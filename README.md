@@ -1,5 +1,7 @@
 # Probability Theory
 
+The library provides a toolbox for doing probability theory.
+
 ## Contributing
 
 1. Fork the project.

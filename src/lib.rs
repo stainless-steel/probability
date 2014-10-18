@@ -1,6 +1,5 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn rock() {
-    }
-}
+//! A toolbox for doing probability theory.
+
+#![feature(tuple_indexing)]
+
+pub mod dist;
