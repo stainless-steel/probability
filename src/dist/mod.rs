@@ -2,8 +2,10 @@
 
 use std::rand::Rng;
 
+pub use self::gaussian::Gaussian;
 pub use self::uniform::Uniform;
 
+mod gaussian;
 mod uniform;
 
 /// An interface for a probability distribution.
