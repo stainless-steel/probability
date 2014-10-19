@@ -1,6 +1,8 @@
+use std::rand::Rng;
+
 use super::Distribution;
 
-/// A continuous uniform distribution on an interval [`a`, `b`].
+/// A continuous uniform distribution on an interval `[a, b]`.
 pub struct Uniform {
     /// The left endpoint of the support.
     pub a: f64,
@@ -9,8 +11,8 @@ pub struct Uniform {
 }
 
 impl Uniform {
+    /// Creates a uniform distribution on the interval `[a, b]`.
     #[inline]
-    /// Creates a uniform distribution on the interval [`a`, `b`].
     pub fn new(a: f64, b: f64) -> Uniform {
         Uniform { a: a, b: b }
     }
@@ -33,8 +35,8 @@ impl Distribution<f64> for Uniform {
     }
 
     #[inline]
-    fn sample(&self) -> f64 {
-        self.a + (self.b - self.a) * ::std::rand::random()
+    fn sample<R: Rng>(&self, rng: &mut R) -> f64 {
+        self.a + (self.b - self.a) * rng.gen()
     }
 }
 
@@ -61,7 +63,8 @@ mod test {
 
     #[test]
     fn sample() {
-        for u in Sampler(&Uniform::new(7.0, 42.0)).take(100) {
+        let mut rng = ::std::rand::task_rng();
+        for u in Sampler(&Uniform::new(7.0, 42.0), &mut rng).take(100) {
             assert!(7.0 <= u && u <= 42.0);
         }
     }

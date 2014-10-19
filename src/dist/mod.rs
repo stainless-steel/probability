@@ -1,5 +1,7 @@
 //! Probability distributions.
 
+use std::rand::Rng;
+
 pub use self::uniform::Uniform;
 
 mod uniform;
@@ -14,7 +16,7 @@ pub trait Distribution<T> {
     fn inv_cdf(&self, p: f64) -> T;
 
     /// Draws a random sample.
-    fn sample(&self) -> T;
+    fn sample<R: Rng>(&self, rng: &mut R) -> T;
 }
 
 /// Provides a means of drawing a sequence of samples from a probability
@@ -24,13 +26,18 @@ pub trait Distribution<T> {
 ///
 /// ```
 /// use prob::dist::{Sampler, Uniform};
-/// let samples = Sampler(&Uniform::new(0.0, 1.0)).take(10).collect::<Vec<_>>();
+///
+/// let mut rng = std::rand::task_rng();
+/// let uniform = Uniform::new(0.0, 1.0);
+/// let samples = Sampler(&uniform, &mut rng).take(10).collect::<Vec<_>>();
 /// ```
-pub struct Sampler<D>(pub D);
+pub struct Sampler<D, R>(pub D, pub R);
 
-impl<'a, T, D> Iterator<T> for Sampler<&'a D> where D: Distribution<T> {
+impl<'a, T, D, R> Iterator<T> for Sampler<&'a D, &'a mut R>
+    where D: Distribution<T>, R: Rng {
+
     #[inline]
     fn next(&mut self) -> Option<T> {
-        Some(self.0.sample())
+        Some(self.0.sample(self.1))
     }
 }
