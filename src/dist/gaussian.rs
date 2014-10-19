@@ -23,7 +23,7 @@ impl Gaussian {
         Gaussian {
             mu: mu,
             sigma: sigma,
-            normal: Normal::new(0.0, 1.0),
+            normal: Normal::new(mu, sigma),
         }
     }
 }
