@@ -64,8 +64,8 @@ mod test {
     #[test]
     fn sample() {
         let mut rng = ::std::rand::task_rng();
-        for u in Sampler(&Uniform::new(7.0, 42.0), &mut rng).take(100) {
-            assert!(7.0 <= u && u <= 42.0);
+        for x in Sampler(&Uniform::new(7.0, 42.0), &mut rng).take(100) {
+            assert!(7.0 <= x && x <= 42.0);
         }
     }
 }
