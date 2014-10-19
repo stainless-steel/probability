@@ -2,3 +2,6 @@
 name = "prob"
 version = "0.0.1"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
+
+[dependencies.sfunc]
+git = "https://github.com/rs-math/sfunc"
