@@ -47,18 +47,18 @@ mod test {
 
     #[test]
     fn cdf() {
-        let uniform = Uniform::new(-1.0, 1.0);
+        let dist = Uniform::new(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
         let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
-        assert_eq!(x.iter().map(|&x| uniform.cdf(x)).collect::<Vec<_>>(), p);
+        assert_eq!(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>(), p);
     }
 
     #[test]
     fn inv_cdf() {
-        let uniform = Uniform::new(-1.0, 1.0);
+        let dist = Uniform::new(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
         let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
-        assert_eq!(p.iter().map(|&p| uniform.inv_cdf(p)).collect::<Vec<_>>(), x);
+        assert_eq!(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>(), x);
     }
 
     #[test]

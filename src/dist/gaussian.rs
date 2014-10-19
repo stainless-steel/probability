@@ -163,7 +163,7 @@ mod test {
 
     #[test]
     fn cdf() {
-        let gaussian = Gaussian::new(1.0, 2.0);
+        let dist = Gaussian::new(1.0, 2.0);
 
         let x = vec![-4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5,
                      1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
@@ -177,14 +177,12 @@ mod test {
                      8.413447460685429e-01, 8.943502263331446e-01,
                      9.331927987311419e-01];
 
-        assert_almost_eq!(x.iter().map(|&x| {
-            gaussian.cdf(x)
-        }).collect(), p);
+        assert_almost_eq!(x.iter().map(|&x| dist.cdf(x)).collect(), p);
     }
 
     #[test]
     fn inv_cdf() {
-        let gaussian = Gaussian::new(-1.0, 0.25);
+        let dist = Gaussian::new(-1.0, 0.25);
 
         let p = vec![0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40,
                      0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85,
@@ -201,9 +199,7 @@ mod test {
                      -6.796121086138498e-01, -5.887865932621319e-01,
                      Float::infinity()];
 
-        assert_almost_eq!(p.iter().map(|&p| {
-            gaussian.inv_cdf(p)
-        }).collect(), x);
+        assert_almost_eq!(p.iter().map(|&p| dist.inv_cdf(p)).collect(), x);
     }
 }
 
@@ -211,15 +207,38 @@ mod test {
 mod bench {
     extern crate test;
 
-    use super::super::Distribution;
+    use super::super::{Distribution, Sampler, Uniform};
     use super::Gaussian;
+
+    #[bench]
+    fn cdf(bench: &mut test::Bencher) {
+        let mut rng = ::std::rand::task_rng();
+        let dist = Gaussian::new(0.0, 1.0);
+        let x = Sampler(&dist, &mut rng).take(1000).collect::<Vec<_>>();
+
+        bench.iter(|| {
+            test::black_box(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>())
+        })
+    }
+
+    #[bench]
+    fn inv_cdf(bench: &mut test::Bencher) {
+        let mut rng = ::std::rand::task_rng();
+        let dist = Gaussian::new(0.0, 1.0);
+        let p = Sampler(&Uniform::new(0.0, 1.0), &mut rng).take(1000).collect::<Vec<_>>();
+
+        bench.iter(|| {
+            test::black_box(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>())
+        })
+    }
 
     #[bench]
     fn sample(bench: &mut test::Bencher) {
         let mut rng = ::std::rand::task_rng();
-        let gaussian = Gaussian::new(0.0, 1.0);
+        let dist = Gaussian::new(0.0, 1.0);
+
         bench.iter(|| {
-            test::black_box(gaussian.sample(&mut rng))
+            test::black_box(dist.sample(&mut rng))
         });
     }
 }
