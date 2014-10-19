@@ -21,8 +21,7 @@ pub trait Distribution<T> {
     fn sample<R: Rng>(&self, rng: &mut R) -> T;
 }
 
-/// Provides a means of drawing a sequence of samples from a probability
-/// distribution.
+/// A means of drawing a sequence of samples from a probability distribution.
 ///
 /// # Example
 ///

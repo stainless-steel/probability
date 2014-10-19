@@ -2,7 +2,7 @@ use std::rand::Rng;
 
 use super::Distribution;
 
-/// A continuous uniform distribution on an interval `[a, b]`.
+/// A continuous uniform distribution.
 pub struct Uniform {
     /// The left endpoint of the support.
     pub a: f64,

@@ -5,8 +5,7 @@ use std::rand::distributions::{Normal, IndependentSample};
 
 use super::Distribution;
 
-/// A Gaussian distribution with a mean value `mu` and a standard deviation
-/// `sigma`.
+/// A Gaussian distribution.
 pub struct Gaussian {
     /// The mean value.
     pub mu: f64,
@@ -17,8 +16,8 @@ pub struct Gaussian {
 }
 
 impl Gaussian {
-    /// Creates a Gaussian distribution with the mean value `mu` and the
-    /// standard deviation `sigma`.
+    /// Creates a Gaussian distribution with the mean value `mu` and standard
+    /// deviation `sigma`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Gaussian {
         Gaussian {
@@ -35,6 +34,12 @@ impl Distribution<f64> for Gaussian {
         (1.0 + erf((x - self.mu) / (self.sigma * Float::sqrt2()))) / 2.0
     }
 
+    /// Compute the inverse of the cummulative distribution function at
+    /// probability `p`.
+    ///
+    /// The code is based on a [C implementation][1] by John Burkardt.
+    ///
+    /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
         use self::sfunc::{log, sqrt};
 
