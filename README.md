@@ -1,6 +1,6 @@
 # Probability Theory
 
-The library provides a toolbox for doing probability theory.
+A probability-theory toolbox.
 
 ## Contributing
 
