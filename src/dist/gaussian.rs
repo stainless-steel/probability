@@ -231,14 +231,4 @@ mod bench {
             test::black_box(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>())
         })
     }
-
-    #[bench]
-    fn sample(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::task_rng();
-        let dist = Gaussian::new(0.0, 1.0);
-
-        bench.iter(|| {
-            test::black_box(dist.sample(&mut rng))
-        });
-    }
 }
