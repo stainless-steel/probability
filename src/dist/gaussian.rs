@@ -41,7 +41,10 @@ impl Distribution<f64> for Gaussian {
     ///
     /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
-        use self::sfunc::{ln, sqrt};
+        #[inline(always)]
+        fn ln(x: f64) -> f64 { x.ln() }
+        #[inline(always)]
+        fn sqrt(x: f64) -> f64 { x.sqrt() }
 
         const CONST1: f64 = 0.180625;
         const CONST2: f64 = 1.6;
