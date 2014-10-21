@@ -16,6 +16,7 @@ pub struct Beta {
     /// The right endpoint of the support.
     pub b: f64,
 
+    ln_beta: f64,
     gamma_alpha: Gamma,
     gamma_beta: Gamma,
 }
@@ -30,6 +31,7 @@ impl Beta {
             beta: beta,
             a: a,
             b: b,
+            ln_beta: sfunc::ln_beta(alpha, beta),
             gamma_alpha: Gamma::new(alpha, 1.0),
             gamma_beta: Gamma::new(beta, 1.0),
         }
@@ -38,16 +40,14 @@ impl Beta {
 
 impl Distribution<f64> for Beta {
     fn cdf(&self, x: f64) -> f64 {
-        use self::sfunc::{inc_beta, ln_beta};
-        inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta,
-                 ln_beta(self.alpha, self.beta))
+        use self::sfunc::inc_beta;
+        inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
     }
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
-        use self::sfunc::{inv_inc_beta, ln_beta};
-        self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta,
-                                                  ln_beta(self.alpha, self.beta))
+        use self::sfunc::inv_inc_beta;
+        self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta, self.ln_beta)
     }
 
     #[inline]
