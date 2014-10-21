@@ -39,6 +39,7 @@ impl Beta {
 }
 
 impl Distribution<f64> for Beta {
+    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use self::sfunc::inc_beta;
         inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
@@ -132,14 +133,15 @@ mod test {
 mod bench {
     extern crate test;
 
-    use super::super::{Distribution, Sampler, Uniform};
+    use std::rand::random;
+
+    use super::super::Distribution;
     use super::Beta;
 
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::task_rng();
         let dist = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let x = Sampler(&Uniform::new(0.0, 1.0), &mut rng).take(1000).collect::<Vec<_>>();
+        let x = range(0u, 1000).map(|_| random()).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>())
@@ -148,9 +150,8 @@ mod bench {
 
     #[bench]
     fn inv_cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::task_rng();
         let dist = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let p = Sampler(&Uniform::new(0.0, 1.0), &mut rng).take(1000).collect::<Vec<_>>();
+        let p = range(0u, 1000).map(|_| random()).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>())
