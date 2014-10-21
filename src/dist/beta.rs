@@ -133,32 +133,28 @@ mod test {
 mod bench {
     extern crate test;
 
-    use std::rand::random;
-
-    use super::super::Distribution;
+    use super::super::{Distribution, Sampler, Uniform};
     use super::Beta;
 
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
+        let mut rng = ::std::rand::task_rng();
         let dist = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let x = range(0u, 1000).map(|_| random()).collect::<Vec<_>>();
+        let x = Sampler(&dist, &mut rng).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
-            for &x in x.iter() {
-                test::black_box(dist.cdf(x));
-            }
+            test::black_box(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>())
         });
     }
 
     #[bench]
     fn inv_cdf(bench: &mut test::Bencher) {
+        let mut rng = ::std::rand::task_rng();
         let dist = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let p = range(0u, 1000).map(|_| random()).collect::<Vec<_>>();
+        let p = Sampler(&Uniform::new(0.0, 1.0), &mut rng).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
-            for &p in p.iter() {
-                test::black_box(dist.inv_cdf(p));
-            }
+            test::black_box(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>())
         });
     }
 }
