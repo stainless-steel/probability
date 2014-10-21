@@ -144,7 +144,9 @@ mod bench {
         let x = range(0u, 1000).map(|_| random()).collect::<Vec<_>>();
 
         bench.iter(|| {
-            test::black_box(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>())
+            for &x in x.iter() {
+                test::black_box(dist.cdf(x));
+            }
         });
     }
 
@@ -154,7 +156,9 @@ mod bench {
         let p = range(0u, 1000).map(|_| random()).collect::<Vec<_>>();
 
         bench.iter(|| {
-            test::black_box(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>())
+            for &p in p.iter() {
+                test::black_box(dist.inv_cdf(p));
+            }
         });
     }
 }
