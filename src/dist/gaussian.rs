@@ -29,6 +29,7 @@ impl Gaussian {
 }
 
 impl Distribution<f64> for Gaussian {
+    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use self::sfunc::erf;
         (1.0 + erf((x - self.mu) / (self.sigma * Float::sqrt2()))) / 2.0
@@ -99,9 +100,9 @@ impl Distribution<f64> for Gaussian {
                                1.42151175831644588870e-7,
                                2.04426310338993978564e-15];
 
-        #[inline]
+        #[inline(always)]
         fn poly(c: &[f64], x: f64) -> f64 {
-            c.iter().rev().fold(0.0, |y, &c| y * x + c)
+            c[0] + x * (c[1] + x * (c[2] + x * (c[3] + x * (c[4] + x * (c[5] + x * (c[6] + x * c[7]))))))
         }
 
         if p <= 0.0 {
@@ -113,7 +114,7 @@ impl Distribution<f64> for Gaussian {
 
         let q = p - 0.5;
 
-        if ::std::num::abs(q) <= SPLIT1 {
+        if (if q < 0.0 { -q } else { q }) <= SPLIT1 {
             let x = CONST1 - q * q;
             return self.mu + self.sigma * q * poly(&A, x) / poly(&B, x);
         }
@@ -130,11 +131,7 @@ impl Distribution<f64> for Gaussian {
             x = poly(&E, x) / poly(&F, x);
         }
 
-        if q < 0.0 {
-            x = -x;
-        }
-
-        self.mu + self.sigma * x
+        self.mu + self.sigma * if q < 0.0 { -x } else { x }
     }
 
     #[inline]
