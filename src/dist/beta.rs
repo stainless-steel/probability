@@ -38,16 +38,16 @@ impl Beta {
 
 impl Distribution<f64> for Beta {
     fn cdf(&self, x: f64) -> f64 {
-        use self::sfunc::{inc_beta, log_beta};
+        use self::sfunc::{inc_beta, ln_beta};
         inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta,
-                 log_beta(self.alpha, self.beta))
+                 ln_beta(self.alpha, self.beta))
     }
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
-        use self::sfunc::{inv_inc_beta, log_beta};
+        use self::sfunc::{inv_inc_beta, ln_beta};
         self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta,
-                                                  log_beta(self.alpha, self.beta))
+                                                  ln_beta(self.alpha, self.beta))
     }
 
     #[inline]

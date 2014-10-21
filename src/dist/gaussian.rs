@@ -41,7 +41,7 @@ impl Distribution<f64> for Gaussian {
     ///
     /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
-        use self::sfunc::{log, sqrt};
+        use self::sfunc::{ln, sqrt};
 
         const CONST1: f64 = 0.180625;
         const CONST2: f64 = 1.6;
@@ -117,7 +117,7 @@ impl Distribution<f64> for Gaussian {
 
         let mut x = if q < 0.0 { p } else { 1.0 - p };
 
-        x = sqrt(-log(x));
+        x = sqrt(-ln(x));
 
         if x <= SPLIT2 {
             x -= CONST2;
