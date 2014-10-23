@@ -102,7 +102,14 @@ impl Distribution<f64> for Gaussian {
 
         #[inline(always)]
         fn poly(c: &[f64], x: f64) -> f64 {
-            c[0] + x * (c[1] + x * (c[2] + x * (c[3] + x * (c[4] + x * (c[5] + x * (c[6] + x * c[7]))))))
+            c[0] + x * (
+            c[1] + x * (
+            c[2] + x * (
+            c[3] + x * (
+            c[4] + x * (
+            c[5] + x * (
+            c[6] + x * (
+            c[7])))))))
         }
 
         if p <= 0.0 {
@@ -142,24 +149,10 @@ impl Distribution<f64> for Gaussian {
 
 #[cfg(test)]
 mod test {
+    #[phase(plugin)] extern crate assert;
+
     use super::super::Distribution;
     use super::Gaussian;
-
-    macro_rules! assert_almost_eq(
-        ($x:expr, $y:expr) => ({
-            let e: f64 = ::std::f64::EPSILON.sqrt();
-            let x: Vec<f64> = $x;
-            let y: Vec<f64> = $y;
-            for i in range(0u, x.len()) {
-                if x[i].is_finite() {
-                    assert!(::std::num::abs(x[i] - y[i]) < e,
-                            "expected {:e} ~ {:e}", x[i], y[i]);
-                } else {
-                    assert_eq!(x[i], y[i]);
-                }
-            }
-        });
-    )
 
     #[test]
     fn cdf() {
@@ -177,7 +170,7 @@ mod test {
                      8.413447460685429e-01, 8.943502263331446e-01,
                      9.331927987311419e-01];
 
-        assert_almost_eq!(x.iter().map(|&x| dist.cdf(x)).collect(), p);
+        assert_close!(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>(), p);
     }
 
     #[test]
@@ -199,7 +192,7 @@ mod test {
                      -6.796121086138498e-01, -5.887865932621319e-01,
                      Float::infinity()];
 
-        assert_almost_eq!(p.iter().map(|&p| dist.inv_cdf(p)).collect(), x);
+        assert_close!(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>(), x);
     }
 }
 

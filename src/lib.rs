@@ -1,5 +1,5 @@
 //! A probability-theory toolbox.
 
-#![feature(macro_rules, tuple_indexing)]
+#![feature(phase, tuple_indexing)]
 
 pub mod dist;

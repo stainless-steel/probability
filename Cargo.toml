@@ -5,3 +5,6 @@ authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 
 [dependencies.sfunc]
 git = "https://github.com/rs-math/sfunc"
+
+[dev-dependencies.assert]
+git = "https://github.com/rs-math/assert"

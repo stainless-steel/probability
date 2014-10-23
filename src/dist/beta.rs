@@ -61,20 +61,10 @@ impl Distribution<f64> for Beta {
 
 #[cfg(test)]
 mod test {
+    #[phase(plugin)] extern crate assert;
+
     use super::super::{Distribution, Sampler};
     use super::Beta;
-
-    macro_rules! assert_almost_eq(
-        ($x:expr, $y:expr) => ({
-            let e: f64 = ::std::f64::EPSILON.sqrt();
-            let x: Vec<f64> = $x;
-            let y: Vec<f64> = $y;
-            for i in range(0u, x.len()) {
-                assert!(::std::num::abs(x[i] - y[i]) < e,
-                        "expected {:e} ~ {:e}", x[i], y[i]);
-            }
-        });
-    )
 
     #[test]
     fn cdf() {
@@ -95,7 +85,7 @@ mod test {
                      9.963000000000000e-01, 9.995187500000000e-01,
                      1.000000000000000e+00];
 
-        assert_almost_eq!(x.iter().map(|&x| dist.cdf(x)).collect(), p);
+        assert_close!(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>(), p);
     }
 
     #[test]
@@ -117,7 +107,7 @@ mod test {
                      3.683772233983162e+00, 3.776393202250021e+00,
                      4.000000000000000e+00];
 
-        assert_almost_eq!(p.iter().map(|&p| dist.inv_cdf(p)).collect(), x);
+        assert_close!(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>(), x);
     }
 
     #[test]
