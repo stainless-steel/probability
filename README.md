@@ -1,6 +1,6 @@
 # Probability Theory [![Build Status][travis-svg]][travis-url]
 
-A probability-theory toolbox.
+The library provides a probability-theory toolbox.
 
 ## Contributing
 
