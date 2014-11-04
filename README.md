@@ -8,5 +8,5 @@ A probability-theory toolbox.
 2. Implement your feature.
 3. Create a pull request.
 
-[travis-svg]: https://travis-ci.org/rs-math/prob.svg?branch=master
-[travis-url]: https://travis-ci.org/rs-math/prob
+[travis-svg]: https://travis-ci.org/stainless-steel/prob.svg?branch=master
+[travis-url]: https://travis-ci.org/stainless-steel/prob

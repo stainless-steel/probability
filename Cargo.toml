@@ -4,7 +4,7 @@ version = "0.0.1"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 
 [dependencies.sfunc]
-git = "https://github.com/rs-math/sfunc"
+git = "https://github.com/stainless-steel/sfunc"
 
 [dev-dependencies.assert]
 git = "https://github.com/stainless-steel/assert"
