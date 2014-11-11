@@ -2,6 +2,8 @@
 
 The library provides a probability-theory toolbox.
 
+## [Documentation][docs]
+
 ## Contributing
 
 1. Fork the project.
@@ -10,3 +12,4 @@ The library provides a probability-theory toolbox.
 
 [travis-svg]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
 [travis-url]: https://travis-ci.org/stainless-steel/probability
+[docs]: https://stainless-steel.github.io/probability
