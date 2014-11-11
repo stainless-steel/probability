@@ -1,9 +1,5 @@
-extern crate sfunc;
-
 use std::rand::Rng;
 use std::rand::distributions::{Gamma, IndependentSample};
-
-use super::Distribution;
 
 /// A beta distribution.
 pub struct Beta {
@@ -22,32 +18,33 @@ pub struct Beta {
 }
 
 impl Beta {
-    /// Creates a beta distribution with the shape parameters `alpha` and
+    /// Create a beta distribution with the shape parameters `alpha` and
     /// `beta` on the interval `[a, b]`.
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
+        use sfunc::ln_beta;
         Beta {
             alpha: alpha,
             beta: beta,
             a: a,
             b: b,
-            ln_beta: sfunc::ln_beta(alpha, beta),
+            ln_beta: ln_beta(alpha, beta),
             gamma_alpha: Gamma::new(alpha, 1.0),
             gamma_beta: Gamma::new(beta, 1.0),
         }
     }
 }
 
-impl Distribution<f64> for Beta {
+impl ::Distribution<f64> for Beta {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
-        use self::sfunc::inc_beta;
+        use sfunc::inc_beta;
         inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
     }
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
-        use self::sfunc::inv_inc_beta;
+        use sfunc::inv_inc_beta;
         self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta, self.ln_beta)
     }
 
@@ -63,12 +60,14 @@ impl Distribution<f64> for Beta {
 mod test {
     #[phase(plugin)] extern crate assert;
 
-    use super::super::{Distribution, Sampler};
-    use super::Beta;
+    use std::rand::task_rng;
+
+    use {Distribution, Sampler};
+    use distributions::Beta;
 
     #[test]
     fn cdf() {
-        let dist = Beta::new(2.0, 3.0, -1.0, 2.0);
+        let beta = Beta::new(2.0, 3.0, -1.0, 2.0);
 
         let x = vec![
             -1.00, -0.85, -0.70, -0.55, -0.40, -0.25, -0.10, 0.05, 0.20, 0.35, 0.50,
@@ -84,12 +83,12 @@ mod test {
             9.963000000000000e-01, 9.995187500000000e-01, 1.000000000000000e+00,
         ];
 
-        assert_close!(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>(), p);
+        assert_close!(x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>(), p);
     }
 
     #[test]
     fn inv_cdf() {
-        let dist = Beta::new(1.0, 2.0, 3.0, 4.0);
+        let beta = Beta::new(1.0, 2.0, 3.0, 4.0);
 
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50,
@@ -105,13 +104,12 @@ mod test {
             3.683772233983162e+00, 3.776393202250021e+00, 4.000000000000000e+00,
         ];
 
-        assert_close!(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>(), x);
+        assert_close!(p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>(), x);
     }
 
     #[test]
     fn sample() {
-        let mut rng = ::std::rand::task_rng();
-        for x in Sampler(&Beta::new(1.0, 2.0, 7.0, 42.0), &mut rng).take(100) {
+        for x in Sampler(&Beta::new(1.0, 2.0, 7.0, 42.0), &mut task_rng()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }
@@ -121,28 +119,29 @@ mod test {
 mod bench {
     extern crate test;
 
-    use super::super::{Distribution, Sampler, Uniform};
-    use super::Beta;
+    use std::rand::task_rng;
+
+    use {Distribution, Sampler};
+    use distributions::{Beta, Uniform};
 
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::task_rng();
-        let dist = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let x = Sampler(&dist, &mut rng).take(1000).collect::<Vec<_>>();
+        let beta = Beta::new(0.5, 1.5, 0.0, 1.0);
+        let x = Sampler(&beta, &mut task_rng()).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
-            test::black_box(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>())
+            test::black_box(x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>())
         });
     }
 
     #[bench]
     fn inv_cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::task_rng();
-        let dist = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let p = Sampler(&Uniform::new(0.0, 1.0), &mut rng).take(1000).collect::<Vec<_>>();
+        let beta = Beta::new(0.5, 1.5, 0.0, 1.0);
+        let uniform = Uniform::new(0.0, 1.0);
+        let p = Sampler(&uniform, &mut task_rng()).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
-            test::black_box(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>())
+            test::black_box(p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>())
         });
     }
 }

@@ -3,8 +3,6 @@ extern crate sfunc;
 use std::rand::Rng;
 use std::rand::distributions::{Normal, IndependentSample};
 
-use super::Distribution;
-
 /// A Gaussian distribution.
 pub struct Gaussian {
     /// The mean value.
@@ -16,7 +14,7 @@ pub struct Gaussian {
 }
 
 impl Gaussian {
-    /// Creates a Gaussian distribution with the mean value `mu` and standard
+    /// Create a Gaussian distribution with the mean value `mu` and standard
     /// deviation `sigma`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Gaussian {
@@ -28,14 +26,14 @@ impl Gaussian {
     }
 }
 
-impl Distribution<f64> for Gaussian {
+impl ::Distribution<f64> for Gaussian {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
-        use self::sfunc::erf;
+        use sfunc::erf;
         (1.0 + erf((x - self.mu) / (self.sigma * Float::sqrt2()))) / 2.0
     }
 
-    /// Compute the inverse of the cummulative distribution function at
+    /// Compute the inverse of the cumulative distribution function at
     /// probability `p`.
     ///
     /// The code is based on a [C implementation][1] by John Burkardt.
@@ -133,12 +131,12 @@ impl Distribution<f64> for Gaussian {
 mod test {
     #[phase(plugin)] extern crate assert;
 
-    use super::super::Distribution;
-    use super::Gaussian;
+    use Distribution;
+    use distributions::Gaussian;
 
     #[test]
     fn cdf() {
-        let dist = Gaussian::new(1.0, 2.0);
+        let gaussian = Gaussian::new(1.0, 2.0);
 
         let x = vec![
             -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0,
@@ -153,12 +151,12 @@ mod test {
             8.943502263331446e-01, 9.331927987311419e-01,
         ];
 
-        assert_close!(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>(), p);
+        assert_close!(x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>(), p);
     }
 
     #[test]
     fn inv_cdf() {
-        let dist = Gaussian::new(-1.0, 0.25);
+        let gaussian = Gaussian::new(-1.0, 0.25);
 
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50,
@@ -174,7 +172,7 @@ mod test {
             -6.796121086138498e-01, -5.887865932621319e-01,  Float::infinity(),
         ];
 
-        assert_close!(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>(), x);
+        assert_close!(p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>(), x);
     }
 }
 
@@ -182,28 +180,29 @@ mod test {
 mod bench {
     extern crate test;
 
-    use super::super::{Distribution, Sampler, Uniform};
-    use super::Gaussian;
+    use {Distribution, Sampler};
+    use distributions::{Gaussian, Uniform};
 
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
         let mut rng = ::std::rand::task_rng();
-        let dist = Gaussian::new(0.0, 1.0);
-        let x = Sampler(&dist, &mut rng).take(1000).collect::<Vec<_>>();
+        let gaussian = Gaussian::new(0.0, 1.0);
+        let x = Sampler(&gaussian, &mut rng).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
-            test::black_box(x.iter().map(|&x| dist.cdf(x)).collect::<Vec<_>>())
+            test::black_box(x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>())
         })
     }
 
     #[bench]
     fn inv_cdf(bench: &mut test::Bencher) {
         let mut rng = ::std::rand::task_rng();
-        let dist = Gaussian::new(0.0, 1.0);
-        let p = Sampler(&Uniform::new(0.0, 1.0), &mut rng).take(1000).collect::<Vec<_>>();
+        let gaussian = Gaussian::new(0.0, 1.0);
+        let uniform = Uniform::new(0.0, 1.0);
+        let p = Sampler(&uniform, &mut rng).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
-            test::black_box(p.iter().map(|&p| dist.inv_cdf(p)).collect::<Vec<_>>())
+            test::black_box(p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>())
         })
     }
 }

@@ -5,7 +5,7 @@ The library provides a probability-theory toolbox.
 ## Contributing
 
 1. Fork the project.
-2. Implement your feature.
+2. Implement your idea.
 3. Create a pull request.
 
 [travis-svg]: https://travis-ci.org/stainless-steel/prob.svg?branch=master
