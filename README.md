@@ -8,5 +8,5 @@ The library provides a probability-theory toolbox.
 2. Implement your idea.
 3. Create a pull request.
 
-[travis-svg]: https://travis-ci.org/stainless-steel/prob.svg?branch=master
-[travis-url]: https://travis-ci.org/stainless-steel/prob
+[travis-svg]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
+[travis-url]: https://travis-ci.org/stainless-steel/probability
