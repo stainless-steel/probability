@@ -3,6 +3,8 @@ extern crate sfunc;
 use std::rand::Rng;
 use std::rand::distributions::{Normal, IndependentSample};
 
+use Distribution;
+
 /// A Gaussian distribution.
 pub struct Gaussian {
     /// The mean value.
@@ -26,7 +28,7 @@ impl Gaussian {
     }
 }
 
-impl ::Distribution<f64> for Gaussian {
+impl Distribution<f64> for Gaussian {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use std::num::Float;
@@ -131,7 +133,7 @@ impl ::Distribution<f64> for Gaussian {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     #[phase(plugin)] extern crate assert;
 
     use Distribution;
@@ -182,7 +184,7 @@ mod test {
 }
 
 #[cfg(test)]
-mod bench {
+mod benches {
     extern crate test;
 
     use {Distribution, Sampler};

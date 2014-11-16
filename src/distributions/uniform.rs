@@ -1,5 +1,7 @@
 use std::rand::Rng;
 
+use Distribution;
+
 /// A continuous uniform distribution.
 pub struct Uniform {
     /// The left endpoint of the support.
@@ -16,7 +18,7 @@ impl Uniform {
     }
 }
 
-impl ::Distribution<f64> for Uniform {
+impl Distribution<f64> for Uniform {
     fn cdf(&self, x: f64) -> f64 {
         if x <= self.a {
             0.0
@@ -39,7 +41,7 @@ impl ::Distribution<f64> for Uniform {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use {Distribution, Sampler};
     use distributions::Uniform;
 

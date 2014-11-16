@@ -1,6 +1,8 @@
 use std::rand::Rng;
 use std::rand::distributions::{Gamma, IndependentSample};
 
+use Distribution;
+
 /// A beta distribution.
 pub struct Beta {
     /// The first shape parameter.
@@ -35,7 +37,7 @@ impl Beta {
     }
 }
 
-impl ::Distribution<f64> for Beta {
+impl Distribution<f64> for Beta {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use sfunc::inc_beta;
@@ -57,7 +59,7 @@ impl ::Distribution<f64> for Beta {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     #[phase(plugin)] extern crate assert;
 
     use std::rand::task_rng;
@@ -116,7 +118,7 @@ mod test {
 }
 
 #[cfg(test)]
-mod bench {
+mod benches {
     extern crate test;
 
     use std::rand::task_rng;
