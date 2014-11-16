@@ -29,6 +29,7 @@ impl Gaussian {
 impl ::Distribution<f64> for Gaussian {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
+        use std::num::Float;
         use sfunc::erf;
         (1.0 + erf((x - self.mu) / (self.sigma * Float::sqrt2()))) / 2.0
     }
@@ -40,6 +41,8 @@ impl ::Distribution<f64> for Gaussian {
     ///
     /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
+        use std::num::Float;
+
         #[inline(always)]
         fn ln(x: f64) -> f64 { x.ln() }
         #[inline(always)]
@@ -156,6 +159,8 @@ mod test {
 
     #[test]
     fn inv_cdf() {
+        use std::num::Float;
+
         let gaussian = Gaussian::new(-1.0, 0.25);
 
         let p = vec![
