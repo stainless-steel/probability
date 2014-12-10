@@ -1,6 +1,6 @@
 //! A probability-theory toolbox.
 
-#![feature(phase, tuple_indexing)]
+#![feature(phase)]
 
 extern crate sfunc;
 
