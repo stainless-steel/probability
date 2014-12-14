@@ -6,6 +6,7 @@ use std::rand::distributions::{Normal, IndependentSample};
 use Distribution;
 
 /// A Gaussian distribution.
+#[deriving(Copy)]
 pub struct Gaussian {
     /// The mean value.
     pub mu: f64,

@@ -3,6 +3,7 @@ use std::rand::Rng;
 use Distribution;
 
 /// A continuous uniform distribution.
+#[deriving(Copy)]
 pub struct Uniform {
     /// The left endpoint of the support.
     pub a: f64,
