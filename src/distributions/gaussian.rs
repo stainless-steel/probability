@@ -193,7 +193,7 @@ mod benches {
 
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::task_rng();
+        let mut rng = ::std::rand::thread_rng();
         let gaussian = Gaussian::new(0.0, 1.0);
         let x = Sampler(&gaussian, &mut rng).take(1000).collect::<Vec<_>>();
 
@@ -204,7 +204,7 @@ mod benches {
 
     #[bench]
     fn inv_cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::task_rng();
+        let mut rng = ::std::rand::thread_rng();
         let gaussian = Gaussian::new(0.0, 1.0);
         let uniform = Uniform::new(0.0, 1.0);
         let p = Sampler(&uniform, &mut rng).take(1000).collect::<Vec<_>>();

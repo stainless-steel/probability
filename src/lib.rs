@@ -26,12 +26,12 @@ pub trait Distribution<T> {
 /// # Example
 ///
 /// ```
-/// use std::rand::task_rng;
+/// use std::rand::thread_rng;
 /// use probability::Sampler;
 /// use probability::distributions::Uniform;
 ///
 /// let uniform = Uniform::new(0.0, 1.0);
-/// let samples = Sampler(&uniform, &mut task_rng()).take(10).collect::<Vec<_>>();
+/// let samples = Sampler(&uniform, &mut thread_rng()).take(10).collect::<Vec<_>>();
 /// ```
 pub struct Sampler<D, R>(pub D, pub R);
 

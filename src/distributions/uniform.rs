@@ -66,7 +66,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut rng = ::std::rand::task_rng();
+        let mut rng = ::std::rand::thread_rng();
         let uniform = Uniform::new(7.0, 42.0);
 
         for x in Sampler(&uniform, &mut rng).take(100) {

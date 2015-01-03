@@ -62,7 +62,7 @@ impl Distribution<f64> for Beta {
 mod tests {
     #[phase(plugin)] extern crate assert;
 
-    use std::rand::task_rng;
+    use std::rand::thread_rng;
 
     use {Distribution, Sampler};
     use distributions::Beta;
@@ -111,7 +111,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Sampler(&Beta::new(1.0, 2.0, 7.0, 42.0), &mut task_rng()).take(100) {
+        for x in Sampler(&Beta::new(1.0, 2.0, 7.0, 42.0), &mut thread_rng()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }
@@ -121,7 +121,7 @@ mod tests {
 mod benches {
     extern crate test;
 
-    use std::rand::task_rng;
+    use std::rand::thread_rng;
 
     use {Distribution, Sampler};
     use distributions::{Beta, Uniform};
@@ -129,7 +129,7 @@ mod benches {
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
         let beta = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let x = Sampler(&beta, &mut task_rng()).take(1000).collect::<Vec<_>>();
+        let x = Sampler(&beta, &mut thread_rng()).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>())
@@ -140,7 +140,7 @@ mod benches {
     fn inv_cdf(bench: &mut test::Bencher) {
         let beta = Beta::new(0.5, 1.5, 0.0, 1.0);
         let uniform = Uniform::new(0.0, 1.0);
-        let p = Sampler(&uniform, &mut task_rng()).take(1000).collect::<Vec<_>>();
+        let p = Sampler(&uniform, &mut thread_rng()).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>())
