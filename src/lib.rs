@@ -1,6 +1,6 @@
 //! A probability-theory toolbox.
 
-#![feature(phase)]
+#![feature(associated_types, phase)]
 
 extern crate sfunc;
 
@@ -35,8 +35,10 @@ pub trait Distribution<T> {
 /// ```
 pub struct Sampler<D, R>(pub D, pub R);
 
-impl<'a, T, D, R> Iterator<T> for Sampler<&'a D, &'a mut R>
+impl<'a, T, D, R> Iterator for Sampler<&'a D, &'a mut R>
     where D: Distribution<T>, R: Rng {
+
+    type Item = T;
 
     #[inline]
     fn next(&mut self) -> Option<T> {
