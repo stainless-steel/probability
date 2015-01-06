@@ -32,9 +32,9 @@ impl Gaussian {
 impl Distribution<f64> for Gaussian {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
-        use std::num::Float;
+        use std::f64::consts::SQRT2;
         use sfunc::erf;
-        (1.0 + erf((x - self.mu) / (self.sigma * Float::sqrt2()))) / 2.0
+        (1.0 + erf((x - self.mu) / (self.sigma * SQRT2))) / 2.0
     }
 
     /// Compute the inverse of the cumulative distribution function at
