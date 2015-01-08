@@ -135,8 +135,6 @@ impl Distribution<f64> for Gaussian {
 
 #[cfg(test)]
 mod tests {
-    #[phase(plugin)] extern crate assert;
-
     use Distribution;
     use distributions::Gaussian;
 
@@ -186,7 +184,7 @@ mod tests {
 
 #[cfg(test)]
 mod benches {
-    extern crate test;
+    use test;
 
     use {Distribution, Sampler};
     use distributions::{Gaussian, Uniform};

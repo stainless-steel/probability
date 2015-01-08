@@ -1,6 +1,11 @@
 //! A probability-theory toolbox.
 
-#![feature(associated_types, phase)]
+#[cfg(test)]
+#[macro_use]
+extern crate assert;
+
+#[cfg(test)]
+extern crate test;
 
 extern crate sfunc;
 

@@ -60,8 +60,6 @@ impl Distribution<f64> for Beta {
 
 #[cfg(test)]
 mod tests {
-    #[phase(plugin)] extern crate assert;
-
     use std::rand::thread_rng;
 
     use {Distribution, Sampler};
@@ -119,9 +117,8 @@ mod tests {
 
 #[cfg(test)]
 mod benches {
-    extern crate test;
-
     use std::rand::thread_rng;
+    use test;
 
     use {Distribution, Sampler};
     use distributions::{Beta, Uniform};
