@@ -20,8 +20,8 @@ pub struct Beta {
 }
 
 impl Beta {
-    /// Create a beta distribution with the shape parameters `alpha` and
-    /// `beta` on the interval `[a, b]`.
+    /// Create a beta distribution with the shape parameters `alpha` and `beta`
+    /// on the interval `[a, b]`.
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
         use sfunc::ln_beta;
@@ -37,7 +37,9 @@ impl Beta {
     }
 }
 
-impl Distribution<f64> for Beta {
+impl Distribution for Beta {
+    type Item = f64;
+
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use sfunc::inc_beta;

@@ -29,7 +29,9 @@ impl Gaussian {
     }
 }
 
-impl Distribution<f64> for Gaussian {
+impl Distribution for Gaussian {
+    type Item = f64;
+
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use std::f64::consts::SQRT2;
