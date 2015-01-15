@@ -1,6 +1,6 @@
 [package]
 name = "probability"
-version = "0.0.9"
+version = "0.1.0"
 authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/stainless-steel/probability"
@@ -9,7 +9,7 @@ documentation = "https://stainless-steel.github.io/probability"
 description = "The library provides a probability-theory toolbox."
 
 [dependencies]
-sfunc = "0.0.4"
+special = "0.1"
 
 [dev-dependencies]
-assert = "0.0.4"
+assert = "0.1"

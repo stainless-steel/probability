@@ -24,7 +24,7 @@ impl Beta {
     /// on the interval `[a, b]`.
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
-        use sfunc::ln_beta;
+        use special::ln_beta;
         Beta {
             alpha: alpha,
             beta: beta,
@@ -42,13 +42,13 @@ impl Distribution for Beta {
 
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
-        use sfunc::inc_beta;
+        use special::inc_beta;
         inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
     }
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
-        use sfunc::inv_inc_beta;
+        use special::inv_inc_beta;
         self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta, self.ln_beta)
     }
 

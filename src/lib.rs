@@ -9,7 +9,7 @@ extern crate assert;
 #[cfg(test)]
 extern crate test;
 
-extern crate sfunc;
+extern crate special;
 
 use std::rand::Rng;
 

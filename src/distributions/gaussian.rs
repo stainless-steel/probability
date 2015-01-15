@@ -1,5 +1,3 @@
-extern crate sfunc;
-
 use std::rand::Rng;
 use std::rand::distributions::{Normal, IndependentSample};
 
@@ -34,8 +32,8 @@ impl Distribution for Gaussian {
 
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
+        use special::erf;
         use std::f64::consts::SQRT2;
-        use sfunc::erf;
         (1.0 + erf((x - self.mu) / (self.sigma * SQRT2))) / 2.0
     }
 
