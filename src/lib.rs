@@ -1,6 +1,7 @@
 //! A probability-theory toolbox.
 
-#![allow(unstable)]
+#![feature(core, rand, std_misc)]
+#![cfg_attr(test, feature(test))]
 
 #[cfg(test)]
 #[macro_use]
