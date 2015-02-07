@@ -1,4 +1,4 @@
-Copyright 2014 Ivan Ukhov
+Copyright 2014–2015 Ivan Ukhov
 
 MIT License
 
