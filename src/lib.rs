@@ -30,7 +30,7 @@ pub trait Distribution {
     fn inv_cdf(&self, p: f64) -> Self::Item;
 
     /// Draw a random sample.
-    fn sample<G: Generator>(&self, rng: &mut G) -> Self::Item;
+    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Item;
 }
 
 /// A means of drawing a sequence of samples from a probability distribution.
