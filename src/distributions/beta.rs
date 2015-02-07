@@ -1,7 +1,6 @@
-use std::rand::Rng;
-use std::rand::distributions::{Gamma, IndependentSample};
+use rand::distributions::{Gamma, IndependentSample};
 
-use Distribution;
+use {Distribution, Generator};
 
 /// A beta distribution.
 pub struct Beta {
@@ -53,16 +52,16 @@ impl Distribution for Beta {
     }
 
     #[inline]
-    fn sample<R: Rng>(&self, rng: &mut R) -> f64 {
-        let x = self.gamma_alpha.ind_sample(rng);
-        let y = self.gamma_beta.ind_sample(rng);
+    fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
+        let x = self.gamma_alpha.ind_sample(generator);
+        let y = self.gamma_beta.ind_sample(generator);
         self.a + (self.b - self.a) * x / (x + y)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::rand::thread_rng;
+    use ::generator;
 
     use {Distribution, Sampler};
     use distributions::Beta;
@@ -111,7 +110,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Sampler(&Beta::new(1.0, 2.0, 7.0, 42.0), &mut thread_rng()).take(100) {
+        for x in Sampler(&Beta::new(1.0, 2.0, 7.0, 42.0), &mut generator()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }
@@ -119,16 +118,15 @@ mod tests {
 
 #[cfg(test)]
 mod benches {
-    use std::rand::thread_rng;
     use test;
 
-    use {Distribution, Sampler};
+    use {Distribution, Sampler, generator};
     use distributions::{Beta, Uniform};
 
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
         let beta = Beta::new(0.5, 1.5, 0.0, 1.0);
-        let x = Sampler(&beta, &mut thread_rng()).take(1000).collect::<Vec<_>>();
+        let x = Sampler(&beta, &mut generator()).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>())
@@ -139,7 +137,7 @@ mod benches {
     fn inv_cdf(bench: &mut test::Bencher) {
         let beta = Beta::new(0.5, 1.5, 0.0, 1.0);
         let uniform = Uniform::new(0.0, 1.0);
-        let p = Sampler(&uniform, &mut thread_rng()).take(1000).collect::<Vec<_>>();
+        let p = Sampler(&uniform, &mut generator()).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>())

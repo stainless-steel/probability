@@ -1,6 +1,6 @@
 //! A probability-theory toolbox.
 
-#![feature(core, rand, std_misc)]
+#![feature(core, std_misc)]
 #![cfg_attr(test, feature(test))]
 
 #[cfg(test)]
@@ -10,9 +10,11 @@ extern crate assert;
 #[cfg(test)]
 extern crate test;
 
+extern crate rand;
 extern crate special;
 
-use std::rand::Rng;
+pub use ::rand::Rng as Generator;
+pub use ::rand::thread_rng as generator;
 
 pub mod distributions;
 
@@ -28,7 +30,7 @@ pub trait Distribution {
     fn inv_cdf(&self, p: f64) -> Self::Item;
 
     /// Draw a random sample.
-    fn sample<R: Rng>(&self, rng: &mut R) -> Self::Item;
+    fn sample<G: Generator>(&self, rng: &mut G) -> Self::Item;
 }
 
 /// A means of drawing a sequence of samples from a probability distribution.
@@ -38,18 +40,16 @@ pub trait Distribution {
 /// ```
 /// #![allow(unstable)]
 ///
-/// use std::rand::thread_rng;
+/// use probability::generator;
 /// use probability::Sampler;
 /// use probability::distributions::Uniform;
 ///
 /// let uniform = Uniform::new(0.0, 1.0);
-/// let samples = Sampler(&uniform, &mut thread_rng()).take(10).collect::<Vec<_>>();
+/// let samples = Sampler(&uniform, &mut generator()).take(10).collect::<Vec<_>>();
 /// ```
-pub struct Sampler<D, R>(pub D, pub R);
+pub struct Sampler<D, G>(pub D, pub G);
 
-impl<'a, T, D, R> Iterator for Sampler<&'a D, &'a mut R>
-    where D: Distribution<Item=T>, R: Rng {
-
+impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G> where D: Distribution<Item=T>, G: Generator {
     type Item = T;
 
     #[inline]

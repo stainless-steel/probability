@@ -1,7 +1,6 @@
-use std::rand::Rng;
-use std::rand::distributions::{Normal, IndependentSample};
+use rand::distributions::{Normal, IndependentSample};
 
-use Distribution;
+use {Distribution, Generator};
 
 /// A Gaussian distribution.
 #[derive(Copy)]
@@ -128,8 +127,8 @@ impl Distribution for Gaussian {
     }
 
     #[inline]
-    fn sample<R: Rng>(&self, rng: &mut R) -> f64 {
-        self.normal.ind_sample(rng)
+    fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
+        self.normal.ind_sample(generator)
     }
 }
 
@@ -191,9 +190,9 @@ mod benches {
 
     #[bench]
     fn cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::thread_rng();
+        let mut generator = ::generator();
         let gaussian = Gaussian::new(0.0, 1.0);
-        let x = Sampler(&gaussian, &mut rng).take(1000).collect::<Vec<_>>();
+        let x = Sampler(&gaussian, &mut generator).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>())
@@ -202,10 +201,10 @@ mod benches {
 
     #[bench]
     fn inv_cdf(bench: &mut test::Bencher) {
-        let mut rng = ::std::rand::thread_rng();
+        let mut generator = ::generator();
         let gaussian = Gaussian::new(0.0, 1.0);
         let uniform = Uniform::new(0.0, 1.0);
-        let p = Sampler(&uniform, &mut rng).take(1000).collect::<Vec<_>>();
+        let p = Sampler(&uniform, &mut generator).take(1000).collect::<Vec<_>>();
 
         bench.iter(|| {
             test::black_box(p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>())

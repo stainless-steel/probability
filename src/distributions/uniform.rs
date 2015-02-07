@@ -1,6 +1,4 @@
-use std::rand::Rng;
-
-use Distribution;
+use {Distribution, Generator};
 
 /// A continuous uniform distribution.
 #[derive(Copy)]
@@ -38,8 +36,8 @@ impl Distribution for Uniform {
     }
 
     #[inline]
-    fn sample<R: Rng>(&self, rng: &mut R) -> f64 {
-        self.a + (self.b - self.a) * rng.gen()
+    fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
+        self.a + (self.b - self.a) * generator.gen()
     }
 }
 
@@ -68,10 +66,10 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut rng = ::std::rand::thread_rng();
+        let mut generator = ::generator();
         let uniform = Uniform::new(7.0, 42.0);
 
-        for x in Sampler(&uniform, &mut rng).take(100) {
+        for x in Sampler(&uniform, &mut generator).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }
