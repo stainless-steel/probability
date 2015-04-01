@@ -37,7 +37,7 @@ impl Distribution for Uniform {
 
     #[inline]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        self.a + (self.b - self.a) * generator.gen()
+        self.a + (self.b - self.a) * generator.gen::<f64>()
     }
 }
 
