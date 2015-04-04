@@ -1,7 +1,7 @@
 use {Distribution, Generator};
 
 /// A continuous uniform distribution.
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct Uniform {
     /// The left endpoint of the support.
     pub a: f64,

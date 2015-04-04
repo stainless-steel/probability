@@ -1,6 +1,5 @@
 //! A probability-theory toolbox.
 
-#![feature(core, std_misc)]
 #![cfg_attr(test, feature(test))]
 
 #[cfg(test)]
@@ -10,6 +9,7 @@ extern crate assert;
 #[cfg(test)]
 extern crate test;
 
+extern crate num;
 extern crate rand;
 extern crate special;
 

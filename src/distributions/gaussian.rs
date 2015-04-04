@@ -3,7 +3,7 @@ use rand::distributions::{Normal, IndependentSample};
 use {Distribution, Generator};
 
 /// A Gaussian distribution.
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 pub struct Gaussian {
     /// The mean value.
     pub mu: f64,
@@ -32,8 +32,8 @@ impl Distribution for Gaussian {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::erf;
-        use std::f64::consts::SQRT2;
-        (1.0 + erf((x - self.mu) / (self.sigma * SQRT2))) / 2.0
+        use std::f64::consts::SQRT_2;
+        (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
     }
 
     /// Compute the inverse of the cumulative distribution function at
@@ -43,7 +43,7 @@ impl Distribution for Gaussian {
     ///
     /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
-        use std::num::Float;
+        use ::num::Float;
 
         #[inline(always)]
         fn ln(x: f64) -> f64 { x.ln() }
@@ -159,7 +159,7 @@ mod tests {
 
     #[test]
     fn inv_cdf() {
-        use std::num::Float;
+        use ::num::Float;
 
         let gaussian = Gaussian::new(-1.0, 0.25);
 
