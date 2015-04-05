@@ -134,6 +134,8 @@ impl Distribution for Gaussian {
 
 #[cfg(test)]
 mod tests {
+    use assert;
+
     use Distribution;
     use distributions::Gaussian;
 
@@ -154,7 +156,7 @@ mod tests {
             8.943502263331446e-01, 9.331927987311419e-01,
         ];
 
-        assert_close!(x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>(), p);
+        assert::within(&x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
@@ -177,7 +179,7 @@ mod tests {
             -6.796121086138498e-01, -5.887865932621319e-01,  Float::infinity(),
         ];
 
-        assert_close!(p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>(), x);
+        assert::within(&p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 }
 

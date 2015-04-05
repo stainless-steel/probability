@@ -3,7 +3,6 @@
 #![cfg_attr(test, feature(test))]
 
 #[cfg(test)]
-#[macro_use]
 extern crate assert;
 
 #[cfg(test)]

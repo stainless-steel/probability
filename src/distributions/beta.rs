@@ -61,9 +61,9 @@ impl Distribution for Beta {
 
 #[cfg(test)]
 mod tests {
-    use ::generator;
+    use assert;
 
-    use {Distribution, Sampler};
+    use {Distribution, Sampler, generator};
     use distributions::Beta;
 
     #[test]
@@ -84,7 +84,7 @@ mod tests {
             9.963000000000000e-01, 9.995187500000000e-01, 1.000000000000000e+00,
         ];
 
-        assert_close!(x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>(), p);
+        assert::within(&x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
@@ -105,7 +105,7 @@ mod tests {
             3.683772233983162e+00, 3.776393202250021e+00, 4.000000000000000e+00,
         ];
 
-        assert_close!(p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>(), x);
+        assert::within(&p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 
     #[test]
