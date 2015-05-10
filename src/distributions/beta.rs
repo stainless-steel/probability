@@ -25,6 +25,7 @@ impl Beta {
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
         use special::ln_beta;
+        assert!(a < b, "Beta::new() called with a >= b");
         Beta {
             alpha: alpha,
             beta: beta,
@@ -74,6 +75,14 @@ mod tests {
 
     use {Distribution, Sampler, generator};
     use distributions::Beta;
+
+    #[test]
+    #[should_panic]
+    #[allow(unused_variables)]
+    fn invalid_support() {
+        let beta = Beta::new(2.0, 3.0, 2.0, -1.0);
+
+    }
 
     #[test]
     fn pdf() {
