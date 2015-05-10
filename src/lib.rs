@@ -21,6 +21,9 @@ pub mod distributions;
 pub trait Distribution {
     type Item;
 
+    /// Compute the probability density function (PDF) as point `x`.
+    fn pdf(&self, x: Self::Item) -> f64;
+
     /// Compute the cumulative distribution function (CDF) at point `x`.
     fn cdf(&self, x: Self::Item) -> f64;
 

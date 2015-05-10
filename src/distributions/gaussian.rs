@@ -30,6 +30,13 @@ impl Distribution for Gaussian {
     type Item = f64;
 
     #[inline]
+    fn pdf(&self, x: f64) -> f64 {
+        use std::f64::consts::PI;
+        let var = self.sigma.powi(2);
+        (-(x - self.mu).powi(2) / (2.0*var)).exp() / ((2.0*PI).sqrt() * self.sigma)
+    }
+
+    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::erf;
         use std::f64::consts::SQRT_2;
@@ -138,6 +145,26 @@ mod tests {
 
     use Distribution;
     use distributions::Gaussian;
+
+    #[test]
+    fn pdf() {
+        let gaussian = Gaussian::new(1.0, 2.0);
+
+        let x = vec![
+            -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0,
+            0.5,  1.0,  1.5,  2.0,  2.5,  3.0,  3.5,  4.0
+        ];
+        let p = vec![
+            8.764150246784270e-03, 1.586982591783371e-02, 2.699548325659403e-02,
+            4.313865941325577e-02, 6.475879783294587e-02, 9.132454269451096e-02,
+            1.209853622595717e-01, 1.505687160774022e-01, 1.760326633821498e-01,
+            1.933340584014246e-01, 1.994711402007164e-01, 1.933340584014246e-01,
+            1.760326633821498e-01, 1.505687160774022e-01, 1.209853622595717e-01,
+            9.132454269451096e-02, 6.475879783294587e-02
+        ];
+
+        assert::within(&x.iter().map(|&x| gaussian.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
 
     #[test]
     fn cdf() {

@@ -40,6 +40,14 @@ impl Distribution for Beta {
     type Item = f64;
 
     #[inline]
+    fn pdf(&self, x: f64) -> f64 {
+        let norm = self.b - self.a;
+        let x = (x - self.a) / (self.b - self.a);
+        ((self.alpha - 1.0) * x.ln() + (self.beta - 1.0) * (1.0 - x).ln() -
+            self.ln_beta).exp() / norm
+    }
+
+    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::inc_beta;
         inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
@@ -65,6 +73,27 @@ mod tests {
 
     use {Distribution, Sampler, generator};
     use distributions::Beta;
+
+    #[test]
+    fn pdf() {
+        let beta = Beta::new(2.0, 3.0, -1.0, 2.0);
+
+        let x = vec![
+            -1.00, -0.85, -0.70, -0.55, -0.40, -0.25, -0.10, 0.05, 0.20, 0.35, 0.50,
+             0.65,  0.80,  0.95,  1.10,  1.25,  1.40,  1.55, 1.70, 1.85, 2.00,
+        ];
+        let p = vec![
+            0.000000000000000e+00, 1.805000000000000e-01, 3.240000000000001e-01,
+            4.335000000000000e-01, 5.120000000000000e-01, 5.625000000000001e-01,
+            5.880000000000000e-01, 5.915000000000001e-01, 5.760000000000001e-01,
+            5.445000000000000e-01, 5.000000000000001e-01, 4.455000000000000e-01,
+            3.840000000000001e-01, 3.184999999999999e-01, 2.519999999999999e-01,
+            1.875000000000000e-01, 1.280000000000001e-01, 7.650000000000003e-02,
+            3.600000000000000e-02, 9.499999999999982e-03, 0.000000000000000e+00
+        ];
+
+        assert::within(&x.iter().map(|&x| beta.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
 
     #[test]
     fn cdf() {
