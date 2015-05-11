@@ -20,6 +20,14 @@ impl Uniform {
 impl Distribution for Uniform {
     type Item = f64;
 
+    fn pdf(&self, x: f64) -> f64 {
+        if x < self.a || x > self.b {
+            0.0
+        } else {
+            1.0 / (self.b - self.a)
+        }
+    }
+
     fn cdf(&self, x: f64) -> f64 {
         if x <= self.a {
             0.0
@@ -45,6 +53,15 @@ impl Distribution for Uniform {
 mod tests {
     use {Distribution, Sampler};
     use distributions::Uniform;
+
+    #[test]
+    fn pdf() {
+        let uniform = Uniform::new(-1.0, 1.0);
+        let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
+        let p = vec![0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0];
+
+        assert_eq!(x.iter().map(|&x| uniform.pdf(x)).collect::<Vec<_>>(), p);
+    }
 
     #[test]
     fn cdf() {
