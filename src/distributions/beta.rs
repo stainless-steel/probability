@@ -3,6 +3,7 @@ use rand::distributions::{Gamma, IndependentSample};
 use {Distribution, Generator};
 
 /// A beta distribution.
+#[derive(Clone, Copy)]
 pub struct Beta {
     /// The first shape parameter.
     pub alpha: f64,
