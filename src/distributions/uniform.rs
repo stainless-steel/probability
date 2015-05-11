@@ -11,6 +11,10 @@ pub struct Uniform {
 
 impl Uniform {
     /// Create a uniform distribution on the interval `[a, b]`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `a >= b`.
     #[inline]
     pub fn new(a: f64, b: f64) -> Uniform {
         assert!(a < b, "Uniform::new() called with a >= b");

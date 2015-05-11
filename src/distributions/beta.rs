@@ -22,6 +22,10 @@ pub struct Beta {
 impl Beta {
     /// Create a beta distribution with the shape parameters `alpha` and `beta`
     /// on the interval `[a, b]`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `a >= b`.
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
         use special::ln_beta;
