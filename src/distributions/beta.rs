@@ -46,14 +46,6 @@ impl Distribution for Beta {
     type Item = f64;
 
     #[inline]
-    fn pdf(&self, x: f64) -> f64 {
-        let norm = self.b - self.a;
-        let x = (x - self.a) / (self.b - self.a);
-        ((self.alpha - 1.0) * x.ln() + (self.beta - 1.0) * (1.0 - x).ln() -
-            self.ln_beta).exp() / norm
-    }
-
-    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::inc_beta;
         inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
@@ -63,6 +55,14 @@ impl Distribution for Beta {
     fn inv_cdf(&self, p: f64) -> f64 {
         use special::inv_inc_beta;
         self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta, self.ln_beta)
+    }
+
+    #[inline]
+    fn pdf(&self, x: f64) -> f64 {
+        let norm = self.b - self.a;
+        let x = (x - self.a) / (self.b - self.a);
+        ((self.alpha - 1.0) * x.ln() + (self.beta - 1.0) * (1.0 - x).ln() -
+            self.ln_beta).exp() / norm
     }
 
     #[inline]

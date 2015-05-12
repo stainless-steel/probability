@@ -34,13 +34,6 @@ impl Distribution for Gaussian {
     type Item = f64;
 
     #[inline]
-    fn pdf(&self, x: f64) -> f64 {
-        use std::f64::consts::PI;
-        let var = self.sigma.powi(2);
-        (-(x - self.mu).powi(2) / (2.0*var)).exp() / ((2.0*PI).sqrt() * self.sigma)
-    }
-
-    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::erf;
         use std::f64::consts::SQRT_2;
@@ -135,6 +128,13 @@ impl Distribution for Gaussian {
         }
 
         self.mu + self.sigma * if q < 0.0 { -x } else { x }
+    }
+
+    #[inline]
+    fn pdf(&self, x: f64) -> f64 {
+        use std::f64::consts::PI;
+        let var = self.sigma.powi(2);
+        (-(x - self.mu).powi(2) / (2.0*var)).exp() / ((2.0*PI).sqrt() * self.sigma)
     }
 
     #[inline]

@@ -25,14 +25,6 @@ impl Uniform {
 impl Distribution for Uniform {
     type Item = f64;
 
-    fn pdf(&self, x: f64) -> f64 {
-        if x < self.a || x > self.b {
-            0.0
-        } else {
-            1.0 / (self.b - self.a)
-        }
-    }
-
     fn cdf(&self, x: f64) -> f64 {
         if x <= self.a {
             0.0
@@ -46,6 +38,14 @@ impl Distribution for Uniform {
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
         self.a + (self.b - self.a) * p
+    }
+
+    fn pdf(&self, x: f64) -> f64 {
+        if x < self.a || x > self.b {
+            0.0
+        } else {
+            1.0 / (self.b - self.a)
+        }
     }
 
     #[inline]
