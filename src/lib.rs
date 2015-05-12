@@ -40,8 +40,6 @@ pub trait Distribution {
 /// # Example
 ///
 /// ```
-/// #![allow(unstable)]
-///
 /// use probability::generator;
 /// use probability::Sampler;
 /// use probability::distributions::Uniform;
