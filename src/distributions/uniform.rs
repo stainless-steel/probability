@@ -40,6 +40,7 @@ impl Distribution for Uniform {
         self.a + (self.b - self.a) * p
     }
 
+    #[inline]
     fn pdf(&self, x: f64) -> f64 {
         if x < self.a || x > self.b {
             0.0
