@@ -14,10 +14,14 @@ pub struct Gaussian {
 }
 
 impl Gaussian {
-    /// Create a Gaussian distribution with the mean value `mu` and standard
-    /// deviation `sigma`.
+    /// Create a Gaussian distribution with the mean value `mu` and standard deviation `sigma`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `sigma < 0`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Gaussian {
+        assert!(sigma >= 0.0, "Gaussian::new() called with sigma < 0");
         Gaussian {
             mu: mu,
             sigma: sigma,
@@ -145,6 +149,13 @@ mod tests {
 
     use Distribution;
     use distributions::Gaussian;
+
+    #[test]
+    #[should_panic]
+    #[allow(unused_variables)]
+    fn negative_sigma() {
+        let gaussian = Gaussian::new(1.0, -1.0);
+    }
 
     #[test]
     fn pdf() {

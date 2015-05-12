@@ -11,8 +11,13 @@ pub struct Uniform {
 
 impl Uniform {
     /// Create a uniform distribution on the interval `[a, b]`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `a >= b`.
     #[inline]
     pub fn new(a: f64, b: f64) -> Uniform {
+        assert!(a < b, "Uniform::new() called with a >= b");
         Uniform { a: a, b: b }
     }
 }
@@ -53,6 +58,13 @@ impl Distribution for Uniform {
 mod tests {
     use {Distribution, Sampler};
     use distributions::Uniform;
+
+    #[test]
+    #[should_panic]
+    #[allow(unused_variables)]
+    fn invalid_support() {
+        let uniform = Uniform::new(2.0, -1.0);
+    }
 
     #[test]
     fn pdf() {
