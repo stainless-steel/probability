@@ -1,4 +1,4 @@
-# Probability Theory [![Build Status][travis-svg]][travis-url]
+# Probability Theory [![Build Status][status-svg]][status-url]
 
 The library provides a probability-theory toolbox.
 
@@ -8,8 +8,8 @@ The library provides a probability-theory toolbox.
 
 1. Fork the project.
 2. Implement your idea.
-3. Create a pull request.
+3. Open a pull request.
 
-[travis-svg]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
-[travis-url]: https://travis-ci.org/stainless-steel/probability
+[status-svg]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
+[status-url]: https://travis-ci.org/stainless-steel/probability
 [docs]: https://stainless-steel.github.io/probability
