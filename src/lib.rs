@@ -24,8 +24,7 @@ pub trait Distribution {
     /// Compute the cumulative distribution function (CDF) at point `x`.
     fn cdf(&self, x: Self::Item) -> f64;
 
-    /// Compute the inverse of the cumulative distribution function at
-    /// probability `p`.
+    /// Compute the inverse of the cumulative distribution function at probability `p`.
     fn inv_cdf(&self, p: f64) -> Self::Item;
 
     /// Compute the probability density function (PDF) as point `x`.
@@ -49,7 +48,9 @@ pub trait Distribution {
 /// ```
 pub struct Sampler<D, G>(pub D, pub G);
 
-impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G> where D: Distribution<Item=T>, G: Generator {
+impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G>
+    where D: Distribution<Item=T>, G: Generator {
+
     type Item = T;
 
     #[inline]

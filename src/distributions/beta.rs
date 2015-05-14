@@ -20,8 +20,8 @@ pub struct Beta {
 }
 
 impl Beta {
-    /// Create a beta distribution with the shape parameters `alpha` and `beta`
-    /// on the interval `[a, b]`.
+    /// Create a beta distribution with the shape parameters `alpha` and `beta` on the interval
+    /// `[a, b]`.
     ///
     /// # Panics
     ///

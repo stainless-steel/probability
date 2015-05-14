@@ -40,8 +40,7 @@ impl Distribution for Gaussian {
         (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
     }
 
-    /// Compute the inverse of the cumulative distribution function at
-    /// probability `p`.
+    /// Compute the inverse of the cumulative distribution function at probability `p`.
     ///
     /// The code is based on a [C implementation][1] by John Burkardt.
     ///
