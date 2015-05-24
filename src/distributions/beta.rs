@@ -29,7 +29,7 @@ impl Beta {
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
         use special::ln_beta;
-        assert!(a < b, "Beta::new() called with a >= b");
+        debug_assert!(a < b, "Beta::new() called with a >= b");
         Beta {
             alpha: alpha,
             beta: beta,

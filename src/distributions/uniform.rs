@@ -17,7 +17,7 @@ impl Uniform {
     /// Panics if `a >= b`.
     #[inline]
     pub fn new(a: f64, b: f64) -> Uniform {
-        assert!(a < b, "Uniform::new() called with a >= b");
+        debug_assert!(a < b, "Uniform::new() called with a >= b");
         Uniform { a: a, b: b }
     }
 }

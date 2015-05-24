@@ -19,7 +19,7 @@ impl Exponential {
     /// Panics if `lambda <= 0`.
     #[inline]
     pub fn new(lambda: f64) -> Exponential {
-        assert!(lambda > 0.0, "Exponental::new() called with lambda <= 0");
+        debug_assert!(lambda > 0.0, "Exponental::new() called with lambda <= 0");
         Exponential { lambda: lambda, sampler: Exp::new(lambda) }
     }
 }

@@ -21,7 +21,7 @@ impl Gaussian {
     /// Panics if `sigma < 0`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Gaussian {
-        assert!(sigma >= 0.0, "Gaussian::new() called with sigma < 0");
+        debug_assert!(sigma >= 0.0, "Gaussian::new() called with sigma < 0");
         Gaussian {
             mu: mu,
             sigma: sigma,
