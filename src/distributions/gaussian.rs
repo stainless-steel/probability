@@ -21,7 +21,7 @@ impl Gaussian {
     /// Panics if `sigma < 0`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Gaussian {
-        debug_assert!(sigma >= 0.0, "Gaussian::new() called with sigma < 0");
+        debug_assert!(sigma >= 0.0, "Gaussian::new() is called with sigma < 0");
         Gaussian {
             mu: mu,
             sigma: sigma,
@@ -47,6 +47,8 @@ impl Distribution for Gaussian {
     /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
         use ::num::Float;
+
+        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
 
         #[inline(always)]
         fn ln(x: f64) -> f64 { x.ln() }

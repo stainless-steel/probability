@@ -19,7 +19,7 @@ impl Exponential {
     /// Panics if `lambda <= 0`.
     #[inline]
     pub fn new(lambda: f64) -> Exponential {
-        debug_assert!(lambda > 0.0, "Exponental::new() called with lambda <= 0");
+        debug_assert!(lambda > 0.0, "Exponental::new() is called with lambda <= 0");
         Exponential { lambda: lambda, sampler: Exp::new(lambda) }
     }
 }
@@ -41,7 +41,7 @@ impl Distribution for Exponential {
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
-        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf called with `p` not between 0 and 1");
+        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
         -(-p).ln_1p() / self.lambda
     }
 
