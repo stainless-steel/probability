@@ -2,7 +2,8 @@ use rand::distributions::{Exp, IndependentSample};
 
 use {Distribution, Generator};
 
-/// A continuous uniform distribution.
+/// A continuous exponential distribution with the rate parameter
+/// `lambda`.
 #[derive(Clone, Copy)]
 pub struct Exponential {
     /// The rate parameter
@@ -40,8 +41,8 @@ impl Distribution for Exponential {
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
-        assert!(0.0 <= p && p <= 1.0,
-                "Quantile functiona called with `p` out of scope");
+        debug_assert!(0.0 <= p && p <= 1.0,
+                      "inv_cdf called with `p` not between 0 and 1");
         -(-p).ln_1p() / self.lambda
     }
 
@@ -94,7 +95,6 @@ mod tests {
             0.18126924692201815, 0.2591817793182821, 0.3934693402873666,
             0.6321205588285577, 0.8646647167633873, 0.950212931632136,
             0.9816843611112658, 0.9975212478233336, 0.9996645373720975
-            
         ];
 
         assert::within(&x.iter().map(|&x| exponential.cdf(x)).collect::<Vec<_>>(),
@@ -118,8 +118,7 @@ mod tests {
         ];
 
         assert::within(&p.iter().map(|&p| exponential.inv_cdf(p))
-                                .collect::<Vec<_>>(),
-                       &x, 1e-14);
+                                .collect::<Vec<_>>(), &x, 1e-14);
     }
 
     #[test]
