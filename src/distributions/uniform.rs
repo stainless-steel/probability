@@ -25,6 +25,7 @@ impl Uniform {
 impl Distribution for Uniform {
     type Item = f64;
 
+    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         if x <= self.a {
             0.0
