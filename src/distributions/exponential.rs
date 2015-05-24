@@ -2,7 +2,7 @@ use rand::distributions::{Exp, IndependentSample};
 
 use {Distribution, Generator};
 
-/// A continuous exponential distribution with rate `lambda`.
+/// An exponential distribution.
 #[derive(Clone, Copy)]
 pub struct Exponential {
     /// The rate parameter.
