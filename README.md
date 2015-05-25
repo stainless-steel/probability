@@ -1,4 +1,4 @@
-# Probability Theory [![Build Status][status-img]][status-url]
+# Probability [![Build Status][status-img]][status-url]
 
 The package provides a probability-theory toolbox.
 
