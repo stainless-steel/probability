@@ -1,7 +1,11 @@
 [package]
 name = "probability"
 version = "0.3.0"
-authors = ["Ivan Ukhov <ivan.ukhov@gmail.com>"]
+authors = [
+  "Ivan Ukhov <ivan.ukhov@gmail.com>",
+  "Jon Lund Steffensen <jonlst@gmail.com>",
+  "Rúnar Berg Baugsson Sigríðarson <runarberg@zoho.com>",
+]
 license = "MIT"
 repository = "https://github.com/stainless-steel/probability"
 homepage = "https://github.com/stainless-steel/probability"
