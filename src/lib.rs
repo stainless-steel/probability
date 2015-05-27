@@ -19,7 +19,8 @@ pub trait Distribution {
     /// Compute the cumulative distribution function (CDF) at point `x`.
     fn cdf(&self, x: Self::Item) -> f64;
 
-    /// Compute the inverse of the cumulative distribution function at probability `p`.
+    /// Compute the inverse of the cumulative distribution function at
+    /// probability `p`.
     fn inv_cdf(&self, p: f64) -> Self::Item;
 
     /// Compute the probability density function (PDF) at point `x`.
