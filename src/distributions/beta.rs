@@ -251,14 +251,14 @@ mod tests {
     #[test]
     fn entropy() {
         use std::f64::consts::E;
-        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
-        let d2 = Beta::new(1.0, 1.0, 0.0, E);
-        let d3 = Beta::new(2.0, 3.0, 0.0, 1.0);
-        let d4 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        assert_eq!(d1.entropy(), 0.0);
-        assert_eq!(d2.entropy(), 1.0);
-        assert_eq!(d3.entropy(), -0.2349066497879999);
-        assert_eq!(d4.entropy(), 0.8637056388801096);
+        let betas = vec![
+            Beta::new(1.0, 1.0, 0.0, 1.0),
+            Beta::new(1.0, 1.0, 0.0, E),
+            Beta::new(2.0, 3.0, 0.0, 1.0),
+            Beta::new(2.0, 3.0, -1.0, 2.0),
+        ];
+        assert::within(&betas.iter().map(|beta| beta.entropy()).collect::<Vec<_>>(),
+                       &vec![0.0, 1.0, -0.2349066497879999, 0.8637056388801096], 1e-15);
     }
 
     #[test]
