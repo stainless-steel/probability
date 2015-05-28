@@ -32,9 +32,6 @@ impl Distribution for Uniform {
     fn var(&self) -> f64 { (self.b - self.a).powi(2) / 12.0 }
 
     #[inline]
-    fn sd(&self) -> f64 { self.var().sqrt() }
-
-    #[inline]
     fn median(&self) -> f64 { self.mean() }
 
     #[inline]

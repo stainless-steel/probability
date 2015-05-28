@@ -23,7 +23,8 @@ pub trait Distribution {
     fn var(&self) -> f64;
 
     /// Compute the standard deviation.
-    fn sd(&self) -> f64;
+    #[inline]
+    fn sd(&self) -> f64 { self.var().sqrt() }
 
     /// Compute the median.
     fn median(&self) -> f64;

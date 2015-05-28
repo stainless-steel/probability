@@ -58,11 +58,6 @@ impl Distribution for Beta {
         scale_sq * (self.alpha * self.beta) / (s.powi(2) * (s + 1.0))
     }
 
-    #[inline]
-    fn sd(&self) -> f64 {
-        self.var().sqrt()
-    }
-
     fn median(&self) -> f64 {
         match (self.alpha, self.beta) {
             (alpha, beta) if alpha == beta => 0.5 * (self.b - self.a),
