@@ -25,7 +25,7 @@ impl Exponential {
 }
 
 impl Distribution for Exponential {
-    type Item = f64;
+    type Value = f64;
 
     #[inline]
     fn mean(&self) -> f64 { self.lambda.recip() }

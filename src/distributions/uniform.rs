@@ -23,7 +23,7 @@ impl Uniform {
 }
 
 impl Distribution for Uniform {
-    type Item = f64;
+    type Value = f64;
 
     #[inline]
     fn mean(&self) -> f64 { (self.a + self.b) / 2.0 }

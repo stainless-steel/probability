@@ -43,7 +43,7 @@ impl Beta {
 }
 
 impl Distribution for Beta {
-    type Item = f64;
+    type Value = f64;
 
     #[inline]
     fn mean(&self) -> f64 {

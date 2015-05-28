@@ -32,7 +32,7 @@ impl Gaussian {
 }
 
 impl Distribution for Gaussian {
-    type Item = f64;
+    type Value = f64;
 
     #[inline]
     fn mean(&self) -> f64 { self.mu }

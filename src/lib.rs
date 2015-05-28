@@ -14,7 +14,7 @@ pub mod distributions;
 
 /// An interface for a probability distribution.
 pub trait Distribution {
-    type Item;
+    type Value;
 
     /// Compute the expected value.
     fn mean(&self) -> f64;
@@ -41,17 +41,17 @@ pub trait Distribution {
     fn entropy(&self) -> f64;
 
     /// Compute the cumulative distribution function (CDF) at point `x`.
-    fn cdf(&self, x: Self::Item) -> f64;
+    fn cdf(&self, x: Self::Value) -> f64;
 
     /// Compute the inverse of the cumulative distribution function at
     /// probability `p`.
-    fn inv_cdf(&self, p: f64) -> Self::Item;
+    fn inv_cdf(&self, p: f64) -> Self::Value;
 
     /// Compute the probability density function (PDF) at point `x`.
-    fn pdf(&self, x: Self::Item) -> f64;
+    fn pdf(&self, x: Self::Value) -> f64;
 
     /// Draw a random sample.
-    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Item;
+    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value;
 }
 
 /// A means of drawing a sequence of samples from a probability distribution.
@@ -69,7 +69,7 @@ pub trait Distribution {
 pub struct Sampler<D, G>(pub D, pub G);
 
 impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G>
-    where D: Distribution<Item=T>, G: Generator {
+    where D: Distribution<Value=T>, G: Generator {
 
     type Item = T;
 
