@@ -102,12 +102,12 @@ impl Distribution for Beta {
 
     #[inline]
     fn entropy(&self) -> f64 {
-        use special::{digamma, ln_beta};
+        use special::digamma;
 
         let (a, b) = (self.alpha, self.beta);
         let scale = self.b - self.a;
         let s = a + b;
-        scale.ln() + ln_beta(a, b) - (a - 1.0) * digamma(a) -
+        scale.ln() + self.ln_beta - (a - 1.0) * digamma(a) -
             (b - 1.0) * digamma(b) + (s - 2.0) * digamma(s)
     }
 
