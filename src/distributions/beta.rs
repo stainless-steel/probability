@@ -160,7 +160,6 @@ mod tests {
         let d2 = Beta::new(0.0005, 0.9995, -1.0, 2.0);
         assert_eq!(d1.mean(), 0.5);
         assert_eq!(d2.mean(), -0.9985);
-        
     }
 
     #[test]
