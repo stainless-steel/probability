@@ -25,6 +25,22 @@ impl Uniform {
 impl Distribution for Uniform {
     type Item = f64;
 
+    fn mean(&self) -> f64 { (self.a + self.b) / 2.0 }
+
+    fn var(&self) -> f64 { (self.b - self.a).powi(2) / 12.0 }
+
+    fn sd(&self) -> f64 { self.var().sqrt() }
+
+    fn median(&self) -> f64 { self.mean() }
+
+    fn modes(&self) -> Vec<f64> { Vec::new() }
+
+    fn skewness(&self) -> f64 { 0.0 }
+
+    fn kurtosis(&self) -> f64 { -1.2 }
+
+    fn entropy(&self) -> f64 { (self.b - self.a).ln() }
+
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         if x <= self.a {
@@ -69,6 +85,55 @@ mod tests {
     #[allow(unused_variables)]
     fn invalid_support() {
         let uniform = Uniform::new(2.0, -1.0);
+    }
+
+    #[test]
+    fn mean() {
+        let d = Uniform::new(0.0, 2.0);
+        assert_eq!(d.mean(), 1.0);
+    }
+
+    #[test]
+    fn var() {
+        let d = Uniform::new(0.0, 12.0);
+        assert_eq!(d.var(), 12.0);
+    }
+
+    #[test]
+    fn sd() {
+        let d = Uniform::new(0.0, 12.0);
+        assert_eq!(d.sd(), (12 as f64).sqrt());
+    }
+
+    #[test]
+    fn median() {
+        let d = Uniform::new(0.0, 2.0);
+        assert_eq!(d.median(), 1.0);
+    }
+
+    #[test]
+    fn modes() {
+        let d = Uniform::new(0.0, 2.0);
+        assert_eq!(d.modes(), Vec::<f64>::new());
+    }
+
+    #[test]
+    fn skewness() {
+        let d = Uniform::new(0.0, 2.0);
+        assert_eq!(d.skewness(), 0.0);
+    }
+
+    #[test]
+    fn kurtosis() {
+        let d = Uniform::new(0.0, 2.0);
+        assert_eq!(d.kurtosis(), -1.2);
+    }
+
+    #[test]
+    fn entropy() {
+        use std::f64::consts::E;
+        let d = Uniform::new(0.0, E);
+        assert_eq!(d.entropy(), 1.0);
     }
 
     #[test]
