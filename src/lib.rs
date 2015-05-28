@@ -16,6 +16,30 @@ pub mod distributions;
 pub trait Distribution {
     type Item;
 
+    /// Get the expected value `E[X]` of the distribution.
+    fn mean(&self) -> f64;
+
+    /// Get the variance `var[X]` of the distribution.
+    fn var(&self) -> f64;
+
+    /// Get the standard deviation `sqrt(var[X])` of the distribution.
+    fn sd(&self) -> f64;
+
+    /// Get the median of the distribution.
+    fn median(&self) -> f64;
+
+    /// Return a vector of all the modes for the distribution.
+    fn modes(&self) -> Vec<f64>;
+
+    /// Return the skewness of the distribution.
+    fn skewness(&self) -> f64;
+
+    /// Return the excess kurtosis of the distribution.
+    fn kurtosis(&self) -> f64;
+
+    /// Return the differential entropy of the distribution (measured in nats).
+    fn entropy(&self) -> f64;
+
     /// Compute the cumulative distribution function (CDF) at point `x`.
     fn cdf(&self, x: Self::Item) -> f64;
 
