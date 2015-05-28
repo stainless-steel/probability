@@ -26,17 +26,17 @@ pub trait Distribution {
     #[inline]
     fn sd(&self) -> f64 { self.var().sqrt() }
 
-    /// Compute the median.
-    fn median(&self) -> f64;
-
-    /// Compute all the modes.
-    fn modes(&self) -> Vec<f64>;
-
     /// Compute the skewness.
     fn skewness(&self) -> f64;
 
     /// Compute the excess kurtosis.
     fn kurtosis(&self) -> f64;
+
+    /// Compute the median.
+    fn median(&self) -> f64;
+
+    /// Compute all the modes.
+    fn modes(&self) -> Vec<f64>;
 
     /// Compute the differential entropy (measured in nats).
     fn entropy(&self) -> f64;

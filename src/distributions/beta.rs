@@ -58,6 +58,20 @@ impl Distribution for Beta {
         scale_sq * (self.alpha * self.beta) / (s.powi(2) * (s + 1.0))
     }
 
+    #[inline]
+    fn skewness(&self) -> f64 {
+        let (a, b) = (self.alpha, self.beta);
+        (2.0 * (b - a) * (a + b + 1.0).sqrt()) /  ((a + b + 2.0) * (a * b).sqrt())
+    }
+
+    #[inline]
+    fn kurtosis(&self) -> f64 {
+        let (a, b) = (self.alpha, self.beta);
+        let s = a + b;
+        let p = a * b;
+        (6.0 * ((a - b).powi(2) * (s + 1.0) - p * (s + 2.0))) / (p * (s + 2.0) * (s + 3.0))
+    }
+
     fn median(&self) -> f64 {
         match (self.alpha, self.beta) {
             (alpha, beta) if alpha == beta => 0.5 * (self.b - self.a),
@@ -82,20 +96,6 @@ impl Distribution for Beta {
                 vec![loc + scale * (alpha - 1.0) / (alpha + beta - 2.0)]
             },
         }
-    }
-
-    #[inline]
-    fn skewness(&self) -> f64 {
-        let (a, b) = (self.alpha, self.beta);
-        (2.0 * (b - a) * (a + b + 1.0).sqrt()) /  ((a + b + 2.0) * (a * b).sqrt())
-    }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 {
-        let (a, b) = (self.alpha, self.beta);
-        let s = a + b;
-        let p = a * b;
-        (6.0 * ((a - b).powi(2) * (s + 1.0) - p * (s + 2.0))) / (p * (s + 2.0) * (s + 3.0))
     }
 
     #[inline]
@@ -187,6 +187,26 @@ mod tests {
     }
 
     #[test]
+    fn skewness() {
+        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
+        let d2 = Beta::new(2.0, 3.0, -1.0, 2.0);
+        let d3 = Beta::new(3.0, 2.0, -1.0, 2.0);
+        assert_eq!(d1.skewness(), 0.0);
+        assert_eq!(d2.skewness(), 0.28571428571428575);
+        assert_eq!(d3.skewness(), -0.28571428571428575);
+    }
+
+    #[test]
+    fn kurtosis() {
+        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
+        let d2 = Beta::new(2.0, 3.0, -1.0, 2.0);
+        let d3 = Beta::new(3.0, 2.0, -1.0, 2.0);
+        assert_eq!(d1.kurtosis(), -6.0 / 5.0);
+        assert_eq!(d2.kurtosis(), -0.6428571428571429);
+        assert_eq!(d3.kurtosis(), -0.6428571428571429);
+    }
+
+    #[test]
     fn median() {
         let d1 = Beta::new(2.0, 2.0, 0.0, 1.0);
         let d2 = Beta::new(2.0, 3.0, 0.0, 1.0);
@@ -223,26 +243,6 @@ mod tests {
         for eq in betas.iter().map(|&d| d.modes()).zip(modes.iter()) {
             assert_eq!(eq.0, *eq.1);
         }
-    }
-
-    #[test]
-    fn skewness() {
-        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
-        let d2 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        let d3 = Beta::new(3.0, 2.0, -1.0, 2.0);
-        assert_eq!(d1.skewness(), 0.0);
-        assert_eq!(d2.skewness(), 0.28571428571428575);
-        assert_eq!(d3.skewness(), -0.28571428571428575);
-    }
-
-    #[test]
-    fn kurtosis() {
-        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
-        let d2 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        let d3 = Beta::new(3.0, 2.0, -1.0, 2.0);
-        assert_eq!(d1.kurtosis(), -6.0 / 5.0);
-        assert_eq!(d2.kurtosis(), -0.6428571428571429);
-        assert_eq!(d3.kurtosis(), -0.6428571428571429);
     }
 
     #[test]

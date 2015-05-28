@@ -32,16 +32,16 @@ impl Distribution for Uniform {
     fn var(&self) -> f64 { (self.b - self.a).powi(2) / 12.0 }
 
     #[inline]
-    fn median(&self) -> f64 { self.mean() }
-
-    #[inline]
-    fn modes(&self) -> Vec<f64> { Vec::new() }
-
-    #[inline]
     fn skewness(&self) -> f64 { 0.0 }
 
     #[inline]
     fn kurtosis(&self) -> f64 { -1.2 }
+
+    #[inline]
+    fn median(&self) -> f64 { self.mean() }
+
+    #[inline]
+    fn modes(&self) -> Vec<f64> { Vec::new() }
 
     #[inline]
     fn entropy(&self) -> f64 { (self.b - self.a).ln() }
@@ -111,18 +111,6 @@ mod tests {
     }
 
     #[test]
-    fn median() {
-        let d = Uniform::new(0.0, 2.0);
-        assert_eq!(d.median(), 1.0);
-    }
-
-    #[test]
-    fn modes() {
-        let d = Uniform::new(0.0, 2.0);
-        assert_eq!(d.modes(), Vec::<f64>::new());
-    }
-
-    #[test]
     fn skewness() {
         let d = Uniform::new(0.0, 2.0);
         assert_eq!(d.skewness(), 0.0);
@@ -132,6 +120,18 @@ mod tests {
     fn kurtosis() {
         let d = Uniform::new(0.0, 2.0);
         assert_eq!(d.kurtosis(), -1.2);
+    }
+
+    #[test]
+    fn median() {
+        let d = Uniform::new(0.0, 2.0);
+        assert_eq!(d.median(), 1.0);
+    }
+
+    #[test]
+    fn modes() {
+        let d = Uniform::new(0.0, 2.0);
+        assert_eq!(d.modes(), Vec::<f64>::new());
     }
 
     #[test]

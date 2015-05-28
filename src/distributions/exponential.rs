@@ -37,6 +37,12 @@ impl Distribution for Exponential {
     fn sd(&self) -> f64 { self.lambda.recip() }
 
     #[inline]
+    fn skewness(&self) -> f64 { 2.0 }
+
+    #[inline]
+    fn kurtosis(&self) -> f64 { 6.0 }
+
+    #[inline]
     fn median(&self) -> f64 {
         use std::f64::consts::LN_2;
         self.lambda.recip() * LN_2
@@ -44,12 +50,6 @@ impl Distribution for Exponential {
 
     #[inline]
     fn modes(&self) -> Vec<f64> { vec![0.0] }
-
-    #[inline]
-    fn skewness(&self) -> f64 { 2.0 }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 { 6.0 }
 
     #[inline]
     fn entropy(&self) -> f64 { 1.0 - self.lambda.ln() }
@@ -113,6 +113,18 @@ mod tests {
     }
 
     #[test]
+    fn skewness() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.skewness(), 2.0);
+    }
+
+    #[test]
+    fn kurtosis() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.kurtosis(), 6.0);
+    }
+
+    #[test]
     fn median() {
         use std::f64::consts::LN_2;
         let d = Exponential::new(LN_2);
@@ -123,18 +135,6 @@ mod tests {
     fn modes() {
         let d = Exponential::new(2.0);
         assert_eq!(d.modes(), vec![0.0]);
-    }
-
-    #[test]
-    fn skewness() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.skewness(), 2.0);
-    }
-
-    #[test]
-    fn kurtosis() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.kurtosis(), 6.0);
     }
 
     #[test]

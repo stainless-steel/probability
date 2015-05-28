@@ -44,16 +44,16 @@ impl Distribution for Gaussian {
     fn sd(&self) -> f64 { self.sigma }
 
     #[inline]
-    fn median(&self) -> f64 { self.mu }
-
-    #[inline]
-    fn modes(&self) -> Vec<f64> { vec![self.mu] }
-
-    #[inline]
     fn skewness(&self) -> f64 { 0.0 }
 
     #[inline]
     fn kurtosis(&self) -> f64 { 0.0 }
+
+    #[inline]
+    fn median(&self) -> f64 { self.mu }
+
+    #[inline]
+    fn modes(&self) -> Vec<f64> { vec![self.mu] }
 
     #[inline]
     fn entropy(&self) -> f64 {
@@ -200,18 +200,6 @@ mod tests {
     }
 
     #[test]
-    fn median() {
-        let d = Gaussian::new(0.0, 2.0);
-        assert_eq!(d.median(), 0.0);
-    }
-
-    #[test]
-    fn modes() {
-        let d = Gaussian::new(2.0, 5.0);
-        assert_eq!(d.modes(), vec![2.0]);
-    }
-
-    #[test]
     fn skewness() {
         let d = Gaussian::new(0.0, 2.0);
         assert_eq!(d.skewness(), 0.0);
@@ -221,6 +209,18 @@ mod tests {
     fn kurtosis() {
         let d = Gaussian::new(0.0, 2.0);
         assert_eq!(d.kurtosis(), 0.0);
+    }
+
+    #[test]
+    fn median() {
+        let d = Gaussian::new(0.0, 2.0);
+        assert_eq!(d.median(), 0.0);
+    }
+
+    #[test]
+    fn modes() {
+        let d = Gaussian::new(2.0, 5.0);
+        assert_eq!(d.modes(), vec![2.0]);
     }
 
     #[test]
