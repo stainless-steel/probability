@@ -33,6 +33,25 @@ impl Gaussian {
 impl Distribution for Gaussian {
     type Item = f64;
 
+    fn mean(&self) -> f64 { self.mu }
+
+    fn var(&self) -> f64 { self.sigma.powi(2) }
+
+    fn sd(&self) -> f64 { self.sigma }
+
+    fn median(&self) -> f64 { self.mu }
+
+    fn modes(&self) -> Vec<f64> { vec![self.mu] }
+
+    fn skewness(&self) -> f64 { 0.0 }
+
+    fn kurtosis(&self) -> f64 { 0.0 }
+
+    fn entropy(&self) -> f64 {
+        use std::f64::consts::{ E, PI };
+        0.5 * (2.0 * PI * E * self.var()).ln()
+    }
+
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::erf;
@@ -154,6 +173,55 @@ mod tests {
     #[allow(unused_variables)]
     fn negative_sigma() {
         let gaussian = Gaussian::new(1.0, -1.0);
+    }
+
+    #[test]
+    fn mean() {
+        let d = Gaussian::new(0.0, 1.0);
+        assert_eq!(d.mean(), 0.0);
+    }
+
+    #[test]
+    fn var() {
+        let d = Gaussian::new(0.0, 2.0);
+        assert_eq!(d.var(), 4.0);
+    }
+
+    #[test]
+    fn sd() {
+        let d = Gaussian::new(0.0, 2.0);
+        assert_eq!(d.sd(), 2.0);
+    }
+
+    #[test]
+    fn median() {
+        let d = Gaussian::new(0.0, 2.0);
+        assert_eq!(d.median(), 0.0);
+    }
+
+    #[test]
+    fn modes() {
+        let d = Gaussian::new(2.0, 5.0);
+        assert_eq!(d.modes(), vec![2.0]);
+    }
+
+    #[test]
+    fn skewness() {
+        let d = Gaussian::new(0.0, 2.0);
+        assert_eq!(d.skewness(), 0.0);
+    }
+
+    #[test]
+    fn kurtosis() {
+        let d = Gaussian::new(0.0, 2.0);
+        assert_eq!(d.kurtosis(), 0.0);
+    }
+
+    #[test]
+    fn entropy() {
+        use std::f64::consts::PI;
+        let d = Gaussian::new(0.0, 1.0);
+        assert_eq!(d.entropy(), ((2.0 * PI).ln() + 1.0) / 2.0);
     }
 
     #[test]

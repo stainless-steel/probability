@@ -27,6 +27,25 @@ impl Exponential {
 impl Distribution for Exponential {
     type Item = f64;
 
+    fn mean(&self) -> f64 { self.lambda.recip() }
+
+    fn var(&self) -> f64 { self.lambda.powi(-2) }
+
+    fn sd(&self) -> f64 { self.lambda.recip() }
+
+    fn median(&self) -> f64 {
+        use std::f64::consts::LN_2;
+        self.lambda.recip() * LN_2
+    }
+
+    fn modes(&self) -> Vec<f64> { vec![0.0] }
+
+    fn skewness(&self) -> f64 { 2.0 }
+
+    fn kurtosis(&self) -> f64 { 6.0 }
+
+    fn entropy(&self) -> f64 { 1.0 - self.lambda.ln() }
+
     #[inline]
     fn pdf(&self, x: f64) -> f64 {
         if x < 0.0 { 0.0 }
@@ -65,6 +84,57 @@ mod tests {
     #[allow(unused_variables)]
     fn negative_lambda() {
         let exponential = Exponential::new(-1.0);
+    }
+
+    #[test]
+    fn mean() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.mean(), 0.5);
+    }
+
+    #[test]
+    fn var() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.var(), 0.25);
+    }
+
+    #[test]
+    fn sd() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.sd(), 0.5);
+        assert_eq!(d.mean(), d.sd());
+    }
+
+    #[test]
+    fn median() {
+        use std::f64::consts::LN_2;
+        let d = Exponential::new(LN_2);
+        assert_eq!(d.median(), 1.0);
+    }
+
+    #[test]
+    fn modes() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.modes(), vec![0.0]);
+    }
+
+    #[test]
+    fn skewness() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.skewness(), 2.0);
+    }
+
+    #[test]
+    fn kurtosis() {
+        let d = Exponential::new(2.0);
+        assert_eq!(d.kurtosis(), 6.0);
+    }
+
+    #[test]
+    fn entropy() {
+        use std::f64::consts::E;
+        let d = Exponential::new(E);
+        assert_eq!(d.entropy(), 0.0);
     }
 
     #[test]
