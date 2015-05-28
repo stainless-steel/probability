@@ -57,7 +57,6 @@ impl Distribution for Beta {
     }
 
     fn sd(&self) -> f64 {
-        if self.a != 0.0 && self.b != 1.0 { unimplemented!() }
         self.var().sqrt()
     }
 
@@ -183,8 +182,15 @@ mod tests {
 
     #[test]
     fn sd() {
-        let d = Beta::new(1.0, 1.0, 0.0, 1.0);
-        assert_eq!(d.sd(), (1.0 / 12.0 as f64).sqrt());
+        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
+        let d2 = Beta::new(2.0, 3.0, 0.0, 1.0);
+        let d3 = Beta::new(2.0, 3.0, -1.0, 2.0);
+        assert_eq!(d1.sd(), (1.0 / 12.0 as f64).sqrt());
+        assert_eq!(d2.sd(), 0.2);
+        assert_eq!(d3.sd(), 0.6);
+        // Variance symmetry
+        assert_eq!(Beta::new(5.0, 0.05, 0.0, 1.0).sd(),
+                   Beta::new(0.05, 5.0, 0.0, 1.0).sd());
     }
 
     #[test]
