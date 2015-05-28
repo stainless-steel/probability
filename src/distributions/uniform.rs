@@ -25,20 +25,28 @@ impl Uniform {
 impl Distribution for Uniform {
     type Item = f64;
 
+    #[inline]
     fn mean(&self) -> f64 { (self.a + self.b) / 2.0 }
 
+    #[inline]
     fn var(&self) -> f64 { (self.b - self.a).powi(2) / 12.0 }
 
+    #[inline]
     fn sd(&self) -> f64 { self.var().sqrt() }
 
+    #[inline]
     fn median(&self) -> f64 { self.mean() }
 
+    #[inline]
     fn modes(&self) -> Vec<f64> { Vec::new() }
 
+    #[inline]
     fn skewness(&self) -> f64 { 0.0 }
 
+    #[inline]
     fn kurtosis(&self) -> f64 { -1.2 }
 
+    #[inline]
     fn entropy(&self) -> f64 { (self.b - self.a).ln() }
 
     #[inline]

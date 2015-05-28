@@ -45,17 +45,20 @@ impl Beta {
 impl Distribution for Beta {
     type Item = f64;
 
+    #[inline]
     fn mean(&self) -> f64 {
         let (loc, scale) = (self.a, self.b - self.a);
         loc + scale * self.alpha / (self.alpha + self.beta)
     }
 
+    #[inline]
     fn var(&self) -> f64 {
         let scale_sq = (self.b - self.a).powi(2);
         let s = self.alpha + self.beta;
         scale_sq * (self.alpha * self.beta) / (s.powi(2) * (s + 1.0))
     }
 
+    #[inline]
     fn sd(&self) -> f64 {
         self.var().sqrt()
     }

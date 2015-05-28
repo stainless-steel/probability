@@ -34,20 +34,28 @@ impl Gaussian {
 impl Distribution for Gaussian {
     type Item = f64;
 
+    #[inline]
     fn mean(&self) -> f64 { self.mu }
 
+    #[inline]
     fn var(&self) -> f64 { self.sigma.powi(2) }
 
+    #[inline]
     fn sd(&self) -> f64 { self.sigma }
 
+    #[inline]
     fn median(&self) -> f64 { self.mu }
 
+    #[inline]
     fn modes(&self) -> Vec<f64> { vec![self.mu] }
 
+    #[inline]
     fn skewness(&self) -> f64 { 0.0 }
 
+    #[inline]
     fn kurtosis(&self) -> f64 { 0.0 }
 
+    #[inline]
     fn entropy(&self) -> f64 {
         use std::f64::consts::{ E, PI };
         0.5 * (2.0 * PI * E * self.var()).ln()
