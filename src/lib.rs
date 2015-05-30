@@ -12,7 +12,7 @@ pub use ::rand::thread_rng as generator;
 
 pub mod distributions;
 
-/// An interface for a probability distribution.
+/// A probability distribution.
 pub trait Distribution {
     type Value;
 
