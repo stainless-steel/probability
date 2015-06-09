@@ -87,9 +87,8 @@ mod tests {
 
     #[test]
     #[should_panic]
-    #[allow(unused_variables)]
     fn invalid_support() {
-        let uniform = Uniform::new(2.0, -1.0);
+        let _ = Uniform::new(2.0, -1.0);
     }
 
     #[test]

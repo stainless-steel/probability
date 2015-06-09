@@ -88,9 +88,8 @@ mod tests {
 
     #[test]
     #[should_panic]
-    #[allow(unused_variables)]
     fn negative_lambda() {
-        let exponential = Exponential::new(-1.0);
+        let _ = Exponential::new(-1.0);
     }
 
     #[test]

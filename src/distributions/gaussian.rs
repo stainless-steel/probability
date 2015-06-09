@@ -176,9 +176,8 @@ mod tests {
 
     #[test]
     #[should_panic]
-    #[allow(unused_variables)]
     fn negative_sigma() {
-        let gaussian = Gaussian::new(1.0, -1.0);
+        let _ = Gaussian::new(1.0, -1.0);
     }
 
     #[test]

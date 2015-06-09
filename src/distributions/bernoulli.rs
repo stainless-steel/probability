@@ -7,7 +7,7 @@ pub struct Bernoulli {
     pub p: f64,
     /// The probability of failure.
     pub q: f64,
-    // The variance
+
     pq: f64,
 }
 
@@ -35,7 +35,6 @@ impl Bernoulli {
         let p = 1. - q;
         Bernoulli { p: p, q: q, pq: p * q }
     }
-    
 }
 
 impl Distribution for Bernoulli {
@@ -115,7 +114,6 @@ mod tests {
 
     #[test]
     #[should_panic]
-    #[allow(unused_variables)]
     fn invalid_succprob() {
         let _ = Bernoulli::new(2.0);
         let _ = Bernoulli::new(-0.5);
@@ -123,7 +121,6 @@ mod tests {
 
     #[test]
     #[should_panic]
-    #[allow(unused_variables)]
     fn invalid_failprob() {
         let _ = Bernoulli::new_failprob(2.0);
         let _ = Bernoulli::new_failprob(-0.5);
@@ -227,9 +224,7 @@ mod tests {
         let mut generator = ::generator();
         let bernoulli = Bernoulli::new(0.25);
 
-        let sum = Sampler(&bernoulli, &mut generator)
-            .take(100)
-            .fold(0, |a, b| a + b);
+        let sum = Sampler(&bernoulli, &mut generator).take(100).fold(0, |a, b| a + b);
 
         assert!(sum <= 100);
     }
