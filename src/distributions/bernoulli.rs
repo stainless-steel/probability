@@ -112,99 +112,89 @@ mod tests {
     use {Distribution, Sampler};
     use distributions::Bernoulli;
 
+    macro_rules! new(
+        (failure $q:expr) => (Bernoulli::new_failprob($q));
+        ($p:expr) => (Bernoulli::new($p));
+    );
+
     #[test]
     #[should_panic]
     fn invalid_success_probability_1() {
-        Bernoulli::new(2.0);
+        new!(2.0);
     }
 
     #[test]
     #[should_panic]
     fn invalid_success_probability_2() {
-        Bernoulli::new(-0.5);
+        new!(-0.5);
     }
 
     #[test]
     #[should_panic]
     fn invalid_failure_probability_1() {
-        Bernoulli::new_failprob(2.0);
+        new!(failure 2.0);
     }
 
     #[test]
     #[should_panic]
     fn invalid_failure_probability_2() {
-        Bernoulli::new_failprob(-0.5);
+        new!(failure -0.5);
     }
 
     #[test]
     fn new_failprob() {
-        let _ = Bernoulli::new_failprob(1e-24);
+        new!(failure 1e-24);
     }
 
     #[test]
     fn mean() {
-        let d = Bernoulli::new(0.5);
-        assert_eq!(d.mean(), 0.5);
+        assert_eq!(new!(0.5).mean(), 0.5);
     }
 
     #[test]
     fn var() {
-        let d = Bernoulli::new(0.25);
-        assert_eq!(d.var(), 0.1875);
+        assert_eq!(new!(0.25).var(), 0.1875);
     }
 
     #[test]
     fn sd() {
-        let d = Bernoulli::new(0.5);
-        assert_eq!(d.sd(), 0.5);
+        assert_eq!(new!(0.5).sd(), 0.5);
     }
 
     #[test]
     fn skewness() {
-        let d = Bernoulli::new(0.5);
-        assert_eq!(d.skewness(), 0.0);
+        assert_eq!(new!(0.5).skewness(), 0.0);
     }
 
     #[test]
     fn kurtosis() {
-        let d = Bernoulli::new(0.5);
-        assert_eq!(d.kurtosis(), -2.0);
+        assert_eq!(new!(0.5).kurtosis(), -2.0);
     }
 
     #[test]
     fn median() {
-        let d1 = Bernoulli::new(0.25);
-        let d2 = Bernoulli::new(0.5);
-        let d3 = Bernoulli::new(0.75);
-        assert_eq!(d1.median(), 0.0);
-        assert_eq!(d2.median(), 0.5);
-        assert_eq!(d3.median(), 1.0);
+        assert_eq!(new!(0.25).median(), 0.0);
+        assert_eq!(new!(0.5).median(), 0.5);
+        assert_eq!(new!(0.75).median(), 1.0);
     }
 
     #[test]
     fn modes() {
-        let d1 = Bernoulli::new(0.25);
-        let d2 = Bernoulli::new(0.5);
-        let d3 = Bernoulli::new(0.75);
-        assert_eq!(d1.modes(), vec![0]);
-        assert_eq!(d2.modes(), vec![0, 1]);
-        assert_eq!(d3.modes(), vec![1]);
+        assert_eq!(new!(0.25).modes(), vec![0]);
+        assert_eq!(new!(0.5).modes(), vec![0, 1]);
+        assert_eq!(new!(0.75).modes(), vec![1]);
     }
 
     #[test]
     fn entropy() {
-        let dists = vec![
-            Bernoulli::new(0.25),
-            Bernoulli::new(0.5),
-            Bernoulli::new(0.75),
-        ];
-        assert::within(&dists.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
+        let bernoullies = vec![new!(0.25), new!(0.5), new!(0.75)];
+        assert::within(&bernoullies.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
                        &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
     }
 
     #[test]
     fn pdf() {
-        let bernoulli = Bernoulli::new(0.25);
+        let bernoulli = new!(0.25);
         let x = 0..3;
         let p = vec![0.75, 0.25, 0.0];
 
@@ -213,7 +203,7 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let bernoulli = Bernoulli::new(0.25);
+        let bernoulli = new!(0.25);
         let x = 0..3;
         let p = vec![0.75, 1., 1.];
 
@@ -222,7 +212,7 @@ mod tests {
 
     #[test]
     fn inv_cdf() {
-        let bernoulli = Bernoulli::new(0.25);
+        let bernoulli = new!(0.25);
         let p = vec![0.0, 0.25, 0.5, 0.75, 0.75000000001, 1.0];
         let x = vec![0, 0, 0, 0, 1, 1];
 
@@ -231,11 +221,6 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut generator = ::generator();
-        let bernoulli = Bernoulli::new(0.25);
-
-        let sum = Sampler(&bernoulli, &mut generator).take(100).fold(0, |a, b| a + b);
-
-        assert!(sum <= 100);
+        assert!(Sampler(&new!(0.25), &mut ::generator()).take(100).fold(0, |a, b| a + b) <= 100);
     }
 }

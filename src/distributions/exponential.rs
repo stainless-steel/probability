@@ -86,66 +86,61 @@ mod tests {
     use Distribution;
     use distributions::Exponential;
 
+    macro_rules! new(
+        ($lambda:expr) => (Exponential::new($lambda));
+    );
+
     #[test]
     #[should_panic]
     fn negative_lambda() {
-        Exponential::new(-1.0);
+        new!(-1.0);
     }
 
     #[test]
     fn mean() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.mean(), 0.5);
+        assert_eq!(new!(2.0).mean(), 0.5);
     }
 
     #[test]
     fn var() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.var(), 0.25);
+        assert_eq!(new!(2.0).var(), 0.25);
     }
 
     #[test]
     fn sd() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.sd(), 0.5);
-        assert_eq!(d.mean(), d.sd());
+        assert_eq!(new!(2.0).sd(), 0.5);
     }
 
     #[test]
     fn skewness() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.skewness(), 2.0);
+        assert_eq!(new!(2.0).skewness(), 2.0);
     }
 
     #[test]
     fn kurtosis() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.kurtosis(), 6.0);
+        assert_eq!(new!(2.0).kurtosis(), 6.0);
     }
 
     #[test]
     fn median() {
         use std::f64::consts::LN_2;
-        let d = Exponential::new(LN_2);
-        assert_eq!(d.median(), 1.0);
+        assert_eq!(new!(LN_2).median(), 1.0);
     }
 
     #[test]
     fn modes() {
-        let d = Exponential::new(2.0);
-        assert_eq!(d.modes(), vec![0.0]);
+        assert_eq!(new!(2.0).modes(), vec![0.0]);
     }
 
     #[test]
     fn entropy() {
         use std::f64::consts::E;
-        let d = Exponential::new(E);
-        assert_eq!(d.entropy(), 0.0);
+        assert_eq!(new!(E).entropy(), 0.0);
     }
 
     #[test]
     fn pdf() {
-        let exponential = Exponential::new(2.0);
+        let exponential = new!(2.0);
         let x = vec![-1.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 12.0];
         let p = vec![
             0.000000000000000e+00, 2.000000000000000e+00, 7.357588823428847e-01,
@@ -159,7 +154,7 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let exponential = Exponential::new(2.0);
+        let exponential = new!(2.0);
         let x = vec![-1.0, 0.0, 0.01, 0.05, 0.1, 0.15, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0];
         let p = vec![
             0.000000000000000e+00, 0.000000000000000e+00, 1.980132669324470e-02,
@@ -176,7 +171,7 @@ mod tests {
     fn inv_cdf() {
         use std::f64::INFINITY;
 
-        let exponential = Exponential::new(2.0);
+        let exponential = new!(2.0);
         let x = vec![
             0.0, 0.01, 0.05, 0.1, 0.15, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, INFINITY,
         ];
@@ -194,12 +189,12 @@ mod tests {
     #[test]
     #[should_panic]
     fn invalid_quantile_1() {
-        Exponential::new(2.0).inv_cdf(1.2);
+        new!(2.0).inv_cdf(1.2);
     }
 
     #[test]
     #[should_panic]
     fn invalid_quantile_2() {
-        Exponential::new(2.0).inv_cdf(-0.2);
+        new!(2.0).inv_cdf(-0.2);
     }
 }

@@ -145,88 +145,73 @@ mod tests {
     use {Distribution, Sampler, generator};
     use distributions::Beta;
 
+    macro_rules! new(
+        ($alpha:expr, $beta:expr, $a:expr, $b:expr) => (Beta::new($alpha, $beta, $a, $b));
+    );
+
     #[test]
     #[should_panic]
     fn invalid_support() {
-        Beta::new(2.0, 3.0, 2.0, -1.0);
+        new!(2.0, 3.0, 2.0, -1.0);
     }
 
     #[test]
     fn mean() {
-        let d1 = Beta::new(0.5, 0.5, 0.0, 1.0);
-        let d2 = Beta::new(0.0005, 0.9995, -1.0, 2.0);
-        assert_eq!(d1.mean(), 0.5);
-        assert_eq!(d2.mean(), -0.9985);
+        assert_eq!(new!(0.5, 0.5, 0.0, 1.0).mean(), 0.5);
+        assert_eq!(new!(0.0005, 0.9995, -1.0, 2.0).mean(), -0.9985);
     }
 
     #[test]
     fn var() {
-        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
-        let d2 = Beta::new(2.0, 3.0, 0.0, 1.0);
-        let d3 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        assert_eq!(d1.var(), 1.0 / 12.0);
-        assert_eq!(d2.var(), 0.04);
-        assert_eq!(d3.var(), 0.36);
+        assert_eq!(new!(1.0, 1.0, 0.0, 1.0).var(), 1.0 / 12.0);
+        assert_eq!(new!(2.0, 3.0, 0.0, 1.0).var(), 0.04);
+        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).var(), 0.36);
         // Variance symmetry
-        assert_eq!(Beta::new(5.0, 0.05, 0.0, 1.0).var(),
-                   Beta::new(0.05, 5.0, 0.0, 1.0).var());
+        assert_eq!(new!(5.0, 0.05, 0.0, 1.0).var(), new!(0.05, 5.0, 0.0, 1.0).var());
     }
 
     #[test]
     fn sd() {
-        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
-        let d2 = Beta::new(2.0, 3.0, 0.0, 1.0);
-        let d3 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        assert_eq!(d1.sd(), (1.0 / 12.0 as f64).sqrt());
-        assert_eq!(d2.sd(), 0.2);
-        assert_eq!(d3.sd(), 0.6);
+        assert_eq!(new!(1.0, 1.0, 0.0, 1.0).sd(), (1f64 / 12.0).sqrt());
+        assert_eq!(new!(2.0, 3.0, 0.0, 1.0).sd(), 0.2);
+        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).sd(), 0.6);
         // Variance symmetry
-        assert_eq!(Beta::new(5.0, 0.05, 0.0, 1.0).sd(),
-                   Beta::new(0.05, 5.0, 0.0, 1.0).sd());
+        assert_eq!(new!(5.0, 0.05, 0.0, 1.0).sd(), new!(0.05, 5.0, 0.0, 1.0).sd());
     }
 
     #[test]
     fn skewness() {
-        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
-        let d2 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        let d3 = Beta::new(3.0, 2.0, -1.0, 2.0);
-        assert_eq!(d1.skewness(), 0.0);
-        assert_eq!(d2.skewness(), 0.28571428571428575);
-        assert_eq!(d3.skewness(), -0.28571428571428575);
+        assert_eq!(new!(1.0, 1.0, 0.0, 1.0).skewness(), 0.0);
+        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).skewness(), 0.28571428571428575);
+        assert_eq!(new!(3.0, 2.0, -1.0, 2.0).skewness(), -0.28571428571428575);
     }
 
     #[test]
     fn kurtosis() {
-        let d1 = Beta::new(1.0, 1.0, 0.0, 1.0);
-        let d2 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        let d3 = Beta::new(3.0, 2.0, -1.0, 2.0);
-        assert_eq!(d1.kurtosis(), -6.0 / 5.0);
-        assert_eq!(d2.kurtosis(), -0.6428571428571429);
-        assert_eq!(d3.kurtosis(), -0.6428571428571429);
+        assert_eq!(new!(1.0, 1.0, 0.0, 1.0).kurtosis(), -6.0 / 5.0);
+        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).kurtosis(), -0.6428571428571429);
+        assert_eq!(new!(3.0, 2.0, -1.0, 2.0).kurtosis(), -0.6428571428571429);
     }
 
     #[test]
     fn median() {
-        let d1 = Beta::new(2.0, 2.0, 0.0, 1.0);
-        let d2 = Beta::new(2.0, 3.0, 0.0, 1.0);
-        let d3 = Beta::new(2.0, 3.0, -1.0, 2.0);
-        assert_eq!(d1.median(), 0.5);
-        assert_eq!(d2.median(), 5.0 / 13.0);
-        assert_eq!(d3.median(), 3.0 * (5.0 / 13.0) -1.0);
+        assert_eq!(new!(2.0, 2.0, 0.0, 1.0).median(), 0.5);
+        assert_eq!(new!(2.0, 3.0, 0.0, 1.0).median(), 5.0 / 13.0);
+        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).median(), 3.0 * (5.0 / 13.0) -1.0);
     }
 
     #[test]
     fn modes() {
         let betas: [Beta; 9] = [
-            Beta::new(1.0, 1.0, -1.0, 2.0),
-            Beta::new(0.05, 0.05, -1.0, 2.0),
-            Beta::new(0.05, 5.0, -1.0, 2.0),
-            Beta::new(5.0, 0.05, -1.0, 2.0),
-            Beta::new(0.05, 3.0, -1.0, 2.0),
-            Beta::new(2.0, 0.05, -1.0, 2.0),
-            Beta::new(1.0, 3.0, -1.0, 2.0),
-            Beta::new(2.0, 1.0, -1.0, 2.0),
-            Beta::new(2.0, 3.0, -1.0, 2.0),
+            new!(1.0, 1.0, -1.0, 2.0),
+            new!(0.05, 0.05, -1.0, 2.0),
+            new!(0.05, 5.0, -1.0, 2.0),
+            new!(5.0, 0.05, -1.0, 2.0),
+            new!(0.05, 3.0, -1.0, 2.0),
+            new!(2.0, 0.05, -1.0, 2.0),
+            new!(1.0, 3.0, -1.0, 2.0),
+            new!(2.0, 1.0, -1.0, 2.0),
+            new!(2.0, 3.0, -1.0, 2.0),
         ];
         let modes: [Vec<f64>; 9] = [
             vec![],
@@ -248,10 +233,10 @@ mod tests {
     fn entropy() {
         use std::f64::consts::E;
         let betas = vec![
-            Beta::new(1.0, 1.0, 0.0, 1.0),
-            Beta::new(1.0, 1.0, 0.0, E),
-            Beta::new(2.0, 3.0, 0.0, 1.0),
-            Beta::new(2.0, 3.0, -1.0, 2.0),
+            new!(1.0, 1.0, 0.0, 1.0),
+            new!(1.0, 1.0, 0.0, E),
+            new!(2.0, 3.0, 0.0, 1.0),
+            new!(2.0, 3.0, -1.0, 2.0),
         ];
         assert::within(&betas.iter().map(|beta| beta.entropy()).collect::<Vec<_>>(),
                        &vec![0.0, 1.0, -0.2349066497879999, 0.8637056388801096], 1e-15);
@@ -259,8 +244,7 @@ mod tests {
 
     #[test]
     fn pdf() {
-        let beta = Beta::new(2.0, 3.0, -1.0, 2.0);
-
+        let beta = new!(2.0, 3.0, -1.0, 2.0);
         let x = vec![
             -1.00, -0.85, -0.70, -0.55, -0.40, -0.25, -0.10, 0.05, 0.20, 0.35, 0.50, 0.65, 0.80,
              0.95,  1.10,  1.25,  1.40,  1.55,  1.70,  1.85, 2.00,
@@ -280,8 +264,7 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let beta = Beta::new(2.0, 3.0, -1.0, 2.0);
-
+        let beta = new!(2.0, 3.0, -1.0, 2.0);
         let x = vec![
             -1.00, -0.85, -0.70, -0.55, -0.40, -0.25, -0.10, 0.05, 0.20, 0.35, 0.50, 0.65, 0.80,
              0.95,  1.10,  1.25,  1.40,  1.55,  1.70,  1.85, 2.00,
@@ -301,8 +284,7 @@ mod tests {
 
     #[test]
     fn inv_cdf() {
-        let beta = Beta::new(1.0, 2.0, 3.0, 4.0);
-
+        let beta = new!(1.0, 2.0, 3.0, 4.0);
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65,
             0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00,
@@ -322,7 +304,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Sampler(&Beta::new(1.0, 2.0, 7.0, 42.0), &mut generator()).take(100) {
+        for x in Sampler(&new!(1.0, 2.0, 7.0, 42.0), &mut generator()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

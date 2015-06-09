@@ -85,64 +85,60 @@ mod tests {
     use {Distribution, Sampler};
     use distributions::Uniform;
 
+    macro_rules! new(
+        ($a:expr, $b:expr) => (Uniform::new($a, $b));
+    );
+
     #[test]
     #[should_panic]
     fn invalid_support() {
-        let _ = Uniform::new(2.0, -1.0);
+        new!(2.0, -1.0);
     }
 
     #[test]
     fn mean() {
-        let d = Uniform::new(0.0, 2.0);
-        assert_eq!(d.mean(), 1.0);
+        assert_eq!(new!(0.0, 2.0).mean(), 1.0);
     }
 
     #[test]
     fn var() {
-        let d = Uniform::new(0.0, 12.0);
-        assert_eq!(d.var(), 12.0);
+        assert_eq!(new!(0.0, 12.0).var(), 12.0);
     }
 
     #[test]
     fn sd() {
-        let d = Uniform::new(0.0, 12.0);
-        assert_eq!(d.sd(), (12 as f64).sqrt());
+        assert_eq!(new!(0.0, 12.0).sd(), 12f64.sqrt());
     }
 
     #[test]
     fn skewness() {
-        let d = Uniform::new(0.0, 2.0);
-        assert_eq!(d.skewness(), 0.0);
+        assert_eq!(new!(0.0, 2.0).skewness(), 0.0);
     }
 
     #[test]
     fn kurtosis() {
-        let d = Uniform::new(0.0, 2.0);
-        assert_eq!(d.kurtosis(), -1.2);
+        assert_eq!(new!(0.0, 2.0).kurtosis(), -1.2);
     }
 
     #[test]
     fn median() {
-        let d = Uniform::new(0.0, 2.0);
-        assert_eq!(d.median(), 1.0);
+        assert_eq!(new!(0.0, 2.0).median(), 1.0);
     }
 
     #[test]
     fn modes() {
-        let d = Uniform::new(0.0, 2.0);
-        assert_eq!(d.modes(), Vec::<f64>::new());
+        assert_eq!(new!(0.0, 2.0).modes(), Vec::<f64>::new());
     }
 
     #[test]
     fn entropy() {
         use std::f64::consts::E;
-        let d = Uniform::new(0.0, E);
-        assert_eq!(d.entropy(), 1.0);
+        assert_eq!(new!(0.0, E).entropy(), 1.0);
     }
 
     #[test]
     fn pdf() {
-        let uniform = Uniform::new(-1.0, 1.0);
+        let uniform = new!(-1.0, 1.0);
         let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
         let p = vec![0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0];
 
@@ -151,7 +147,7 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let uniform = Uniform::new(-1.0, 1.0);
+        let uniform = new!(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
         let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
 
@@ -160,7 +156,7 @@ mod tests {
 
     #[test]
     fn inv_cdf() {
-        let uniform = Uniform::new(-1.0, 1.0);
+        let uniform = new!(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
         let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
 
@@ -169,10 +165,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut generator = ::generator();
-        let uniform = Uniform::new(7.0, 42.0);
-
-        for x in Sampler(&uniform, &mut generator).take(100) {
+        for x in Sampler(&new!(7.0, 42.0), &mut ::generator()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

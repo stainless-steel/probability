@@ -174,65 +174,60 @@ mod tests {
     use Distribution;
     use distributions::Gaussian;
 
+    macro_rules! new(
+        ($mu:expr, $sigma:expr) => (Gaussian::new($mu, $sigma));
+    );
+
     #[test]
     #[should_panic]
-    fn negative_sigma() {
-        Gaussian::new(1.0, -1.0);
+    fn invalid_sigma() {
+        new!(1.0, -1.0);
     }
 
     #[test]
     fn mean() {
-        let d = Gaussian::new(0.0, 1.0);
-        assert_eq!(d.mean(), 0.0);
+        assert_eq!(new!(0.0, 1.0).mean(), 0.0);
     }
 
     #[test]
     fn var() {
-        let d = Gaussian::new(0.0, 2.0);
-        assert_eq!(d.var(), 4.0);
+        assert_eq!(new!(0.0, 2.0).var(), 4.0);
     }
 
     #[test]
     fn sd() {
-        let d = Gaussian::new(0.0, 2.0);
-        assert_eq!(d.sd(), 2.0);
+        assert_eq!(new!(0.0, 2.0).sd(), 2.0);
     }
 
     #[test]
     fn skewness() {
-        let d = Gaussian::new(0.0, 2.0);
-        assert_eq!(d.skewness(), 0.0);
+        assert_eq!(new!(0.0, 2.0).skewness(), 0.0);
     }
 
     #[test]
     fn kurtosis() {
-        let d = Gaussian::new(0.0, 2.0);
-        assert_eq!(d.kurtosis(), 0.0);
+        assert_eq!(new!(0.0, 2.0).kurtosis(), 0.0);
     }
 
     #[test]
     fn median() {
-        let d = Gaussian::new(0.0, 2.0);
-        assert_eq!(d.median(), 0.0);
+        assert_eq!(new!(0.0, 2.0).median(), 0.0);
     }
 
     #[test]
     fn modes() {
-        let d = Gaussian::new(2.0, 5.0);
-        assert_eq!(d.modes(), vec![2.0]);
+        assert_eq!(new!(2.0, 5.0).modes(), vec![2.0]);
     }
 
     #[test]
     fn entropy() {
         use std::f64::consts::PI;
-        let d = Gaussian::new(0.0, 1.0);
-        assert_eq!(d.entropy(), ((2.0 * PI).ln() + 1.0) / 2.0);
+        assert_eq!(new!(0.0, 1.0).entropy(), ((2.0 * PI).ln() + 1.0) / 2.0);
     }
 
     #[test]
     fn pdf() {
-        let gaussian = Gaussian::new(1.0, 2.0);
-
+        let gaussian = new!(1.0, 2.0);
         let x = vec![
             -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
              4.0
@@ -251,8 +246,7 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let gaussian = Gaussian::new(1.0, 2.0);
-
+        let gaussian = new!(1.0, 2.0);
         let x = vec![
             -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
              4.0,
@@ -273,8 +267,7 @@ mod tests {
     fn inv_cdf() {
         use ::num::Float;
 
-        let gaussian = Gaussian::new(-1.0, 0.25);
-
+        let gaussian = new!(-1.0, 0.25);
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65,
             0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00,
