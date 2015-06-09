@@ -114,16 +114,26 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn invalid_succprob() {
-        let _ = Bernoulli::new(2.0);
-        let _ = Bernoulli::new(-0.5);
+    fn invalid_success_probability_1() {
+        Bernoulli::new(2.0);
     }
 
     #[test]
     #[should_panic]
-    fn invalid_failprob() {
-        let _ = Bernoulli::new_failprob(2.0);
-        let _ = Bernoulli::new_failprob(-0.5);
+    fn invalid_success_probability_2() {
+        Bernoulli::new(-0.5);
+    }
+
+    #[test]
+    #[should_panic]
+    fn invalid_failure_probability_1() {
+        Bernoulli::new_failprob(2.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn invalid_failure_probability_2() {
+        Bernoulli::new_failprob(-0.5);
     }
 
     #[test]

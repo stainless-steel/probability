@@ -89,7 +89,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn negative_lambda() {
-        let _ = Exponential::new(-1.0);
+        Exponential::new(-1.0);
     }
 
     #[test]
@@ -193,9 +193,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn invalid_quantile() {
-        let exponential = Exponential::new(2.0);
-        exponential.inv_cdf(-0.2);
-        exponential.inv_cdf(1.2);
+    fn invalid_quantile_1() {
+        Exponential::new(2.0).inv_cdf(1.2);
+    }
+
+    #[test]
+    #[should_panic]
+    fn invalid_quantile_2() {
+        Exponential::new(2.0).inv_cdf(-0.2);
     }
 }

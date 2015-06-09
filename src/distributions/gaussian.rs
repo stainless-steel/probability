@@ -177,7 +177,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn negative_sigma() {
-        let _ = Gaussian::new(1.0, -1.0);
+        Gaussian::new(1.0, -1.0);
     }
 
     #[test]
