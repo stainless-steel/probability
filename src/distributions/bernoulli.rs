@@ -81,22 +81,18 @@ impl Distribution for Bernoulli {
 
     #[inline]
     fn cdf(&self, x: Self::Value) -> f64 {
-        if x == 0 { self.q }
-        else { 1. }
+        if x == 0 { self.q } else { 1. }
     }
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> Self::Value {
         debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
-        if p <= self.q { 0 }
-        else { 1 }
+        if p <= self.q { 0 } else { 1 }
     }
 
     #[inline]
     fn pdf(&self, x: Self::Value) -> f64 {
-        if x == 0 { self.q }
-        else if x == 1 { self.p }
-        else { 0.0 }
+        if x == 0 { self.q } else if x == 1 { self.p } else { 0.0 }
     }
 
     #[inline]
