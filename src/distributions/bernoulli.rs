@@ -1,12 +1,12 @@
 use {Distribution, Generator};
 
-/// A discrete Bernoulli distribution.
+/// A Bernoulli distribution.
 #[derive(Clone, Copy)]
 pub struct Bernoulli {
-    /// The success probability.
+    /// The probability of success.
     pub p: f64,
-    // The probability of failure.
-    q: f64,
+    /// The probability of failure.
+    pub q: f64,
 }
 
 impl Bernoulli {
@@ -18,12 +18,24 @@ impl Bernoulli {
     #[inline]
     pub fn new(p: f64) -> Bernoulli {
         debug_assert!(0. < p && p < 1., "Bernoulli::new() is called with p < 0 or p > 1");
-        Bernoulli { p: p, q: 1.0 - p }
+        Bernoulli { p: p, q: 1. - p }
     }
+
+    /// Create a Bernoulli distribution with failure probability `q`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `q < 0` or `q > 1`.
+    #[inline]
+    pub fn new_failprob(q: f64) -> Bernoulli {
+        debug_assert!(0. < q && q < 1., "Bernoulli::new_failprob() is called with q < 0 or q > 1");
+        Bernoulli { p: 1. - q, q: q }
+    }
+    
 }
 
 impl Distribution for Bernoulli {
-    type Value = i32;
+    type Value = u8;
 
     #[inline]
     fn mean(&self) -> f64 { self.p }
@@ -49,7 +61,7 @@ impl Distribution for Bernoulli {
     }
 
     #[inline]
-    fn modes(&self) -> Vec<i32> {
+    fn modes(&self) -> Vec<Self::Value> {
         use std::cmp::Ordering::*;
         match self.p.partial_cmp(&self.q) {
             Some(Less) => vec![0],
@@ -65,28 +77,27 @@ impl Distribution for Bernoulli {
     }
 
     #[inline]
-    fn cdf(&self, x: i32) -> f64 {
-        if x < 0 { 0. }
-        else if x < 1 { self.q }
+    fn cdf(&self, x: Self::Value) -> f64 {
+        if x == 0 { self.q }
         else { 1. }
     }
 
     #[inline]
-    fn inv_cdf(&self, p: f64) -> i32 {
+    fn inv_cdf(&self, p: f64) -> Self::Value {
         debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
         if p <= self.q { 0 }
         else { 1 }
     }
 
     #[inline]
-    fn pdf(&self, x: i32) -> f64 {
+    fn pdf(&self, x: Self::Value) -> f64 {
         if x == 0 { self.q }
         else if x == 1 { self.p }
         else { 0.0 }
     }
 
     #[inline]
-    fn sample<G: Generator>(&self, generator: &mut G) -> i32 {
+    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
         if generator.gen::<f64>() < self.q { 0 } else { 1 }
     }
 }
@@ -104,6 +115,19 @@ mod tests {
     fn invalid_succprob() {
         let _ = Bernoulli::new(2.0);
         let _ = Bernoulli::new(-0.5);
+    }
+
+    #[test]
+    #[should_panic]
+    #[allow(unused_variables)]
+    fn invalid_failprob() {
+        let _ = Bernoulli::new_failprob(2.0);
+        let _ = Bernoulli::new_failprob(-0.5);
+    }
+
+    #[test]
+    fn new_failprob() {
+        let _ = Bernoulli::new_failprob(1e-24);
     }
 
     #[test]
@@ -170,8 +194,8 @@ mod tests {
     #[test]
     fn pdf() {
         let bernoulli = Bernoulli::new(0.25);
-        let x = -1..3;
-        let p = vec![0.0, 0.75, 0.25, 0.0];
+        let x = 0..3;
+        let p = vec![0.75, 0.25, 0.0];
 
         assert::equal(&x.map(|x| bernoulli.pdf(x)).collect::<Vec<_>>(), &p);
     }
@@ -179,8 +203,8 @@ mod tests {
     #[test]
     fn cdf() {
         let bernoulli = Bernoulli::new(0.25);
-        let x = -1..3;
-        let p = vec![0., 0.75, 1., 1.];
+        let x = 0..3;
+        let p = vec![0.75, 1., 1.];
 
         assert::equal(&x.map(|x| bernoulli.cdf(x)).collect::<Vec<_>>(), &p);
     }
@@ -203,6 +227,6 @@ mod tests {
             .take(100)
             .fold(0, |a, b| a + b);
 
-        assert!(0 <= sum && sum <= 100);
+        assert!(sum <= 100);
     }
 }
