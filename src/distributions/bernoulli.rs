@@ -7,6 +7,8 @@ pub struct Bernoulli {
     pub p: f64,
     /// The probability of failure.
     pub q: f64,
+    // The variance
+    pq: f64,
 }
 
 impl Bernoulli {
@@ -18,7 +20,8 @@ impl Bernoulli {
     #[inline]
     pub fn new(p: f64) -> Bernoulli {
         debug_assert!(0. < p && p < 1., "Bernoulli::new() is called with p < 0 or p > 1");
-        Bernoulli { p: p, q: 1. - p }
+        let q = 1. - p;
+        Bernoulli { p: p, q: q, pq: p * q }
     }
 
     /// Create a Bernoulli distribution with failure probability `q`.
@@ -29,7 +32,8 @@ impl Bernoulli {
     #[inline]
     pub fn new_failprob(q: f64) -> Bernoulli {
         debug_assert!(0. < q && q < 1., "Bernoulli::new_failprob() is called with q < 0 or q > 1");
-        Bernoulli { p: 1. - q, q: q }
+        let p = 1. - q;
+        Bernoulli { p: p, q: q, pq: p * q }
     }
     
 }
@@ -41,13 +45,13 @@ impl Distribution for Bernoulli {
     fn mean(&self) -> f64 { self.p }
 
     #[inline]
-    fn var(&self) -> f64 { self.p * self.q }
+    fn var(&self) -> f64 { self.pq }
 
     #[inline]
-    fn skewness(&self) -> f64 { (1. - 2. * self.p) / (self.p * self.q).sqrt() }
+    fn skewness(&self) -> f64 { (1. - 2. * self.p) / (self.pq).sqrt() }
 
     #[inline]
-    fn kurtosis(&self) -> f64 { (1. - 6. * self.p * self.q) / (self.p * self.q) }
+    fn kurtosis(&self) -> f64 { (1. - 6. * self.pq) / (self.pq) }
 
     #[inline]
     fn median(&self) -> f64 {
