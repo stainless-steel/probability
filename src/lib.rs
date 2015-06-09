@@ -36,7 +36,7 @@ pub trait Distribution {
     fn median(&self) -> f64;
 
     /// Compute all the modes.
-    fn modes(&self) -> Vec<f64>;
+    fn modes(&self) -> Vec<Self::Value>;
 
     /// Compute the differential entropy (measured in nats).
     fn entropy(&self) -> f64;
