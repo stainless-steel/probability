@@ -23,7 +23,9 @@ impl Categorical {
                 // Check if p is a probability vector.
                 let mut sum = 0.;
                 for &p in p.iter() {
-                    if p < 0. || p > 1. { return false; }
+                    if p < 0. || p > 1. {
+                        return false;
+                    }
                     sum += p;
                 }
                 (sum - 1.).abs() <= 1e-12
@@ -67,13 +69,17 @@ impl Distribution for Categorical {
     }
 
     fn median(&self) -> f64 {
-        if self.p[0] > 0.5 { return 0.0; }
-        else if self.p[0] == 0.5 { return 0.5; }
+        if self.p[0] > 0.5 {
+            return 0.0;
+        } else if self.p[0] == 0.5 {
+            return 0.5;
+        }
         let mut sum = 0.;
         for i in 0..self.k {
             sum += self.p[i];
-            if sum == 0.5 { return (2 * i - 1) as f64 / 2.; }
-            else if sum > 0.5 {
+            if sum == 0.5 {
+                return (2 * i - 1) as f64 / 2.;
+            } else if sum > 0.5 {
                 return i as f64;
             }
         }
@@ -117,7 +123,9 @@ impl Distribution for Categorical {
         let mut sum = 0.;
         for i in 0..self.k {
             sum += self.p[i];
-            if sum >= p || sum == 1. { return i; }
+            if sum >= p || sum == 1. {
+                return i;
+            }
         }
         self.k - 1
     }
