@@ -9,7 +9,7 @@ pub struct Categorical {
     pub p: Vec<f64>,
 }
 
-fn is_prob_vec(p: &Vec<f64>) -> bool {
+fn is_prob_vec(p: &[f64]) -> bool {
     let mut sum = 0.;
     for &p_i in p.iter() {
         if p_i < 0.|| p_i > 1. { return false; }
@@ -25,9 +25,9 @@ impl Categorical {
     ///
     /// Panics if `p < 0` or `p > 1`.
     #[inline]
-    pub fn new(p: Vec<f64>) -> Categorical {
-        debug_assert!(is_prob_vec(&p), "Categorical::new() is called with p not a probabilty vector");
-        Categorical { k: p.len() as usize,  p: p}
+    pub fn new(p: &[f64]) -> Categorical {
+        debug_assert!(is_prob_vec(p), "Categorical::new() is called with p not a probabilty vector");
+        Categorical { k: p.len() as usize,  p: p.to_vec()}
     }
 }
 
@@ -144,89 +144,89 @@ mod tests {
     use distributions::Categorical;
 
     macro_rules! new(
-        (equal $k:expr) => (Categorical::new(vec![1./$k as f64; $k]));
-        ($p:expr) => (Categorical::new($p));
+        (equal $k:expr) => { Categorical::new(&[1./$k as f64; $k]) };
+        ($p:expr) => { Categorical::new(&$p); }
     );
 
     #[test]
     #[should_panic]
     fn invalid_prob_vec_1() {
-        new!(vec![0.6, 0.6, 0.6]);
+        new!([0.6, 0.6, 0.6]);
     }
 
     #[test]
     #[should_panic]
     fn invalid_prob_vec_2() {
-        new!(vec![0.6, 0.6, 0.6, -0.2]);
+        new!([0.6, 0.6, 0.6, -0.2]);
     }
 
     #[test]
     #[should_panic]
     fn invalid_prob_vec_3() {
-        new!(vec![1.2, -0.2]);
+        new!([1.2, -0.2]);
     }
 
     #[test]
     fn mean() {
         assert_eq!(new!(equal 3).mean(), 1.);
-        assert_eq!(new!(vec![0.3, 0.3, 0.4]).mean(), 1.1);
-        assert_eq!(new!(vec![1./6., 1./3., 1./3., 1./6.]).mean(), 1.5);
+        assert_eq!(new!([0.3, 0.3, 0.4]).mean(), 1.1);
+        assert_eq!(new!([1./6., 1./3., 1./3., 1./6.]).mean(), 1.5);
     }
 
     #[test]
     fn var() {
         assert_eq!(new!(equal 3).var(), 2./3.);
-        assert_eq!(new!(vec![1./6., 1./3., 1./3., 1./6.]).var(), 11./12.);
+        assert_eq!(new!([1./6., 1./3., 1./3., 1./6.]).var(), 11./12.);
     }
 
     #[test]
     fn sd() {
         assert_eq!(new!(equal 2).sd(), 0.5);
-        assert_eq!(new!(vec![1./6., 1./3., 1./3., 1./6.]).sd(), 0.9574271077563381);
+        assert_eq!(new!([1./6., 1./3., 1./3., 1./6.]).sd(), 0.9574271077563381);
     }
 
     #[test]
     fn skewness() {
         assert_eq!(new!(equal 6).skewness(), 0.0);
-        assert_eq!(new!(vec![1./6., 1./3., 1./3., 1./6.]).skewness(), 0.);
-        assert_eq!(new!(vec![0.1, 0.2, 0.3, 0.4]).skewness(), -0.6);
+        assert_eq!(new!([1./6., 1./3., 1./3., 1./6.]).skewness(), 0.);
+        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).skewness(), -0.6);
     }
 
     #[test]
     fn kurtosis() {
         assert_eq!(new!(equal 2).kurtosis(), -2.0);
-        assert_eq!(new!(vec![0.1, 0.2, 0.3, 0.4]).kurtosis(), -0.7999999999999998);
+        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).kurtosis(), -0.7999999999999998);
     }
 
     #[test]
     fn median() {
-        assert_eq!(new!(vec![0.6, 0.2, 0.2]).median(), 0.0);
+        assert_eq!(new!([0.6, 0.2, 0.2]).median(), 0.0);
         assert_eq!(new!(equal 2).median(), 0.5);
-        assert_eq!(new!(vec![0.1, 0.2, 0.3, 0.4]).median(), 2.0);
-        assert_eq!(new!(vec![1./6., 1./3., 1./3., 1./6.]).median(), 0.5);
+        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).median(), 2.0);
+        assert_eq!(new!([1./6., 1./3., 1./3., 1./6.]).median(), 0.5);
     }
 
     #[test]
     fn modes() {
-        assert_eq!(new!(vec![0.6, 0.2, 0.2]).modes(), vec![0]);
+        assert_eq!(new!([0.6, 0.2, 0.2]).modes(), vec![0]);
         assert_eq!(new!(equal 2).modes(), vec![0, 1]);
         assert_eq!(new!(equal 3).modes(), vec![0, 1, 2]);
-        assert_eq!(new!(vec![0.4, 0.2, 0.4]).modes(), vec![0, 2]);
-        assert_eq!(new!(vec![1./6., 1./3., 1./3., 1./6.]).modes(), vec![1, 2]);
+        assert_eq!(new!([0.4, 0.2, 0.4]).modes(), vec![0, 2]);
+        assert_eq!(new!([1./6., 1./3., 1./3., 1./6.]).modes(), vec![1, 2]);
     }
 
     #[test]
     fn entropy() {
         use std::f64::consts::LN_2;
         assert_eq!(new!(equal 2).entropy(), LN_2);
-        assert_eq!(new!(vec![0.1, 0.2, 0.3, 0.4]).entropy(), 1.2798542258336676);
+        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).entropy(), 1.2798542258336676);
     }
 
     #[test]
     fn pdf() {
-        let p = vec![0.0, 0.75, 0.25, 0.0];
-        let d1 = new!(p.clone());
-        assert::equal(&(0..4).map(|x| d1.pdf(x)).collect::<Vec<_>>(), &p);
+        let p = [0.0, 0.75, 0.25, 0.0];
+        let d1 = new!(p);
+        assert::equal(&(0..4).map(|x| d1.pdf(x)).collect::<Vec<_>>(), &p.to_vec());
 
         let d2 = new!(equal 3);
         assert::equal(&(0..3).map(|x| d2.pdf(x)).collect::<Vec<_>>(), &vec![1./3.; 3])
@@ -234,7 +234,7 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let d1 = new!(vec![0.0, 0.75, 0.25, 0.0]);
+        let d1 = new!([0.0, 0.75, 0.25, 0.0]);
         assert::equal(&(0..4).map(|x| d1.cdf(x)).collect::<Vec<_>>(),
                       &vec![0.0, 0.75, 1.0, 1.0]);
 
@@ -245,7 +245,7 @@ mod tests {
 
     #[test]
     fn inv_cdf() {
-        let d1 = new!(vec![0.0, 0.75, 0.25, 0.0]);
+        let d1 = new!([0.0, 0.75, 0.25, 0.0]);
         let p1 = vec![0.0, 0.75, 0.7500001, 1.0];
         assert::equal(&p1.iter().map(|&p| d1.inv_cdf(p)).collect::<Vec<_>>(),
                       &vec![1, 1, 2, 2]);
@@ -262,7 +262,7 @@ mod tests {
         let mut generator = ::generator();
 
         // Discrete Uniform(1, 2)
-        let sum = Sampler(&new!(vec![0.0, 0.5, 0.5]), &mut generator)
+        let sum = Sampler(&new!([0.0, 0.5, 0.5]), &mut generator)
             .take(100)
             .fold(0, |a, b| a + b);
 
