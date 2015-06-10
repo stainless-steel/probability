@@ -40,34 +40,29 @@ impl Distribution for Categorical {
 
     #[inline]
     fn mean(&self) -> f64 {
-        // sum_{i=0}^k i p_i
-        self.p.iter().enumerate().fold(0., |acc, b| acc + b.0 as f64 * b.1)
+        self.p.iter().enumerate().fold(0., |sum, (i, p)| sum + i as f64 * p)
     }
 
     #[inline]
     fn var(&self) -> f64 {
         let mu = self.mean();
-        self.p.iter().enumerate().fold(
-            0., |acc, b| acc + (b.0 as f64 - mu).powi(2) * b.1
-        )
+        self.p.iter().enumerate().fold(0., |sum, (i, p)| sum + (i as f64 - mu).powi(2) * p)
     }
 
     #[inline]
     fn skewness(&self) -> f64 {
         let mu = self.mean();
         let sigma2 = self.var();
-        let skew = self.p.iter().enumerate().fold(
-            0., |acc, b| acc + (b.0 as f64 - mu).powi(3) * b.1
-        );
+        let skew = self.p.iter().enumerate()
+                         .fold(0., |sum, (i, p)| sum + (i as f64 - mu).powi(3) * p);
         skew / (sigma2 * sigma2.sqrt())
     }
 
     fn kurtosis(&self) -> f64 {
         let mu = self.mean();
         let sigma2 = self.var();
-        let kurt = self.p.iter().enumerate().fold(
-            0., |acc, b| acc + (b.0 as f64 - mu).powi(4) * b.1
-        );
+        let kurt = self.p.iter().enumerate()
+                         .fold(0., |sum, (i, p)| sum + (i as f64 - mu).powi(4) * p);
         kurt / sigma2.powi(2) - 3.
     }
 
@@ -115,7 +110,7 @@ impl Distribution for Categorical {
         debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
         if p == 0. {
             // return the first non-zero index
-            return self.p.iter().enumerate().find(|&v| *v.1 > 0.).unwrap().0;
+            return self.p.iter().enumerate().find(|&(_, &p)| p > 0.).unwrap().0;
         }
         let mut sum = 0.;
         for i in 0..self.k {
