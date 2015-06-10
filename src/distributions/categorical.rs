@@ -232,25 +232,21 @@ mod tests {
     #[test]
     fn cdf() {
         let d1 = new!([0.0, 0.75, 0.25, 0.0]);
-        assert::equal(&(0..4).map(|x| d1.cdf(x)).collect::<Vec<_>>(),
-                      &vec![0.0, 0.75, 1.0, 1.0]);
+        assert::equal(&(0..4).map(|x| d1.cdf(x)).collect::<Vec<_>>(), &vec![0.0, 0.75, 1.0, 1.0]);
 
         let d2 = new!(equal 3);
-        assert::equal(&(0..3).map(|x| d2.cdf(x)).collect::<Vec<_>>(),
-                      &vec![1./3., 2./3., 1.]);
+        assert::equal(&(0..3).map(|x| d2.cdf(x)).collect::<Vec<_>>(), &vec![1./3., 2./3., 1.]);
     }
 
     #[test]
     fn inv_cdf() {
         let d1 = new!([0.0, 0.75, 0.25, 0.0]);
         let p1 = vec![0.0, 0.75, 0.7500001, 1.0];
-        assert::equal(&p1.iter().map(|&p| d1.inv_cdf(p)).collect::<Vec<_>>(),
-                      &vec![1, 1, 2, 2]);
+        assert::equal(&p1.iter().map(|&p| d1.inv_cdf(p)).collect::<Vec<_>>(), &vec![1, 1, 2, 2]);
 
         let d2 = new!(equal 3);
         let p2 = vec![0.0, 0.5, 0.75, 1.0];
-        assert::equal(&p2.iter().map(|&p| d2.inv_cdf(p)).collect::<Vec<_>>(),
-                      &vec![0, 1, 2, 2]);
+        assert::equal(&p2.iter().map(|&p| d2.inv_cdf(p)).collect::<Vec<_>>(), &vec![0, 1, 2, 2]);
 
     }
 
@@ -259,9 +255,7 @@ mod tests {
         let mut generator = ::generator();
 
         // Discrete Uniform(1, 2)
-        let sum = Sampler(&new!([0.0, 0.5, 0.5]), &mut generator)
-            .take(100)
-            .fold(0, |a, b| a + b);
+        let sum = Sampler(&new!([0.0, 0.5, 0.5]), &mut generator).take(100).fold(0, |a, b| a + b);
 
         assert!(100 <= sum && sum <= 200);
     }
