@@ -22,16 +22,16 @@ impl Categorical {
             fn is_prob_vec(p: &[f64]) -> bool {
                 // Check if p is a probability vector.
                 let mut sum = 0.;
-                for &p_i in p.iter() {
-                    if p_i < 0.|| p_i > 1. { return false; }
-                    sum += p_i;
+                for &p in p.iter() {
+                    if p < 0. || p > 1. { return false; }
+                    sum += p;
                 }
                 (sum - 1.).abs() <= 1e-12
             }
             is_prob_vec(&p)
         }, "Categorical::new() is called with p not a probabilty vector");
 
-        Categorical { k: p.len(),  p: p.to_vec()}
+        Categorical { k: p.len(),  p: p.to_vec() }
     }
 }
 
@@ -83,10 +83,12 @@ impl Distribution for Categorical {
     fn modes(&self) -> Vec<Self::Value> {
         let mut m = Vec::new();
         let mut max = 0.;
-        for (i, &p_i) in self.p.iter().enumerate() {
-            if p_i == max { m.push(i); }
-            if p_i > max {
-                max = p_i;
+        for (i, &p) in self.p.iter().enumerate() {
+            if p == max {
+                m.push(i);
+            }
+            if p > max {
+                max = p;
                 m = vec![i];
             }
         }
@@ -95,7 +97,7 @@ impl Distribution for Categorical {
 
     #[inline]
     fn entropy(&self) -> f64 {
-        - self.p.iter().fold(0., |acc, p_i| acc + p_i * p_i.ln())
+        -self.p.iter().fold(0., |sum, p| sum + p * p.ln())
     }
 
     #[inline]
