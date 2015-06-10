@@ -13,7 +13,6 @@ documentation = "https://stainless-steel.github.io/probability"
 description = "The package provides a probability-theory toolbox."
 
 [dependencies]
-num = "*"
 rand = "*"
 special = "*"
 

@@ -3,12 +3,11 @@
 #[cfg(test)]
 extern crate assert;
 
-extern crate num;
 extern crate rand;
 extern crate special;
 
-pub use ::rand::Rng as Generator;
-pub use ::rand::thread_rng as generator;
+pub use rand::Rng as Generator;
+pub use rand::thread_rng as generator;
 
 pub mod distributions;
 

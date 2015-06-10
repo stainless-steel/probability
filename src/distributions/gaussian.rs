@@ -75,7 +75,7 @@ impl Distribution for Gaussian {
     ///
     /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
-        use ::num::Float;
+        use std::f64::{INFINITY, NEG_INFINITY};
 
         debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
 
@@ -126,10 +126,10 @@ impl Distribution for Gaussian {
         }
 
         if p <= 0.0 {
-            return Float::neg_infinity();
+            return NEG_INFINITY;
         }
         if 1.0 <= p {
-            return Float::infinity();
+            return INFINITY;
         }
 
         let q = p - 0.5;
@@ -170,6 +170,7 @@ impl Distribution for Gaussian {
 #[cfg(test)]
 mod tests {
     use assert;
+    use std::f64::{INFINITY, NEG_INFINITY};
 
     use Distribution;
     use distributions::Gaussian;
@@ -265,21 +266,19 @@ mod tests {
 
     #[test]
     fn inv_cdf() {
-        use ::num::Float;
-
         let gaussian = new!(-1.0, 0.25);
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65,
             0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00,
         ];
         let x = vec![
-             Float::neg_infinity(), -1.411213406737868e+00, -1.320387891386150e+00,
+                      NEG_INFINITY, -1.411213406737868e+00, -1.320387891386150e+00,
             -1.259108347373447e+00, -1.210405308393228e+00, -1.168622437549020e+00,
             -1.131100128177010e+00, -1.096330116601892e+00, -1.063336775783950e+00,
             -1.031415336713768e+00, -1.000000000000000e+00, -9.685846632862315e-01,
             -9.366632242160501e-01, -9.036698833981082e-01, -8.688998718229899e-01,
             -8.313775624509796e-01, -7.895946916067714e-01, -7.408916526265525e-01,
-            -6.796121086138498e-01, -5.887865932621319e-01,  Float::infinity(),
+            -6.796121086138498e-01, -5.887865932621319e-01,               INFINITY,
         ];
 
         assert::within(&p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
