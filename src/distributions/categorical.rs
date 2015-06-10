@@ -58,7 +58,6 @@ impl Distribution for Categorical {
         skew / (sigma2 * sigma2.sqrt())
     }
 
-    #[inline]
     fn kurtosis(&self) -> f64 {
         let mu = self.mean();
         let sigma2 = self.var();
@@ -68,7 +67,6 @@ impl Distribution for Categorical {
         kurt / sigma2.powi(2) - 3.
     }
 
-    #[inline]
     fn median(&self) -> f64 {
         if self.p[0] > 0.5 { return 0.0; }
         else if self.p[0] == 0.5 { return 0.5; }
@@ -83,7 +81,6 @@ impl Distribution for Categorical {
         unreachable!()
     }
 
-    #[inline]
     fn modes(&self) -> Vec<Self::Value> {
         let mut m = Vec::new();
         let mut max = 0.;
@@ -110,7 +107,6 @@ impl Distribution for Categorical {
         }
     }
 
-    #[inline]
     fn inv_cdf(&self, p: f64) -> Self::Value {
         debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
         if p == 0. {
