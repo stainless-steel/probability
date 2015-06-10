@@ -9,24 +9,28 @@ pub struct Categorical {
     pub p: Vec<f64>,
 }
 
-fn is_prob_vec(p: &[f64]) -> bool {
-    let mut sum = 0.;
-    for &p_i in p.iter() {
-        if p_i < 0.|| p_i > 1. { return false; }
-        sum += p_i;
-    }
-    (sum - 1.).abs() <= 1e-12
-}
-
 impl Categorical {
-    /// Create a Categorical distribution with success probability `p`.
+    /// Create a categorical distribution with success probability `p`.
     ///
     /// # Panics
     ///
-    /// Panics if `p < 0` or `p > 1`.
+    /// Panics if `p[i] < 0` or `p[i] > 1` for any `i = 0..k`, or if
+    /// `sum(p) != 1`.
     #[inline]
     pub fn new(p: &[f64]) -> Categorical {
-        debug_assert!(is_prob_vec(p), "Categorical::new() is called with p not a probabilty vector");
+        debug_assert!({
+            fn is_prob_vec(p: &[f64]) -> bool {
+                // Check if p is a probability vector.
+                let mut sum = 0.;
+                for &p_i in p.iter() {
+                    if p_i < 0.|| p_i > 1. { return false; }
+                    sum += p_i;
+                }
+                (sum - 1.).abs() <= 1e-12
+            }
+            is_prob_vec(&p)
+        }, "Categorical::new() is called with p not a probabilty vector");
+
         Categorical { k: p.len(),  p: p.to_vec()}
     }
 }
