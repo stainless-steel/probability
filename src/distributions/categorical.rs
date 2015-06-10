@@ -1,9 +1,9 @@
 use {Distribution, Generator};
 
-/// A discrete Categorical distribution.
+/// A categorical distribution.
 #[derive(Clone)]
 pub struct Categorical {
-    /// The size of the probabilty vector
+    /// The size of the probabilty vector.
     pub k: usize,
     /// The probability vector.
     pub p: Vec<f64>,
@@ -27,7 +27,7 @@ impl Categorical {
     #[inline]
     pub fn new(p: &[f64]) -> Categorical {
         debug_assert!(is_prob_vec(p), "Categorical::new() is called with p not a probabilty vector");
-        Categorical { k: p.len() as usize,  p: p.to_vec()}
+        Categorical { k: p.len(),  p: p.to_vec()}
     }
 }
 
