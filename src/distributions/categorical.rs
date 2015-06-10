@@ -29,14 +29,6 @@ impl Categorical {
         debug_assert!(is_prob_vec(&p), "Categorical::new() is called with p not a probabilty vector");
         Categorical { k: p.len() as usize,  p: p}
     }
-
-    /// Create a Categorical distriburion with `k` categories of equal
-    /// probabilty `1/k`.
-    #[inline]
-    pub fn new_equal(k: usize) -> Categorical {
-        let p = 1. / k as f64;
-        Categorical { k: k,  p: vec![p; k] }
-    }
 }
 
 impl Distribution for Categorical {
@@ -152,7 +144,7 @@ mod tests {
     use distributions::Categorical;
 
     macro_rules! new(
-        (equal $k:expr) => (Categorical::new_equal($k));
+        (equal $k:expr) => (Categorical::new(vec![1./$k as f64; $k]));
         ($p:expr) => (Categorical::new($p));
     );
 
