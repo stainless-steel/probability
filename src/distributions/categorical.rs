@@ -143,8 +143,6 @@ impl Distribution for Categorical {
 
 #[cfg(test)]
 mod tests {
-    use assert;
-
     use {Distribution, Sampler};
     use distributions::Categorical;
 
@@ -231,30 +229,30 @@ mod tests {
     fn pdf() {
         let p = [0.0, 0.75, 0.25, 0.0];
         let d1 = new!(p);
-        assert::equal(&(0..4).map(|x| d1.pdf(x)).collect::<Vec<_>>(), &p.to_vec());
+        assert_eq!(&(0..4).map(|x| d1.pdf(x)).collect::<Vec<_>>(), &p.to_vec());
 
         let d2 = new!(equal 3);
-        assert::equal(&(0..3).map(|x| d2.pdf(x)).collect::<Vec<_>>(), &vec![1./3.; 3])
+        assert_eq!(&(0..3).map(|x| d2.pdf(x)).collect::<Vec<_>>(), &vec![1./3.; 3])
     }
 
     #[test]
     fn cdf() {
         let d1 = new!([0.0, 0.75, 0.25, 0.0]);
-        assert::equal(&(0..4).map(|x| d1.cdf(x)).collect::<Vec<_>>(), &vec![0.0, 0.75, 1.0, 1.0]);
+        assert_eq!(&(0..4).map(|x| d1.cdf(x)).collect::<Vec<_>>(), &vec![0.0, 0.75, 1.0, 1.0]);
 
         let d2 = new!(equal 3);
-        assert::equal(&(0..3).map(|x| d2.cdf(x)).collect::<Vec<_>>(), &vec![1./3., 2./3., 1.]);
+        assert_eq!(&(0..3).map(|x| d2.cdf(x)).collect::<Vec<_>>(), &vec![1./3., 2./3., 1.]);
     }
 
     #[test]
     fn inv_cdf() {
         let d1 = new!([0.0, 0.75, 0.25, 0.0]);
         let p1 = vec![0.0, 0.75, 0.7500001, 1.0];
-        assert::equal(&p1.iter().map(|&p| d1.inv_cdf(p)).collect::<Vec<_>>(), &vec![1, 1, 2, 2]);
+        assert_eq!(&p1.iter().map(|&p| d1.inv_cdf(p)).collect::<Vec<_>>(), &vec![1, 1, 2, 2]);
 
         let d2 = new!(equal 3);
         let p2 = vec![0.0, 0.5, 0.75, 1.0];
-        assert::equal(&p2.iter().map(|&p| d2.inv_cdf(p)).collect::<Vec<_>>(), &vec![0, 1, 2, 2]);
+        assert_eq!(&p2.iter().map(|&p| d2.inv_cdf(p)).collect::<Vec<_>>(), &vec![0, 1, 2, 2]);
 
     }
 

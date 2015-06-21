@@ -242,7 +242,7 @@ mod tests {
             9.132454269451096e-02, 6.475879783294587e-02
         ];
 
-        assert::within(&x.iter().map(|&x| gaussian.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| gaussian.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
@@ -261,7 +261,7 @@ mod tests {
             8.943502263331446e-01, 9.331927987311419e-01,
         ];
 
-        assert::within(&x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
@@ -281,6 +281,6 @@ mod tests {
             -6.796121086138498e-01, -5.887865932621319e-01,               INFINITY,
         ];
 
-        assert::within(&p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(&p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 }

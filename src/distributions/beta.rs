@@ -238,8 +238,8 @@ mod tests {
             new!(2.0, 3.0, 0.0, 1.0),
             new!(2.0, 3.0, -1.0, 2.0),
         ];
-        assert::within(&betas.iter().map(|beta| beta.entropy()).collect::<Vec<_>>(),
-                       &vec![0.0, 1.0, -0.2349066497879999, 0.8637056388801096], 1e-15);
+        assert::close(&betas.iter().map(|beta| beta.entropy()).collect::<Vec<_>>(),
+                      &vec![0.0, 1.0, -0.2349066497879999, 0.8637056388801096], 1e-15);
     }
 
     #[test]
@@ -259,7 +259,7 @@ mod tests {
             3.600000000000000e-02, 9.499999999999982e-03, 0.000000000000000e+00
         ];
 
-        assert::within(&x.iter().map(|&x| beta.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| beta.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
@@ -279,7 +279,7 @@ mod tests {
             9.963000000000000e-01, 9.995187500000000e-01, 1.000000000000000e+00,
         ];
 
-        assert::within(&x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
@@ -299,7 +299,7 @@ mod tests {
             3.683772233983162e+00, 3.776393202250021e+00, 4.000000000000000e+00,
         ];
 
-        assert::within(&p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(&p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 
     #[test]

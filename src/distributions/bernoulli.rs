@@ -184,8 +184,8 @@ mod tests {
     #[test]
     fn entropy() {
         let bernoullies = vec![new!(0.25), new!(0.5), new!(0.75)];
-        assert::within(&bernoullies.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
-                       &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
+        assert::close(&bernoullies.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
+                      &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
     }
 
     #[test]
@@ -194,7 +194,7 @@ mod tests {
         let x = 0..3;
         let p = vec![0.75, 0.25, 0.0];
 
-        assert::equal(&x.map(|x| bernoulli.pdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&x.map(|x| bernoulli.pdf(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]
@@ -203,7 +203,7 @@ mod tests {
         let x = 0..3;
         let p = vec![0.75, 1., 1.];
 
-        assert::equal(&x.map(|x| bernoulli.cdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&x.map(|x| bernoulli.cdf(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]
@@ -212,7 +212,7 @@ mod tests {
         let p = vec![0.0, 0.25, 0.5, 0.75, 0.75000000001, 1.0];
         let x = vec![0, 0, 0, 0, 1, 1];
 
-        assert::equal(&p.iter().map(|&p| bernoulli.inv_cdf(p)).collect::<Vec<_>>(), &x);
+        assert_eq!(&p.iter().map(|&p| bernoulli.inv_cdf(p)).collect::<Vec<_>>(), &x);
     }
 
     #[test]

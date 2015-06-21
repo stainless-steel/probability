@@ -147,7 +147,7 @@ mod tests {
             1.228842470665642e-05, 7.550269088558195e-11,
         ];
 
-        assert::within(&x.iter().map(|&x| exponential.pdf(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(&x.iter().map(|&x| exponential.pdf(x)).collect::<Vec<_>>(), &p, 1e-15);
     }
 
     #[test]
@@ -162,7 +162,7 @@ mod tests {
             9.996645373720975e-01
         ];
 
-        assert::within(&x.iter().map(|&x| exponential.cdf(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(&x.iter().map(|&x| exponential.cdf(x)).collect::<Vec<_>>(), &p, 1e-15);
     }
 
     #[test]
@@ -181,7 +181,7 @@ mod tests {
             1.000000000000000e-00,
         ];
 
-        assert::within(&p.iter().map(|&p| exponential.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(&p.iter().map(|&p| exponential.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 
     #[test]
