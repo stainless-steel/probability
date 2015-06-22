@@ -78,8 +78,8 @@ pub trait Distribution {
 pub struct Sampler<D, G>(pub D, pub G);
 
 impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G>
-    where D: Distribution<Value=T>, G: Generator {
-
+    where D: Distribution<Value=T>, G: Generator
+{
     type Item = T;
 
     #[inline]
