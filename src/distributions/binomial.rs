@@ -9,18 +9,19 @@ pub struct Binomial {
     pub p: f64,
     /// The probability of failure.
     pub q: f64,
+
     np: f64,
     nq: f64,
     npq: f64,
 }
 
 impl Binomial {
-    /// Create a binomial distribution with `n` observations and
-    /// success probability `p`.
+    /// Create a binomial distribution with `n` trails and success probability
+    /// `p`.
     ///
     /// # Panics
     ///
-    /// Panics if `p < 0` or `p > 1` or if n < 0
+    /// Panics if `p < 0` or `p > 1` or if n < 0.
     #[inline]
     pub fn new(n: i32, p: f64) -> Binomial {
         debug_assert!(n >= 0, "Binomial::new() is called with n < 0");
@@ -38,15 +39,14 @@ impl Binomial {
         }
     }
 
-    /// Create a binomial distribution with `n` observations and
-    /// failure probability `q`.
+    /// Create a binomial distribution with `n` trails and failure probability
+    /// `q`.
     ///
-    /// Use this one instead of `Binomial::new()` if `q` is very
-    /// small.
+    /// This constructor should be used instead of `new` when `q` is very small.
     ///
     /// # Panics
     ///
-    /// Panics if `q < 0` or `q > 1` or if n < 0
+    /// Panics if `q < 0` or `q > 1` or if n < 0.
     #[inline]
     pub fn new_failprob(n: i32, q: f64) -> Binomial {
         debug_assert!(n >= 0, "Binomial::new() is called with n < 0");
@@ -120,7 +120,7 @@ impl Distribution for Binomial {
         use std::f64::consts::PI;
 
         if self.n > 10000 && self.npq > 80. {
-            // Use normal approximation.
+            // Use a normal approximation.
             0.5 * ((2. * PI * self.npq).ln() + 1.)
         } else {
             // Calculate directly.
@@ -130,7 +130,7 @@ impl Distribution for Binomial {
 
     /// Compute the cumulative distribution function (CDF) at point `x`.
     ///
-    /// Uses the incomplete beta function.
+    /// The implementation is based on the incomplete beta function.
     #[inline]
     fn cdf(&self, x: Self::Value) -> f64 {
         use special::{inc_beta, ln_beta};
@@ -147,15 +147,15 @@ impl Distribution for Binomial {
     /// Compute the inverse of the cumulative distribution function at
     /// probability `p`.
     ///
-    /// For small `n` we use simple summation. For larger `n` and
-    /// large variance we use normal asymptotic approximation. Else we
-    /// use the Newton method to search.
+    /// For small `n`, a simple summation is utilized. For large `n` and large
+    /// variances, a normal asymptotic approximation is used. Otherwise, the
+    /// Newton method is employed.
     ///
-    /// # References
+    /// ## References
     ///
-    /// 1. Sean Moorhead (2013). “Efficient evaluation of the inverse
-    ///    Binomial cumulative distribution function where the number
-    ///    of trials is large”.
+    /// 1. Sean Moorhead. “Efficient evaluation of the inverse Binomial
+    ///    cumulative distribution function where the number of trials is
+    ///    large.” Oxford University, 2013.
     fn inv_cdf(&self, p: f64) -> Self::Value {
         debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
 
@@ -193,7 +193,7 @@ impl Distribution for Binomial {
             };
         }
 
-        // See Moorhead (2013) pp. 7.
+        // See [Moorhead, 2013, pp. 7].
         let normal_approx = |p: f64, np: f64, v:f64| -> f64 {
             use distributions::Gaussian;
             let w = Gaussian::new(0., 1.).inv_cdf(u);
@@ -230,7 +230,7 @@ impl Distribution for Binomial {
         } else if u == 0. {
             0
         } else if self.n < 1000 {
-            // Find if top-down or buttom-up sumation is better.
+            // Find if top-down or bottom-up summation is better.
             if u <= self.cdf(self.n / 2) {
                 buttom_up_sum!(|k| self.p / self.q * ((self.n - k + 1) as f64 / k as f64))
             } else {
@@ -241,7 +241,7 @@ impl Distribution for Binomial {
             let approx = normal_approx(self.p, self.np, self.npq);
             approx.floor() as Self::Value
         } else {
-            // Use newton to search, starting at the mode
+            // Use the Newton method starting at the mode.
             let modes = self.modes();
             let mut m = modes[0];
             loop {
@@ -255,13 +255,13 @@ impl Distribution for Binomial {
 
     /// Compute the probability density function (PDF) at point `x`.
     ///
-    /// Uses saddle-point expansion[1] for more accurate computation
-    /// for large n.
+    /// For large `n`, a saddle-point expansion is used for more accurate
+    /// computation.
     ///
-    /// # References
+    /// ## References
     ///
-    /// 1. Catherine Loader (2000). “Fast and Accurate Computation of
-    ///    Binomial Probabilities”.
+    /// 1. Catherine Loader. “Fast and Accurate Computation of Binomial
+    ///    Probabilities.” 2000.
     fn pdf(&self, x: Self::Value) -> f64 {
         use std::f64::consts::PI;
 
@@ -275,8 +275,8 @@ impl Distribution for Binomial {
             const S3: f64 = 1. / 1680.;
             const S4: f64 = 1. / 1188.;
 
-            // Precomputed values for the first n = 0, ⋯, 15
-            // see Loader (2000) pp. 7.
+            // Precomputed values for the first n = 0, …, 15 see
+            // [Loader, 2000, pp. 7].
             const SFE: [f64; 16] = [
                 0.000000000000000000e+00, 8.106146679532725822e-02,
                 4.134069595540929409e-02, 2.767792568499833915e-02,
@@ -291,19 +291,18 @@ impl Distribution for Binomial {
             let nn = n * n;
             if n < 16. { SFE[n as usize] }
             // For all other n, use decreasing number of terms in the
-            // Stirling-De Moivre series expansion, see in Loader (2000)
-            // eq. 4.
+            // Stirling–De Moivre series expansion, see in
+            // [Loader, 2000, eq. 4].
             else if n > 500. { (S0 - S1 / nn) / n }
             else if n > 80. { (S0 - (S1 - S2 / nn) / nn) / n }
             else if n > 35. { (S0 - (S1 - (S2 - S3 / nn) / nn) / nn) / n }
             else { (S0 - (S1 - (S2 - (S3 - S4 / nn) / nn) / nn) / nn) / n }
         }
 
-
         // Log of the deviance term: ln(np*D₀) = x ln(x/np) + np - x.
         fn ln_d0(x: f64, np: f64) -> f64 {
             if (x - np).abs() < 0.1 * (x + np) {
-                // ε = (n / np) is close to 1. Use series expansion.
+                // ε = (n / np) is close to 1. Use a series expansion.
                 let mut s = (x - np).powi(2) / (x + np);
                 let v = (x - np) / (x + np);
                 let mut ej = 2. * x * v;
