@@ -17,7 +17,7 @@ impl Uniform {
     /// Panics if `a >= b`.
     #[inline]
     pub fn new(a: f64, b: f64) -> Uniform {
-        debug_assert!(a < b, "Uniform::new() is called with a >= b");
+        should!(a < b);
         Uniform { a: a, b: b }
     }
 }
@@ -59,7 +59,7 @@ impl Distribution for Uniform {
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
-        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
+        should!(0.0 <= p && p <= 1.0);
         self.a + (self.b - self.a) * p
     }
 

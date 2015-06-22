@@ -19,7 +19,7 @@ impl Bernoulli {
     /// Panics if `p < 0` or `p > 1`.
     #[inline]
     pub fn new(p: f64) -> Bernoulli {
-        debug_assert!(0. < p && p < 1., "Bernoulli::new() is called with p < 0 or p > 1");
+        should!(0.0 < p && p < 1.0);
         let q = 1. - p;
         Bernoulli { p: p, q: q, pq: p * q }
     }
@@ -31,7 +31,7 @@ impl Bernoulli {
     /// Panics if `q < 0` or `q > 1`.
     #[inline]
     pub fn new_failprob(q: f64) -> Bernoulli {
-        debug_assert!(0. < q && q < 1., "Bernoulli::new_failprob() is called with q < 0 or q > 1");
+        should!(0.0 < q && q < 1.0);
         let p = 1. - q;
         Bernoulli { p: p, q: q, pq: p * q }
     }
@@ -86,7 +86,7 @@ impl Distribution for Bernoulli {
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> Self::Value {
-        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
+        should!(0.0 <= p && p <= 1.0);
         if p <= self.q { 0 } else { 1 }
     }
 

@@ -18,22 +18,19 @@ impl Categorical {
     /// `sum(p) != 1`.
     #[inline]
     pub fn new(p: &[f64]) -> Categorical {
-        debug_assert!({
-            fn is_prob_vec(p: &[f64]) -> bool {
-                // Check if p is a probability vector.
-                let mut sum = 0.;
-                for &p in p.iter() {
-                    if p < 0. || p > 1. {
-                        return false;
-                    }
-                    sum += p;
+        should!(is_probability_vector(p), {
+            let mut in_unit = true;
+            let mut sum = 0.0;
+            for &p in p.iter() {
+                if p < 0.0 || p > 1.0 {
+                    in_unit = false;
+                    break;
                 }
-                (sum - 1.).abs() <= 1e-12
+                sum += p;
             }
-            is_prob_vec(&p)
-        }, "Categorical::new() is called with p not a probabilty vector");
-
-        Categorical { k: p.len(),  p: p.to_vec() }
+            in_unit && (sum - 1.0).abs() <= 1e-12
+        });
+        Categorical { k: p.len(), p: p.to_vec() }
     }
 }
 
@@ -115,7 +112,7 @@ impl Distribution for Categorical {
     }
 
     fn inv_cdf(&self, p: f64) -> Self::Value {
-        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
+        should!(0.0 <= p && p <= 1.0);
         if p == 0. {
             // return the first non-zero index
             return self.p.iter().enumerate().find(|&(_, &p)| p > 0.).unwrap().0;

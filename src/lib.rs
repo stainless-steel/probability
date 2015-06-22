@@ -9,6 +9,15 @@ extern crate special;
 pub use rand::Rng as Generator;
 pub use rand::thread_rng as generator;
 
+macro_rules! should(
+    ($requirement:expr) => ({
+        debug_assert!($requirement, stringify!($requirement))
+    });
+    ($requirement:expr, $code:expr) => ({
+        debug_assert!($code, stringify!($requirement))
+    });
+);
+
 pub mod distributions;
 
 /// A probability distribution.

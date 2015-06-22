@@ -24,8 +24,7 @@ impl Binomial {
     /// Panics if `p < 0` or `p > 1` or if n < 0.
     #[inline]
     pub fn new(n: i32, p: f64) -> Binomial {
-        debug_assert!(n >= 0, "Binomial::new() is called with n < 0");
-        debug_assert!(0. < p && p < 1., "Binomial::new() is called with p < 0 or p > 1");
+        should!(0.0 < p && p < 1.0 && n >= 0);
         let q = 1.0 - p;
         let np = n as f64 * p;
         let nq = n as f64 * q;
@@ -49,8 +48,7 @@ impl Binomial {
     /// Panics if `q < 0` or `q > 1` or if n < 0.
     #[inline]
     pub fn new_failprob(n: i32, q: f64) -> Binomial {
-        debug_assert!(n >= 0, "Binomial::new() is called with n < 0");
-        debug_assert!(0. < q && q < 1., "Binomial::new() is called with q < 0 or p > 1");
+        should!(n >= 0 && 0.0 < q && q < 1.0);
         let p = 1.0 - q;
         let np = n as f64 * p;
         let nq = n as f64 * q;
@@ -157,7 +155,7 @@ impl Distribution for Binomial {
     ///    cumulative distribution function where the number of trials is
     ///    large.” Oxford University, 2013.
     fn inv_cdf(&self, p: f64) -> Self::Value {
-        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
+        should!(0.0 <= p && p <= 1.0);
 
         // Rename p as to not be confused with self.p.
         let u = p;

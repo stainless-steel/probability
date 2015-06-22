@@ -29,7 +29,7 @@ impl Beta {
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
         use special::ln_beta;
-        debug_assert!(a < b, "Beta::new() is called with a >= b");
+        should!(a < b);
         Beta {
             alpha: alpha,
             beta: beta,
@@ -118,7 +118,7 @@ impl Distribution for Beta {
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
         use special::inv_inc_beta;
-        debug_assert!(0.0 <= p && p <= 1.0, "inv_cdf is called with p outside of [0, 1]");
+        should!(0.0 <= p && p <= 1.0);
         self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta, self.ln_beta)
     }
 
