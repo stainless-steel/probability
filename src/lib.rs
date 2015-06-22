@@ -65,7 +65,7 @@ pub trait Distribution {
 
 /// A means of drawing a sequence of samples from a probability distribution.
 ///
-/// # Example
+/// ## Example
 ///
 /// ```
 /// use probability::generator;
