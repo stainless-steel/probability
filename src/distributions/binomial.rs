@@ -19,9 +19,9 @@ impl Binomial {
     /// Create a binomial distribution with `n` trails and success probability
     /// `p`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
-    /// Panics if `p < 0` or `p > 1` or if n < 0.
+    /// Panics if `n < 0` or `p < 0` or `p > 1`.
     #[inline]
     pub fn new(n: i32, p: f64) -> Binomial {
         should!(0.0 < p && p < 1.0 && n >= 0);
@@ -43,9 +43,9 @@ impl Binomial {
     ///
     /// This constructor should be used instead of `new` when `q` is very small.
     ///
-    /// # Panics
+    /// ## Panics
     ///
-    /// Panics if `q < 0` or `q > 1` or if n < 0.
+    /// Panics if `n < 0` or `q < 0` or `q > 1`.
     #[inline]
     pub fn new_failprob(n: i32, q: f64) -> Binomial {
         should!(n >= 0 && 0.0 < q && q < 1.0);

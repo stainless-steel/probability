@@ -23,7 +23,7 @@ impl Beta {
     /// Create a beta distribution with the shape parameters `alpha` and `beta`
     /// on the interval `[a, b]`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
     /// Panics if `a >= b`.
     #[inline]

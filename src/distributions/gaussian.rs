@@ -17,7 +17,7 @@ impl Gaussian {
     /// Create a Gaussian distribution with the mean value `mu` and standard
     /// deviation `sigma`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
     /// Panics if `sigma < 0`.
     #[inline]

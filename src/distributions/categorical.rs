@@ -12,10 +12,9 @@ pub struct Categorical {
 impl Categorical {
     /// Create a categorical distribution with success probability `p`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
-    /// Panics if `p[i] < 0` or `p[i] > 1` for any `i = 0..k`, or if
-    /// `sum(p) != 1`.
+    /// Panics if `p[i] < 0` or `p[i] > 1` or `sum(p) != 1`.
     #[inline]
     pub fn new(p: &[f64]) -> Categorical {
         should!(is_probability_vector(p), {

@@ -12,7 +12,7 @@ pub struct Uniform {
 impl Uniform {
     /// Create a uniform distribution on the interval `[a, b]`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
     /// Panics if `a >= b`.
     #[inline]

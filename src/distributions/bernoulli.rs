@@ -14,7 +14,7 @@ pub struct Bernoulli {
 impl Bernoulli {
     /// Create a Bernoulli distribution with success probability `p`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
     /// Panics if `p < 0` or `p > 1`.
     #[inline]
@@ -26,7 +26,7 @@ impl Bernoulli {
 
     /// Create a Bernoulli distribution with failure probability `q`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
     /// Panics if `q < 0` or `q > 1`.
     #[inline]

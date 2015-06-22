@@ -14,7 +14,7 @@ pub struct Exponential {
 impl Exponential {
     /// Create an exponential distribution with rate `lambda`.
     ///
-    /// # Panics
+    /// ## Panics
     ///
     /// Panics if `lambda <= 0`.
     #[inline]
