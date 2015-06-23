@@ -196,57 +196,6 @@ impl Distribution for Binomial {
 
         let n = self.n as f64;
 
-        // strilerr(n) = ln(n!) - ln(sqrt(2π * n) * (n/e)^n)
-        fn stirlerr(n: f64) -> f64 {
-            const S0: f64 = 1.0 / 12.0;
-            const S1: f64 = 1.0 / 360.0;
-            const S2: f64 = 1.0 / 1260.0;
-            const S3: f64 = 1.0 / 1680.0;
-            const S4: f64 = 1.0 / 1188.0;
-
-            // Precomputed values for the first n = 0, …, 15 see
-            // [Loader, 2000, pp. 7].
-            const SFE: [f64; 16] = [
-                0.000000000000000000e+00, 8.106146679532725822e-02,
-                4.134069595540929409e-02, 2.767792568499833915e-02,
-                2.079067210376509311e-02, 1.664469118982119216e-02,
-                1.387612882307074800e-02, 1.189670994589177010e-02,
-                1.041126526197209650e-02, 9.255462182712732918e-03,
-                8.330563433362871256e-03, 7.757367548795184079e-03,
-                6.942840107209529866e-03, 6.408994188004207068e-03,
-                5.951370112758847736e-03, 5.554733551962801371e-03,
-                ];
-
-            let nn = n * n;
-            if n < 16.0 { SFE[n as usize] }
-            // For all other n, use decreasing number of terms in the
-            // Stirling–De Moivre series expansion, see in
-            // [Loader, 2000, eq. 4].
-            else if n > 500.0 { (S0 - S1 / nn) / n }
-            else if n > 80.0 { (S0 - (S1 - S2 / nn) / nn) / n }
-            else if n > 35.0 { (S0 - (S1 - (S2 - S3 / nn) / nn) / nn) / n }
-            else { (S0 - (S1 - (S2 - (S3 - S4 / nn) / nn) / nn) / nn) / n }
-        }
-
-        // Log of the deviance term: ln(np*D₀) = x ln(x/np) + np - x.
-        fn ln_d0(x: f64, np: f64) -> f64 {
-            if (x - np).abs() < 0.1 * (x + np) {
-                // ε = (n / np) is close to 1. Use a series expansion.
-                let mut s = (x - np).powi(2) / (x + np);
-                let v = (x - np) / (x + np);
-                let mut ej = 2.0 * x * v;
-                let mut j = 1;
-                loop {
-                    ej *= v * v;
-                    let s1 = s + ej / (2 * j + 1) as f64;
-                    if s1 == s { return s1; }
-                    s = s1;
-                    j += 1;
-                }
-            }
-            x * (x / np).ln() + np - x
-        }
-
         if self.p == 0.0 {
             if x == 0 { 1.0 } else { 0.0 }
         } else if self.p == 1.0 {
@@ -310,6 +259,64 @@ fn approximate_by_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
         4.0 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (23.0 * p2 - 23.0 * p + 2.0) / 25515.0
     )
     // + O(v.powf(-2.5)), with probabilty of 1 - 2e-9
+}
+
+// strilerr(n) = ln(n!) - ln(sqrt(2π * n) * (n / e)^n)
+fn stirlerr(n: f64) -> f64 {
+    const S0: f64 = 1.0 / 12.0;
+    const S1: f64 = 1.0 / 360.0;
+    const S2: f64 = 1.0 / 1260.0;
+    const S3: f64 = 1.0 / 1680.0;
+    const S4: f64 = 1.0 / 1188.0;
+
+    // See [Loader, 2000, pp. 7].
+    const SFE: [f64; 16] = [
+        0.000000000000000000e+00, 8.106146679532725822e-02,
+        4.134069595540929409e-02, 2.767792568499833915e-02,
+        2.079067210376509311e-02, 1.664469118982119216e-02,
+        1.387612882307074800e-02, 1.189670994589177010e-02,
+        1.041126526197209650e-02, 9.255462182712732918e-03,
+        8.330563433362871256e-03, 7.757367548795184079e-03,
+        6.942840107209529866e-03, 6.408994188004207068e-03,
+        5.951370112758847736e-03, 5.554733551962801371e-03,
+    ];
+
+    if n < 16.0 {
+        return SFE[n as usize];
+    }
+
+    // See [Loader, 2000, eq. 4].
+    let nn = n * n;
+    if n > 500.0 {
+        (S0 - S1 / nn) / n
+    } else if n > 80.0 {
+        (S0 - (S1 - S2 / nn) / nn) / n
+    } else if n > 35.0 {
+        (S0 - (S1 - (S2 - S3 / nn) / nn) / nn) / n
+    } else {
+        (S0 - (S1 - (S2 - (S3 - S4 / nn) / nn) / nn) / nn) / n
+    }
+}
+
+// ln(np * D₀) = x * ln(x / np) + np - x
+fn ln_d0(x: f64, np: f64) -> f64 {
+    if (x - np).abs() < 0.1 * (x + np) {
+        // ε = (n / np) is close to 1. Use a series expansion.
+        let mut s = (x - np).powi(2) / (x + np);
+        let v = (x - np) / (x + np);
+        let mut ej = 2.0 * x * v;
+        let mut j = 1;
+        loop {
+            ej *= v * v;
+            let s1 = s + ej / (2 * j + 1) as f64;
+            if s1 == s {
+                return s1;
+            }
+            s = s1;
+            j += 1;
+        }
+    }
+    x * (x / np).ln() + np - x
 }
 
 #[cfg(test)]
