@@ -4,7 +4,7 @@ use {Distribution, Generator};
 #[derive(Clone, Copy)]
 pub struct Binomial {
     /// The number of trials.
-    pub n: i32,
+    pub n: usize,
     /// The success probability.
     pub p: f64,
     /// The probability of failure.
@@ -19,10 +19,10 @@ impl Binomial {
     /// Create a binomial distribution with `n` trails and success probability
     /// `p`.
     ///
-    /// It should hold that `n >= 0`, `p >= 0`, and `p <= 1`.
+    /// It should hold that `p >= 0` and `p <= 1`.
     #[inline]
-    pub fn new(n: i32, p: f64) -> Binomial {
-        should!(0.0 < p && p < 1.0 && n >= 0);
+    pub fn new(n: usize, p: f64) -> Binomial {
+        should!(0.0 < p && p < 1.0);
         let q = 1.0 - p;
         let np = n as f64 * p;
         let nq = n as f64 * q;
@@ -32,11 +32,11 @@ impl Binomial {
     /// Create a binomial distribution with `n` trails and failure probability
     /// `q`.
     ///
-    /// It should hold that if `n > 0` or `q >= 0` or `q <= 1`. This constructor
-    /// is preferable when `q` is very small.
+    /// It should hold that if `q >= 0` or `q <= 1`. This constructor is
+    /// preferable when `q` is very small.
     #[inline]
-    pub fn new_failprob(n: i32, q: f64) -> Binomial {
-        should!(n >= 0 && 0.0 < q && q < 1.0);
+    pub fn new_failprob(n: usize, q: f64) -> Binomial {
+        should!(0.0 < q && q < 1.0);
         let p = 1.0 - q;
         let np = n as f64 * p;
         let nq = n as f64 * q;
@@ -45,7 +45,7 @@ impl Binomial {
 }
 
 impl Distribution for Binomial {
-    type Value = i32;
+    type Value = usize;
 
     #[inline] fn mean(&self) -> f64 { self.np }
     #[inline] fn var(&self) -> f64 { self.npq }
@@ -69,16 +69,16 @@ impl Distribution for Binomial {
         }
     }
 
-    fn modes(&self) -> Vec<Self::Value> {
+    fn modes(&self) -> Vec<usize> {
         let r = self.p * (self.n + 1) as f64;
         if r == 0.0 {
             vec![0]
         } else if self.p == 1.0 {
             vec![self.n]
         } else if r.fract() != 0.0 {
-            vec![r.floor() as Self::Value]
+            vec![r.floor() as usize]
         } else {
-            let r_int = r as Self::Value;
+            let r_int = r as usize;
             vec![r_int - 1, r_int]
         }
     }
@@ -99,7 +99,7 @@ impl Distribution for Binomial {
     ///
     /// The implementation is based on the incomplete beta function.
     #[inline]
-    fn cdf(&self, x: Self::Value) -> f64 {
+    fn cdf(&self, x: usize) -> f64 {
         use special::{inc_beta, ln_beta};
         if x == 0 {
             return self.pdf(0);
@@ -122,7 +122,7 @@ impl Distribution for Binomial {
     /// 1. Sean Moorhead, “Efficient Evaluation of the Inverse Binomial
     ///    Cumulative Distribution Function Where the Number of Trials Is
     ///    Large,” Oxford University, 2013.
-    fn inv_cdf(&self, p: f64) -> Self::Value {
+    fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
 
         // Rename p as to not be confused with self.p.
@@ -131,7 +131,7 @@ impl Distribution for Binomial {
         macro_rules! buttom_up_sum(
             ($prod_term: expr) => ({
                 let mut k = 1;
-                let mut a = self.q.powi(self.n);
+                let mut a = self.q.powi(self.n as i32);
                 let mut sum = a - u;
                 while sum < 0.0 {
                     a *= $prod_term(k);
@@ -144,7 +144,7 @@ impl Distribution for Binomial {
         macro_rules! top_down_sum(
             ($prod_term: expr) => ({
                 let mut k = 1;
-                let mut a = self.p.powi(self.n);
+                let mut a = self.p.powi(self.n as i32);
                 let mut sum = (1.0 - u) - a;
                 while sum >= 0.0 {
                     a *= $prod_term(k);
@@ -201,7 +201,7 @@ impl Distribution for Binomial {
         } else if self.npq > 80. {
             // Use normal asymptotic approximation.
             let approx = normal_approx(self.p, self.np, self.npq);
-            approx.floor() as Self::Value
+            approx.floor() as usize
         } else {
             // Use the Newton method starting at the mode.
             let modes = self.modes();
@@ -209,7 +209,7 @@ impl Distribution for Binomial {
             loop {
                 let next = (u - self.cdf(m)) / self.pdf(m);
                 if -0.5 < next && next < 0.5 { break; }
-                m += next.round() as Self::Value;
+                m += next.round() as usize;
             }
             m
         }
@@ -224,7 +224,7 @@ impl Distribution for Binomial {
     ///
     /// 1. Catherine Loader, “Fast and Accurate Computation of Binomial
     ///    Probabilities,” 2000.
-    fn pdf(&self, x: Self::Value) -> f64 {
+    fn pdf(&self, x: usize) -> f64 {
         use std::f64::consts::PI;
 
         let n = self.n as f64;
@@ -298,7 +298,7 @@ impl Distribution for Binomial {
     }
 
     #[inline(always)]
-    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
+    fn sample<G: Generator>(&self, generator: &mut G) -> usize {
         self.inv_cdf(generator.next::<f64>())
     }
 }
