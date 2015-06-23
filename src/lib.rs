@@ -55,17 +55,16 @@ pub trait Distribution {
     /// Compute the differential entropy (measured in nats).
     fn entropy(&self) -> f64;
 
-    /// Compute the cumulative distribution function (CDF) at point `x`.
+    /// Compute the cumulative distribution function.
     fn cdf(&self, x: Self::Value) -> f64;
 
-    /// Compute the inverse of the cumulative distribution function at
-    /// probability `p`.
+    /// Compute the inverse of the cumulative distribution function.
     fn inv_cdf(&self, p: f64) -> Self::Value;
 
-    /// Compute the probability density function (PDF) at point `x`.
+    /// Compute the probability density function.
     fn pdf(&self, x: Self::Value) -> f64;
 
-    /// Draw a random sample.
+    /// Draw a sample.
     fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value;
 }
 

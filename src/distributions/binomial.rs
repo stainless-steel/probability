@@ -41,7 +41,7 @@ impl Binomial {
     /// Create a binomial distribution with `n` trails and failure probability
     /// `q`.
     ///
-    /// This constructor should be used instead of `new` when `q` is very small.
+    /// This constructor is preferable when `q` is very small.
     ///
     /// ## Panics
     ///
@@ -93,7 +93,7 @@ impl Distribution for Binomial {
                   (self.np.round() - self.np).abs() <= self.p.min(self.q) {
             self.np.round()
         } else if self.n > 1000 && self.npq > 80. {
-            // Normal approximation.
+            // Use a normal approximation.
             self.np.floor()
         } else {
             self.inv_cdf(0.5) as f64
@@ -121,12 +121,11 @@ impl Distribution for Binomial {
             // Use a normal approximation.
             0.5 * ((2. * PI * self.npq).ln() + 1.)
         } else {
-            // Calculate directly.
             -(0..self.n+1).fold(0., |sum, i| sum + self.pdf(i) * self.pdf(i).ln())
         }
     }
 
-    /// Compute the cumulative distribution function (CDF) at point `x`.
+    /// Compute the cumulative distribution function.
     ///
     /// The implementation is based on the incomplete beta function.
     #[inline]
@@ -142,8 +141,7 @@ impl Distribution for Binomial {
         inc_beta(self.q, n_m_x, x_p_1, ln_beta(n_m_x, x_p_1))
     }
 
-    /// Compute the inverse of the cumulative distribution function at
-    /// probability `p`.
+    /// Compute the inverse of the cumulative distribution function.
     ///
     /// For small `n`, a simple summation is utilized. For large `n` and large
     /// variances, a normal asymptotic approximation is used. Otherwise, the
@@ -151,9 +149,9 @@ impl Distribution for Binomial {
     ///
     /// ## References
     ///
-    /// 1. Sean Moorhead. “Efficient evaluation of the inverse Binomial
-    ///    cumulative distribution function where the number of trials is
-    ///    large.” Oxford University, 2013.
+    /// 1. Sean Moorhead, “Efficient Evaluation of the Inverse Binomial
+    ///    Cumulative Distribution Function Where the Number of Trials Is
+    ///    Large,” Oxford University, 2013.
     fn inv_cdf(&self, p: f64) -> Self::Value {
         should!(0.0 <= p && p <= 1.0);
 
@@ -251,15 +249,15 @@ impl Distribution for Binomial {
         }
     }
 
-    /// Compute the probability density function (PDF) at point `x`.
+    /// Compute the probability density function.
     ///
     /// For large `n`, a saddle-point expansion is used for more accurate
     /// computation.
     ///
     /// ## References
     ///
-    /// 1. Catherine Loader. “Fast and Accurate Computation of Binomial
-    ///    Probabilities.” 2000.
+    /// 1. Catherine Loader, “Fast and Accurate Computation of Binomial
+    ///    Probabilities,” 2000.
     fn pdf(&self, x: Self::Value) -> f64 {
         use std::f64::consts::PI;
 

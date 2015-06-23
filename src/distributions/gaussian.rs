@@ -10,8 +10,8 @@ pub struct Gaussian {
 }
 
 impl Gaussian {
-    /// Create a Gaussian distribution with the mean value `mu` and standard
-    /// deviation `sigma`.
+    /// Create a Gaussian distribution with mean `mu` and standard deviation
+    /// `sigma`.
     ///
     /// ## Panics
     ///
@@ -60,12 +60,15 @@ impl Distribution for Gaussian {
         (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
     }
 
-    /// Compute the inverse of the cumulative distribution function at
-    /// probability `p`.
+    /// Compute the inverse of the cumulative distribution function.
     ///
-    /// The code is based on a [C implementation][1] by John Burkardt.
+    /// ## References
     ///
-    /// [1]: http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
+    /// 1. Michael Wichura, “The Percentage Points of the Normal Distribution,”
+    ///    Algorithm AS 241, Applied Statistics, vol. 37, no. 3, pp. 477–484,
+    ///    1988.
+    ///
+    /// 2. http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     fn inv_cdf(&self, p: f64) -> f64 {
         use std::f64::{INFINITY, NEG_INFINITY};
 
@@ -153,6 +156,15 @@ impl Distribution for Gaussian {
         (-(x - self.mu).powi(2) / (2.0*var)).exp() / ((2.0*PI).sqrt() * self.sigma)
     }
 
+    /// Draw a sample.
+    ///
+    /// ## References
+    ///
+    /// 1. George Marsaglia and Wai Wan Tsang, “The Ziggurat Method for
+    ///    Generating Random Variables,” Journal of Statistical Software,
+    ///    vol. 5, no. 8, 2000.
+    ///
+    /// 2. Dirk Eddelbuettel, “Ziggurat Revisited,” 2014.
     #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
         self.sigma * sample(generator) + self.mu
@@ -160,10 +172,6 @@ impl Distribution for Gaussian {
 }
 
 /// Draw a sample from the standard Gaussian distribution.
-///
-/// ## References
-///
-/// 1. Dirk Eddelbuettel, “Ziggurat Revisited,” 2014.
 pub fn sample<G: Generator>(generator: &mut G) -> f64 {
     loop {
         let u = generator.next::<u64>();

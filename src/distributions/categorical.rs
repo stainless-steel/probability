@@ -255,10 +255,7 @@ mod tests {
     #[test]
     fn sample() {
         let mut generator = ::generator();
-
-        // Discrete Uniform(1, 2)
         let sum = Sampler(&new!([0.0, 0.5, 0.5]), &mut generator).take(100).fold(0, |a, b| a + b);
-
         assert!(100 <= sum && sum <= 200);
     }
 }

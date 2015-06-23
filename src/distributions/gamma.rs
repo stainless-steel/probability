@@ -22,6 +22,13 @@ impl Gamma {
         Gamma { alpha: alpha, beta: beta }
     }
 
+    /// Draw a sample.
+    ///
+    /// ## References
+    ///
+    /// 1. George Marsaglia and Wai Wan Tsang, “A Simple Method for Generating
+    ///    Gamma Variables,” ACM Transactions on Mathematical Software, vol. 26,
+    ///    no. 3, 2000, pp. 363–372.
     #[inline(always)]
     pub fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
         sample(self.alpha, self.beta, generator)
@@ -29,12 +36,6 @@ impl Gamma {
 }
 
 /// Draw a sample from a Gamma distribution.
-///
-/// ## References
-///
-/// 1. George Marsaglia and Wai Wan Tsang, “A Simple Method for Generating Gamma
-///    Variables,” ACM Transactions on Mathematical Software, vol. 26, no. 3,
-///    2000, pp. 363–372.
 pub fn sample<G: Generator>(alpha: f64, beta: f64, generator: &mut G) -> f64 {
     use distributions::gaussian;
 
