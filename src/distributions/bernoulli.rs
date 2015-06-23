@@ -14,26 +14,21 @@ pub struct Bernoulli {
 impl Bernoulli {
     /// Create a Bernoulli distribution with success probability `p`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `p < 0` or `p > 1`.
+    /// It should hold that `p > 0` and `p < 1`.
     #[inline]
     pub fn new(p: f64) -> Bernoulli {
-        should!(0.0 < p && p < 1.0);
-        let q = 1. - p;
-        Bernoulli { p: p, q: q, pq: p * q }
+        should!(p > 0.0 && p < 1.0);
+        Bernoulli { p: p, q: 1.0 - p, pq: p * (1.0 - p) }
     }
 
     /// Create a Bernoulli distribution with failure probability `q`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `q < 0` or `q > 1`.
+    /// It should hold `q > 0` and  `q < 1`. The constructor is preferable when
+    /// `q` is very small.
     #[inline]
     pub fn new_failprob(q: f64) -> Bernoulli {
-        should!(0.0 < q && q < 1.0);
-        let p = 1. - q;
-        Bernoulli { p: p, q: q, pq: p * q }
+        should!(q > 0.0 && q < 1.0);
+        Bernoulli { p: 1.0 - q, q: q, pq: (1.0 - q) * q }
     }
 }
 
@@ -112,30 +107,6 @@ mod tests {
         (failure $q:expr) => (Bernoulli::new_failprob($q));
         ($p:expr) => (Bernoulli::new($p));
     );
-
-    #[test]
-    #[should_panic]
-    fn invalid_success_probability_1() {
-        new!(2.0);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_success_probability_2() {
-        new!(-0.5);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_failure_probability_1() {
-        new!(failure 2.0);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_failure_probability_2() {
-        new!(failure -0.5);
-    }
 
     #[test]
     fn new_failprob() {

@@ -10,12 +10,10 @@ pub struct Gamma {
 }
 
 impl Gamma {
-    /// Create a gamma distribution with the shape and rate parameters `alpha`
-    /// and `beta`, respectively.
+    /// Create a gamma distribution with shape parameter `alpha` and rate
+    /// parameter `beta`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `alpha <= 0` or `beta <= 0`.
+    /// It should hold that `alpha > 0` and `beta > 0`.
     #[inline]
     pub fn new(alpha: f64, beta: f64) -> Gamma {
         should!(alpha > 0.0 && beta > 0.0);

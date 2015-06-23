@@ -346,36 +346,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
-    fn invalid_trails() {
-        new!(-2, 0.5);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_success_probability_1() {
-        new!(16, 2.0);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_success_probability_2() {
-        new!(16, -0.5);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_failure_probability_1() {
-        new!(fail 16, 2.0);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_failure_probability_2() {
-        new!(fail 16, -0.5);
-    }
-
-    #[test]
     fn new() {
         new!(16, 0.5);
     }

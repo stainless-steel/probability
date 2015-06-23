@@ -19,13 +19,11 @@ impl Beta {
     /// Create a beta distribution with shape parameters `alpha` and `beta`
     /// on interval `[a, b]`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `a >= b`.
+    /// It should hold that `alpha > 0`, `beta > 0`, and `a < b`.
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
         use special::ln_beta;
-        should!(a < b);
+        should!(alpha > 0.0 && beta > 0.0 && a < b);
         Beta { alpha: alpha, beta: beta, a: a, b: b, ln_beta: ln_beta(alpha, beta) }
     }
 }
@@ -137,12 +135,6 @@ mod tests {
     macro_rules! new(
         ($alpha:expr, $beta:expr, $a:expr, $b:expr) => (Beta::new($alpha, $beta, $a, $b));
     );
-
-    #[test]
-    #[should_panic]
-    fn invalid_support() {
-        new!(2.0, 3.0, 2.0, -1.0);
-    }
 
     #[test]
     fn mean() {

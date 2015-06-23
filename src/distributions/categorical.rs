@@ -12,9 +12,7 @@ pub struct Categorical {
 impl Categorical {
     /// Create a categorical distribution with success probability `p`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `p[i] < 0` or `p[i] > 1` or `sum(p) != 1`.
+    /// It should hold that `p[i] >= 0`, `p[i] <= 1`, and `sum(p) == 1`.
     #[inline]
     pub fn new(p: &[f64]) -> Categorical {
         should!(is_probability_vector(p), {
@@ -146,24 +144,6 @@ mod tests {
         (equal $k:expr) => { Categorical::new(&[1./$k as f64; $k]) };
         ($p:expr) => { Categorical::new(&$p); }
     );
-
-    #[test]
-    #[should_panic]
-    fn invalid_prob_vec_1() {
-        new!([0.6, 0.6, 0.6]);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_prob_vec_2() {
-        new!([0.6, 0.6, 0.6, -0.2]);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_prob_vec_3() {
-        new!([1.2, -0.2]);
-    }
 
     #[test]
     fn mean() {

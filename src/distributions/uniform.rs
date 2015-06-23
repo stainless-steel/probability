@@ -12,9 +12,7 @@ pub struct Uniform {
 impl Uniform {
     /// Create a uniform distribution on interval `[a, b]`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `a >= b`.
+    /// It should hold that `a < b`.
     #[inline]
     pub fn new(a: f64, b: f64) -> Uniform {
         should!(a < b);
@@ -86,12 +84,6 @@ mod tests {
     macro_rules! new(
         ($a:expr, $b:expr) => (Uniform::new($a, $b));
     );
-
-    #[test]
-    #[should_panic]
-    fn invalid_support() {
-        new!(2.0, -1.0);
-    }
 
     #[test]
     fn mean() {

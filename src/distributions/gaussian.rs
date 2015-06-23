@@ -13,12 +13,10 @@ impl Gaussian {
     /// Create a Gaussian distribution with mean `mu` and standard deviation
     /// `sigma`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `sigma < 0`.
+    /// It should hold that `sigma > 0`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Gaussian {
-        should!(sigma >= 0.0);
+        should!(sigma > 0.0);
         Gaussian { mu: mu, sigma: sigma }
     }
 }
@@ -319,12 +317,6 @@ mod tests {
     macro_rules! new(
         ($mu:expr, $sigma:expr) => (Gaussian::new($mu, $sigma));
     );
-
-    #[test]
-    #[should_panic]
-    fn invalid_sigma() {
-        new!(1.0, -1.0);
-    }
 
     #[test]
     fn mean() {

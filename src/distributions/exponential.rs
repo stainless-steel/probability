@@ -10,9 +10,7 @@ pub struct Exponential {
 impl Exponential {
     /// Create an exponential distribution with rate `lambda`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `lambda <= 0`.
+    /// It should hold that `lambda > 0`.
     #[inline]
     pub fn new(lambda: f64) -> Exponential {
         should!(lambda > 0.0);
@@ -83,12 +81,6 @@ mod tests {
     macro_rules! new(
         ($lambda:expr) => (Exponential::new($lambda));
     );
-
-    #[test]
-    #[should_panic]
-    fn negative_lambda() {
-        new!(-1.0);
-    }
 
     #[test]
     fn mean() {
@@ -178,17 +170,5 @@ mod tests {
         ];
 
         assert::close(&p.iter().map(|&p| exponential.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_quantile_1() {
-        new!(2.0).inv_cdf(1.2);
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_quantile_2() {
-        new!(2.0).inv_cdf(-0.2);
     }
 }
