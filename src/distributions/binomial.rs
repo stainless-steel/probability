@@ -155,39 +155,6 @@ impl Distribution for Binomial {
             });
         );
 
-        // See [Moorhead, 2013, pp. 7].
-        let normal_approx = |p: f64, np: f64, v:f64| -> f64 {
-            use distributions::gaussian;
-            let w = gaussian::inv_cdf(u);
-            let w2 = w * w;
-            let w3 = w2 * w;
-            let w4 = w3 * w;
-            let w5 = w4 * w;
-            let w6 = w5 * w;
-            let sd = v.sqrt();
-            let sd_em1 = sd.recip();
-            let sd_em2 = v.recip();
-            let sd_em3 = sd_em1 * sd_em2;
-            let sd_em4 = sd_em2 * sd_em2;
-            let p2 = p * p;
-            let p3 = p2 * p;
-            let p4 = p2 * p2;
-
-            (np + sd * w + ((p + 1.0) / 3.0 - (2.0 * p - 1.0) * w2 / 6.0)
-             + sd_em1 * w3 * (2.0 * p2 - 2.0 * p - 1.0) / 72.0
-             - w * (7.0 * p2 - 7.0 * p + 1.0) / 36.0
-             + sd_em2 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (3.0 * w4 + 7.0 * w2 - 16.0 / 1620.0)
-             + sd_em3 * (w5 * (4.0 * p4 - 8.0 * p3 - 48.0 * p2 + 52.0 * p - 23.0) / 17280.0
-                         + w3 * (256.0 * p4 - 512.0 * p3 - 147.0 * p2 + 403.0 * p - 137.0) / 38880.0
-                         - w * (433.0 * p4 - 866.0 * p3 - 921.0 * p2 + 1354.0 * p - 671.0) / 38880.0)
-             + sd_em4 * (w6 * (2.0 * p - 1.0) * (p2 - p + 1.0) * (p2 - p + 19.0) / 34020.0
-                         + w4 * (2.0 * p - 1.0) * (9.0 * p4 - 18.0 * p3 - 35.0 * p2 + 44.0 * p - 25.0) / 15120.0
-                         + w2 * ((2.0 * p - 1.0) * (923.0 * p4 - 1846.0 * p3 + 5271.0 * p2 - 4348.0 * p + 5189.0)
-                                 / 408240.0)
-                         - 4.0 * ((2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (23.0 * p2 - 23.0 * p + 2.0)
-                                 / 25515.0))) // + O(v.powf(-2.5)), with probabilty of 1 - 2e-9.
-        };
-
         if u == 1.0 {
             self.n
         } else if u == 0.0 {
@@ -200,9 +167,8 @@ impl Distribution for Binomial {
                 top_down_sum!(|k| self.q / self.p * ((self.n - k + 1) as f64 / k as f64))
             }
         } else if self.npq > 80.0 {
-            // Use normal asymptotic approximation.
-            let approx = normal_approx(self.p, self.np, self.npq);
-            approx.floor() as usize
+            // Use a normal approximation.
+            approximate_by_normal(self.p, self.np, self.npq, u).floor() as usize
         } else {
             // Use the Newton method starting at the mode.
             let modes = self.modes();
@@ -302,6 +268,48 @@ impl Distribution for Binomial {
     fn sample<G: Generator>(&self, generator: &mut G) -> usize {
         self.inv_cdf(generator.next::<f64>())
     }
+}
+
+// See [Moorhead, 2013, pp. 7].
+fn approximate_by_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
+    use distributions::gaussian;
+
+    let w = gaussian::inv_cdf(u);
+    let w2 = w * w;
+    let w3 = w2 * w;
+    let w4 = w3 * w;
+    let w5 = w4 * w;
+    let w6 = w5 * w;
+    let sd = v.sqrt();
+    let sd_em1 = sd.recip();
+    let sd_em2 = v.recip();
+    let sd_em3 = sd_em1 * sd_em2;
+    let sd_em4 = sd_em2 * sd_em2;
+    let p2 = p * p;
+    let p3 = p2 * p;
+    let p4 = p2 * p2;
+
+    np +
+    sd * w +
+    (p + 1.0) / 3.0 -
+    (2.0 * p - 1.0) * w2 / 6.0 +
+    sd_em1 * w3 * (2.0 * p2 - 2.0 * p - 1.0) / 72.0 -
+    w * (7.0 * p2 - 7.0 * p + 1.0) / 36.0 +
+    sd_em2 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (3.0 * w4 + 7.0 * w2 - 16.0 / 1620.0) +
+    sd_em3 * (
+        w5 * (4.0 * p4 - 8.0 * p3 - 48.0 * p2 + 52.0 * p - 23.0) / 17280.0 +
+        w3 * (256.0 * p4 - 512.0 * p3 - 147.0 * p2 + 403.0 * p - 137.0) / 38880.0 -
+        w * (433.0 * p4 - 866.0 * p3 - 921.0 * p2 + 1354.0 * p - 671.0) / 38880.0
+    ) +
+    sd_em4 * (
+        w6 * (2.0 * p - 1.0) * (p2 - p + 1.0) * (p2 - p + 19.0) / 34020.0 +
+        w4 * (2.0 * p - 1.0) * (9.0 * p4 - 18.0 * p3 - 35.0 * p2 + 44.0 * p - 25.0) / 15120.0 +
+        w2 * (2.0 * p - 1.0) * (
+                923.0 * p4 - 1846.0 * p3 + 5271.0 * p2 - 4348.0 * p + 5189.0
+        ) / 408240.0 -
+        4.0 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (23.0 * p2 - 23.0 * p + 2.0) / 25515.0
+    )
+    // + O(v.powf(-2.5)), with probabilty of 1 - 2e-9
 }
 
 #[cfg(test)]
