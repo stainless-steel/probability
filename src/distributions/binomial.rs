@@ -331,7 +331,7 @@ impl Distribution for Binomial {
 
     #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
-        self.inv_cdf(generator.uniform())
+        self.inv_cdf(generator.next::<f64>())
     }
 }
 

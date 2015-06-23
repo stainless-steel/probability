@@ -1,5 +1,4 @@
 use {Distribution, Generator};
-use distributions::Gamma;
 
 /// A beta distribution.
 #[derive(Clone, Copy)]
@@ -14,8 +13,6 @@ pub struct Beta {
     pub b: f64,
 
     ln_beta: f64,
-    gamma_alpha: Gamma,
-    gamma_beta: Gamma,
 }
 
 impl Beta {
@@ -29,15 +26,7 @@ impl Beta {
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
         use special::ln_beta;
         should!(a < b);
-        Beta {
-            alpha: alpha,
-            beta: beta,
-            a: a,
-            b: b,
-            ln_beta: ln_beta(alpha, beta),
-            gamma_alpha: Gamma::new(alpha, 1.0),
-            gamma_beta: Gamma::new(beta, 1.0),
-        }
+        Beta { alpha: alpha, beta: beta, a: a, b: b, ln_beta: ln_beta(alpha, beta) }
     }
 }
 
@@ -131,8 +120,9 @@ impl Distribution for Beta {
 
     #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        let x = self.gamma_alpha.sample(generator);
-        let y = self.gamma_beta.sample(generator);
+        use distributions::gamma;
+        let x = gamma::sample(self.alpha, 1.0, generator);
+        let y = gamma::sample(self.beta, 1.0, generator);
         self.a + (self.b - self.a) * x / (x + y)
     }
 }

@@ -9,9 +9,8 @@ extern crate special;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub use random::Generator;
-use random::generators::Ziggurat;
-use random::sources::XorshiftPlus;
+pub use random::{Generator, Quantity};
+use random::XorshiftPlus;
 
 macro_rules! should(
     ($requirement:expr) => ({
@@ -24,12 +23,8 @@ macro_rules! should(
 
 pub mod distributions;
 
-/// The default generator, which is a combo of Xorshift+ [1] and Ziggurat [2].
-///
-/// 1. https://en.wikipedia.org/wiki/Xorshift#Xorshift.2B
-///
-/// 2. https://en.wikipedia.org/wiki/Ziggurat_algorithm
-pub struct DefaultGenerator(Rc<RefCell<Ziggurat<XorshiftPlus>>>);
+/// The default generator, which is the Xorshift+ algorithm.
+pub struct DefaultGenerator(Rc<RefCell<XorshiftPlus>>);
 
 /// A probability distribution.
 pub trait Distribution {
@@ -75,31 +70,31 @@ pub trait Distribution {
 }
 
 impl DefaultGenerator {
-    /// Reseed the generator.
+    /// Seed the generator.
     #[inline(always)]
     pub fn seed(&mut self, seed: [u64; 2]) -> &mut DefaultGenerator {
-        *self.0.borrow_mut() = Ziggurat::new(XorshiftPlus::new(seed));
+        *self.0.borrow_mut() = XorshiftPlus::new(seed);
         self
     }
 }
 
 impl Generator for DefaultGenerator {
     #[inline(always)]
-    fn gaussian(&mut self) -> f64 {
-        self.0.borrow_mut().gaussian()
+    fn read(&mut self) -> u64 {
+        self.0.borrow_mut().read()
     }
 
     #[inline(always)]
-    fn uniform(&mut self) -> f64 {
-        self.0.borrow_mut().uniform()
+    fn next<T: Quantity>(&mut self) -> T {
+        self.0.borrow_mut().next()
     }
 }
 
 /// Return the default generator.
 #[inline(always)]
 pub fn generator() -> DefaultGenerator {
-    thread_local!(static DEFAULT_GENERATOR: Rc<RefCell<Ziggurat<XorshiftPlus>>> = {
-        Rc::new(RefCell::new(Ziggurat::new(XorshiftPlus::new([42, 69]))))
+    thread_local!(static DEFAULT_GENERATOR: Rc<RefCell<XorshiftPlus>> = {
+        Rc::new(RefCell::new(XorshiftPlus::new([42, 69])))
     });
     DefaultGenerator(DEFAULT_GENERATOR.with(|generator| generator.clone()))
 }

@@ -97,7 +97,7 @@ impl Distribution for Bernoulli {
 
     #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
-        if generator.uniform() < self.q { 0 } else { 1 }
+        if generator.next::<f64>() < self.q { 0 } else { 1 }
     }
 }
 

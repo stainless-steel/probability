@@ -28,21 +28,25 @@ impl Gamma {
     }
 }
 
-// References:
-//
-// [1] G. Marsaglia and W. Tsang, “A Simple Method for generating gamma
-//     variables,” ACM Transactions on Mathematical Software, vol. 26, no. 3,
-//     2000, pp. 363–372.
-fn sample<G: Generator>(alpha: f64, beta: f64, generator: &mut G) -> f64 {
+/// Draw a sample from a Gamma distribution.
+///
+/// ## References
+///
+/// 1. George Marsaglia and Wai Wan Tsang, “A Simple Method for Generating Gamma
+///    Variables,” ACM Transactions on Mathematical Software, vol. 26, no. 3,
+///    2000, pp. 363–372.
+pub fn sample<G: Generator>(alpha: f64, beta: f64, generator: &mut G) -> f64 {
+    use distributions::gaussian;
+
     if alpha < 1.0 {
-        return sample(1.0 + alpha, beta, generator) * generator.uniform().powf(1.0 / alpha);
+        return sample(1.0 + alpha, beta, generator) * generator.next::<f64>().powf(1.0 / alpha);
     }
 
     let d = alpha - 1.0 / 3.0;
     let c = (1.0 / 3.0) / d.sqrt();
 
     loop {
-        let mut x = generator.gaussian();
+        let mut x = gaussian::sample(generator);
         let mut v = 1.0 + c * x;
         if v <= 0.0 {
             continue;
@@ -52,7 +56,7 @@ fn sample<G: Generator>(alpha: f64, beta: f64, generator: &mut G) -> f64 {
         v = v * v * v;
 
         loop {
-            let u = generator.uniform();
+            let u = generator.next::<f64>();
             if u == 0.0 {
                 continue;
             }

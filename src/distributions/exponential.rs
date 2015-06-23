@@ -68,7 +68,7 @@ impl Distribution for Exponential {
 
     #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        -generator.uniform().ln() / self.lambda
+        -generator.next::<f64>().ln() / self.lambda
     }
 }
 
