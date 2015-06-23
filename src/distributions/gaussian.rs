@@ -47,7 +47,7 @@ impl Distribution for Gaussian {
 
     #[inline]
     fn entropy(&self) -> f64 {
-        use std::f64::consts::{ E, PI };
+        use std::f64::consts::{E, PI};
         0.5 * (2.0 * PI * E * self.var()).ln()
     }
 
@@ -75,8 +75,7 @@ impl Distribution for Gaussian {
     #[inline]
     fn pdf(&self, x: f64) -> f64 {
         use std::f64::consts::PI;
-        let var = self.sigma.powi(2);
-        (-(x - self.mu).powi(2) / (2.0*var)).exp() / ((2.0*PI).sqrt() * self.sigma)
+        (-(x - self.mu).powi(2) / (2.0 * self.var())).exp() / ((2.0 * PI).sqrt() * self.sigma)
     }
 
     /// Draw a sample.

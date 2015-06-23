@@ -23,7 +23,7 @@ impl Bernoulli {
 
     /// Create a Bernoulli distribution with failure probability `q`.
     ///
-    /// It should hold `q > 0` and  `q < 1`. The constructor is preferable when
+    /// It should hold `q > 0` and `q < 1`. The constructor is preferable when
     /// `q` is very small.
     #[inline]
     pub fn new_failprob(q: f64) -> Bernoulli {

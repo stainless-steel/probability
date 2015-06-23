@@ -47,7 +47,7 @@ impl Distribution for Beta {
     #[inline]
     fn skewness(&self) -> f64 {
         let (a, b) = (self.alpha, self.beta);
-        (2.0 * (b - a) * (a + b + 1.0).sqrt()) /  ((a + b + 2.0) * (a * b).sqrt())
+        (2.0 * (b - a) * (a + b + 1.0).sqrt()) / ((a + b + 2.0) * (a * b).sqrt())
     }
 
     #[inline]
