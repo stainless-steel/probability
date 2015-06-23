@@ -80,7 +80,7 @@ impl Distribution for Categorical {
         unreachable!()
     }
 
-    fn modes(&self) -> Vec<Self::Value> {
+    fn modes(&self) -> Vec<usize> {
         let mut m = Vec::new();
         let mut max = 0.;
         for (i, &p) in self.p.iter().enumerate() {
@@ -101,14 +101,14 @@ impl Distribution for Categorical {
     }
 
     #[inline]
-    fn cdf(&self, x: Self::Value) -> f64 {
+    fn cdf(&self, x: usize) -> f64 {
         if x >= self.k - 1 { 1. }
         else {
             self.p.iter().take(x + 1).fold(0., |a, b| a + b)
         }
     }
 
-    fn inv_cdf(&self, p: f64) -> Self::Value {
+    fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
         if p == 0. {
             // return the first non-zero index
@@ -125,12 +125,12 @@ impl Distribution for Categorical {
     }
 
     #[inline]
-    fn pdf(&self, x: Self::Value) -> f64 {
+    fn pdf(&self, x: usize) -> f64 {
         self.p[x]
     }
 
     #[inline(always)]
-    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
+    fn sample<G: Generator>(&self, generator: &mut G) -> usize {
         self.inv_cdf(generator.next::<f64>())
     }
 }

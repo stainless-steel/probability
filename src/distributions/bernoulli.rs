@@ -52,7 +52,7 @@ impl Distribution for Bernoulli {
     }
 
     #[inline]
-    fn modes(&self) -> Vec<Self::Value> {
+    fn modes(&self) -> Vec<u8> {
         use std::cmp::Ordering::*;
         match self.p.partial_cmp(&self.q) {
             Some(Less) => vec![0],
@@ -63,21 +63,21 @@ impl Distribution for Bernoulli {
     }
 
     #[inline] fn entropy(&self) -> f64 { -self.q * self.q.ln() - self.p * self.p.ln() }
-    #[inline] fn cdf(&self, x: Self::Value) -> f64 { if x == 0 { self.q } else { 1.0 } }
+    #[inline] fn cdf(&self, x: u8) -> f64 { if x == 0 { self.q } else { 1.0 } }
 
     #[inline]
-    fn inv_cdf(&self, p: f64) -> Self::Value {
+    fn inv_cdf(&self, p: f64) -> u8 {
         should!(0.0 <= p && p <= 1.0);
         if p <= self.q { 0 } else { 1 }
     }
 
     #[inline]
-    fn pdf(&self, x: Self::Value) -> f64 {
+    fn pdf(&self, x: u8) -> f64 {
         if x == 0 { self.q } else if x == 1 { self.p } else { 0.0 }
     }
 
     #[inline(always)]
-    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
+    fn sample<G: Generator>(&self, generator: &mut G) -> u8 {
         if generator.next::<f64>() < self.q { 0 } else { 1 }
     }
 }
