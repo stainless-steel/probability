@@ -54,14 +54,14 @@ impl Distribution for Binomial {
 
     fn median(&self) -> f64 {
         use std::f64::consts::LN_2;
-        if self.np.fract() == 0. {
+        if self.np.fract() == 0.0 {
             self.np
         } else if self.p == 0.5 && self.n % 2 != 0 {
             self.np
-        } else if self.p <= 1. - LN_2 || self.p >= LN_2 ||
+        } else if self.p <= 1.0 - LN_2 || self.p >= LN_2 ||
                   (self.np.round() - self.np).abs() <= self.p.min(self.q) {
             self.np.round()
-        } else if self.n > 1000 && self.npq > 80. {
+        } else if self.n > 1000 && self.npq > 80.0 {
             // Use a normal approximation.
             self.np.floor()
         } else {
@@ -173,23 +173,24 @@ impl Distribution for Binomial {
             let p3 = p2 * p;
             let p4 = p2 * p2;
 
-            (np + sd * w + ((p + 1.) / 3. - (2.*p - 1.) * w2 / 6.)
-             + sd_em1 * w3 * (2.*p2 - 2.*p - 1.) / 72. - w * (7.*p2 - 7.*p + 1.) / 36.
-             + sd_em2 * (2.*p - 1.) * (p + 1.) * (p - 2.) * (3.*w4 + 7.*w2 - 16. / 1620.)
-             + sd_em3 * (w5 * (4.*p4 - 8.*p3 - 48.*p2 + 52.*p - 23.) / 17280.
-                         + w3 * (256.*p4 - 512.*p3 - 147.*p2 + 403.*p - 137.) / 38880.
-                         - w * (433.*p4 - 866.*p3 - 921.*p2 + 1354.*p - 671.) / 38880.)
-             + sd_em4 * (w6 * (2.*p - 1.) * (p2 - p + 1.) * (p2 - p + 19.) / 34020.
-                         + w4 * (2.*p - 1.) * (9.*p4 - 18.*p3 - 35.*p2 + 44.*p - 25.) / 15120.
-                         + w2 * ((2.*p - 1.) * (923.*p4 - 1846.*p3 + 5271.*p2 - 4348.*p + 5189.)
-                                 / 408240.)
-                         - 4. * ((2.*p - 1.) * (p + 1.) * (p - 2.) * (23.*p2 - 23.*p + 2.)
-                                 / 25515.))) // + O(v.powf(-2.5)), with probabilty of 1 - 2e-9.
+            (np + sd * w + ((p + 1.0) / 3.0 - (2.0 * p - 1.0) * w2 / 6.0)
+             + sd_em1 * w3 * (2.0 * p2 - 2.0 * p - 1.0) / 72.0
+             - w * (7.0 * p2 - 7.0 * p + 1.0) / 36.0
+             + sd_em2 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (3.0 * w4 + 7.0 * w2 - 16.0 / 1620.0)
+             + sd_em3 * (w5 * (4.0 * p4 - 8.0 * p3 - 48.0 * p2 + 52.0 * p - 23.0) / 17280.0
+                         + w3 * (256.0 * p4 - 512.0 * p3 - 147.0 * p2 + 403.0 * p - 137.0) / 38880.0
+                         - w * (433.0 * p4 - 866.0 * p3 - 921.0 * p2 + 1354.0 * p - 671.0) / 38880.0)
+             + sd_em4 * (w6 * (2.0 * p - 1.0) * (p2 - p + 1.0) * (p2 - p + 19.0) / 34020.0
+                         + w4 * (2.0 * p - 1.0) * (9.0 * p4 - 18.0 * p3 - 35.0 * p2 + 44.0 * p - 25.0) / 15120.0
+                         + w2 * ((2.0 * p - 1.0) * (923.0 * p4 - 1846.0 * p3 + 5271.0 * p2 - 4348.0 * p + 5189.0)
+                                 / 408240.0)
+                         - 4.0 * ((2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (23.0 * p2 - 23.0 * p + 2.0)
+                                 / 25515.0))) // + O(v.powf(-2.5)), with probabilty of 1 - 2e-9.
         };
 
-        if u == 1. {
+        if u == 1.0 {
             self.n
-        } else if u == 0. {
+        } else if u == 0.0 {
             0
         } else if self.n < 1000 {
             // Find if top-down or bottom-up summation is better.
@@ -198,7 +199,7 @@ impl Distribution for Binomial {
             } else {
                 top_down_sum!(|k| self.q / self.p * ((self.n - k + 1) as f64 / k as f64))
             }
-        } else if self.npq > 80. {
+        } else if self.npq > 80.0 {
             // Use normal asymptotic approximation.
             let approx = normal_approx(self.p, self.np, self.npq);
             approx.floor() as usize
@@ -231,11 +232,11 @@ impl Distribution for Binomial {
 
         // strilerr(n) = ln(n!) - ln(sqrt(2π * n) * (n/e)^n)
         fn stirlerr(n: f64) -> f64 {
-            const S0: f64 = 1. / 12.;
-            const S1: f64 = 1. / 360.;
-            const S2: f64 = 1. / 1260.;
-            const S3: f64 = 1. / 1680.;
-            const S4: f64 = 1. / 1188.;
+            const S0: f64 = 1.0 / 12.0;
+            const S1: f64 = 1.0 / 360.0;
+            const S2: f64 = 1.0 / 1260.0;
+            const S3: f64 = 1.0 / 1680.0;
+            const S4: f64 = 1.0 / 1188.0;
 
             // Precomputed values for the first n = 0, …, 15 see
             // [Loader, 2000, pp. 7].
@@ -251,13 +252,13 @@ impl Distribution for Binomial {
                 ];
 
             let nn = n * n;
-            if n < 16. { SFE[n as usize] }
+            if n < 16.0 { SFE[n as usize] }
             // For all other n, use decreasing number of terms in the
             // Stirling–De Moivre series expansion, see in
             // [Loader, 2000, eq. 4].
-            else if n > 500. { (S0 - S1 / nn) / n }
-            else if n > 80. { (S0 - (S1 - S2 / nn) / nn) / n }
-            else if n > 35. { (S0 - (S1 - (S2 - S3 / nn) / nn) / nn) / n }
+            else if n > 500.0 { (S0 - S1 / nn) / n }
+            else if n > 80.0 { (S0 - (S1 - S2 / nn) / nn) / n }
+            else if n > 35.0 { (S0 - (S1 - (S2 - S3 / nn) / nn) / nn) / n }
             else { (S0 - (S1 - (S2 - (S3 - S4 / nn) / nn) / nn) / nn) / n }
         }
 
@@ -267,7 +268,7 @@ impl Distribution for Binomial {
                 // ε = (n / np) is close to 1. Use a series expansion.
                 let mut s = (x - np).powi(2) / (x + np);
                 let v = (x - np) / (x + np);
-                let mut ej = 2. * x * v;
+                let mut ej = 2.0 * x * v;
                 let mut j = 1;
                 loop {
                     ej *= v * v;
@@ -293,7 +294,7 @@ impl Distribution for Binomial {
             let n_m_x = n - x;
             let ln_c = stirlerr(n) - stirlerr(x) - stirlerr(n_m_x)
                 - ln_d0(x, self.np) - ln_d0(n_m_x, self.nq);
-            ln_c.exp() * (n / (2. * PI * x * (n_m_x))).sqrt()
+            ln_c.exp() * (n / (2.0 * PI * x * (n_m_x))).sqrt()
         }
     }
 
@@ -342,10 +343,10 @@ mod tests {
 
     #[test]
     fn median() {
-        assert_eq!(new!(16, 0.25).median(), 4.);
+        assert_eq!(new!(16, 0.25).median(), 4.0);
         assert_eq!(new!(3, 0.5).median(), 1.5);
-        assert_eq!(new!(1000, 0.015).median(), 15.);
-        assert_eq!(new!(39, 0.1).median(), 4.);
+        assert_eq!(new!(1000, 0.015).median(), 15.0);
+        assert_eq!(new!(39, 0.1).median(), 4.0);
     }
 
     #[test]
@@ -371,7 +372,7 @@ mod tests {
             3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
         ];
 
-        assert::close(&(0..9).map(|i| binom.pdf(2*i)).collect::<Vec<_>>(), &probs, 1e-14);
+        assert::close(&(0..9).map(|i| binom.pdf(2 * i)).collect::<Vec<_>>(), &probs, 1e-14);
     }
 
     #[test]
@@ -382,7 +383,7 @@ mod tests {
             1.644465373829007e-03, 2.712995628826319e-02, 1.896545726340262e-01,
             5.950128899421541e-01, 9.365235602017492e-01, 1.000000000000000e+00,
         ];
-        assert::close(&(0..9).map(|i| binom.cdf(2*i)).collect::<Vec<_>>(), &probs, 1e-14);
+        assert::close(&(0..9).map(|i| binom.cdf(2 * i)).collect::<Vec<_>>(), &probs, 1e-14);
     }
 
     #[test]
