@@ -35,17 +35,10 @@ impl Bernoulli {
 impl Distribution for Bernoulli {
     type Value = u8;
 
-    #[inline]
-    fn mean(&self) -> f64 { self.p }
-
-    #[inline]
-    fn var(&self) -> f64 { self.pq }
-
-    #[inline]
-    fn skewness(&self) -> f64 { (1. - 2. * self.p) / (self.pq).sqrt() }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 { (1. - 6. * self.pq) / (self.pq) }
+    #[inline] fn mean(&self) -> f64 { self.p }
+    #[inline] fn var(&self) -> f64 { self.pq }
+    #[inline] fn skewness(&self) -> f64 { (1.0 - 2.0 * self.p) / (self.pq).sqrt() }
+    #[inline] fn kurtosis(&self) -> f64 { (1.0 - 6.0 * self.pq) / (self.pq) }
 
     #[inline]
     fn median(&self) -> f64 {
@@ -69,15 +62,8 @@ impl Distribution for Bernoulli {
         }
     }
 
-    #[inline]
-    fn entropy(&self) -> f64 {
-        -self.q * self.q.ln() - self.p * self.p.ln()
-    }
-
-    #[inline]
-    fn cdf(&self, x: Self::Value) -> f64 {
-        if x == 0 { self.q } else { 1. }
-    }
+    #[inline] fn entropy(&self) -> f64 { -self.q * self.q.ln() - self.p * self.p.ln() }
+    #[inline] fn cdf(&self, x: Self::Value) -> f64 { if x == 0 { self.q } else { 1.0 } }
 
     #[inline]
     fn inv_cdf(&self, p: f64) -> Self::Value {
@@ -157,19 +143,13 @@ mod tests {
     #[test]
     fn pdf() {
         let bernoulli = new!(0.25);
-        let x = 0..3;
-        let p = vec![0.75, 0.25, 0.0];
-
-        assert_eq!(&x.map(|x| bernoulli.pdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&(0..3).map(|x| bernoulli.pdf(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
     }
 
     #[test]
     fn cdf() {
         let bernoulli = new!(0.25);
-        let x = 0..3;
-        let p = vec![0.75, 1., 1.];
-
-        assert_eq!(&x.map(|x| bernoulli.cdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&(0..3).map(|x| bernoulli.cdf(x)).collect::<Vec<_>>(), &[0.75, 1.0, 1.0]);
     }
 
     #[test]
@@ -177,7 +157,6 @@ mod tests {
         let bernoulli = new!(0.25);
         let p = vec![0.0, 0.25, 0.5, 0.75, 0.75000000001, 1.0];
         let x = vec![0, 0, 0, 0, 1, 1];
-
         assert_eq!(&p.iter().map(|&p| bernoulli.inv_cdf(p)).collect::<Vec<_>>(), &x);
     }
 

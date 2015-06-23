@@ -110,10 +110,10 @@ impl Distribution for Beta {
 
     #[inline]
     fn pdf(&self, x: f64) -> f64 {
-        let norm = self.b - self.a;
-        let x = (x - self.a) / (self.b - self.a);
+        let range = self.b - self.a;
+        let x = (x - self.a) / range;
         ((self.alpha - 1.0) * x.ln() + (self.beta - 1.0) * (1.0 - x).ln() -
-            self.ln_beta).exp() / norm
+            self.ln_beta).exp() / range
     }
 
     #[inline(always)]

@@ -21,20 +21,11 @@ impl Exponential {
 impl Distribution for Exponential {
     type Value = f64;
 
-    #[inline]
-    fn mean(&self) -> f64 { self.lambda.recip() }
-
-    #[inline]
-    fn var(&self) -> f64 { self.lambda.powi(-2) }
-
-    #[inline]
-    fn sd(&self) -> f64 { self.lambda.recip() }
-
-    #[inline]
-    fn skewness(&self) -> f64 { 2.0 }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 { 6.0 }
+    #[inline] fn mean(&self) -> f64 { self.lambda.recip() }
+    #[inline] fn var(&self) -> f64 { self.lambda.powi(-2) }
+    #[inline] fn sd(&self) -> f64 { self.lambda.recip() }
+    #[inline] fn skewness(&self) -> f64 { 2.0 }
+    #[inline] fn kurtosis(&self) -> f64 { 6.0 }
 
     #[inline]
     fn median(&self) -> f64 {
@@ -42,11 +33,8 @@ impl Distribution for Exponential {
         self.lambda.recip() * LN_2
     }
 
-    #[inline]
-    fn modes(&self) -> Vec<f64> { vec![0.0] }
-
-    #[inline]
-    fn entropy(&self) -> f64 { 1.0 - self.lambda.ln() }
+    #[inline] fn modes(&self) -> Vec<f64> { vec![0.0] }
+    #[inline] fn entropy(&self) -> f64 { 1.0 - self.lambda.ln() }
 
     #[inline]
     fn pdf(&self, x: f64) -> f64 {

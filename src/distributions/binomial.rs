@@ -19,70 +19,39 @@ impl Binomial {
     /// Create a binomial distribution with `n` trails and success probability
     /// `p`.
     ///
-    /// ## Panics
-    ///
-    /// Panics if `n < 0` or `p < 0` or `p > 1`.
+    /// It should hold that `n >= 0`, `p >= 0`, and `p <= 1`.
     #[inline]
     pub fn new(n: i32, p: f64) -> Binomial {
         should!(0.0 < p && p < 1.0 && n >= 0);
         let q = 1.0 - p;
         let np = n as f64 * p;
         let nq = n as f64 * q;
-        Binomial {
-            n: n,
-            p: p,
-            q: q,
-            np: np,
-            nq: nq,
-            npq: np * q,
-        }
+        Binomial { n: n, p: p, q: q, np: np, nq: nq, npq: np * q }
     }
 
     /// Create a binomial distribution with `n` trails and failure probability
     /// `q`.
     ///
-    /// This constructor is preferable when `q` is very small.
-    ///
-    /// ## Panics
-    ///
-    /// Panics if `n < 0` or `q < 0` or `q > 1`.
+    /// It should hold that if `n > 0` or `q >= 0` or `q <= 1`. This constructor
+    /// is preferable when `q` is very small.
     #[inline]
     pub fn new_failprob(n: i32, q: f64) -> Binomial {
         should!(n >= 0 && 0.0 < q && q < 1.0);
         let p = 1.0 - q;
         let np = n as f64 * p;
         let nq = n as f64 * q;
-        Binomial {
-            n: n,
-            p: p,
-            q: q,
-            np: np,
-            nq: nq,
-            npq: np * q,
-        }
+        Binomial { n: n, p: p, q: q, np: np, nq: nq, npq: np * q }
     }
 }
 
 impl Distribution for Binomial {
     type Value = i32;
 
-    #[inline]
-    fn mean(&self) -> f64 { self.np }
+    #[inline] fn mean(&self) -> f64 { self.np }
+    #[inline] fn var(&self) -> f64 { self.npq }
+    #[inline] fn skewness(&self) -> f64 { (1.0 - 2.0 * self.p) / (self.npq).sqrt() }
+    #[inline] fn kurtosis(&self) -> f64 { (1.0 - 6.0 * self.p * self.q) / (self.npq) }
 
-    #[inline]
-    fn var(&self) -> f64 { self.npq }
-
-    #[inline]
-    fn skewness(&self) -> f64 {
-        (1. - 2. * self.p) / (self.npq).sqrt()
-    }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 {
-        (1. - 6. * self.p * self.q) / (self.npq)
-    }
-
-    #[inline]
     fn median(&self) -> f64 {
         use std::f64::consts::LN_2;
         if self.np.fract() == 0. {
@@ -100,14 +69,15 @@ impl Distribution for Binomial {
         }
     }
 
-    #[inline]
     fn modes(&self) -> Vec<Self::Value> {
         let r = self.p * (self.n + 1) as f64;
-
-        if r == 0. { vec![0] }
-        else if self.p == 1. { vec![self.n] }
-        else if r.fract() != 0. { vec![r.floor() as Self::Value] }
-        else {
+        if r == 0.0 {
+            vec![0]
+        } else if self.p == 1.0 {
+            vec![self.n]
+        } else if r.fract() != 0.0 {
+            vec![r.floor() as Self::Value]
+        } else {
             let r_int = r as Self::Value;
             vec![r_int - 1, r_int]
         }
@@ -117,11 +87,11 @@ impl Distribution for Binomial {
     fn entropy(&self) -> f64 {
         use std::f64::consts::PI;
 
-        if self.n > 10000 && self.npq > 80. {
+        if self.n > 10000 && self.npq > 80.0 {
             // Use a normal approximation.
-            0.5 * ((2. * PI * self.npq).ln() + 1.)
+            0.5 * ((2.0 * PI * self.npq).ln() + 1.0)
         } else {
-            -(0..self.n+1).fold(0., |sum, i| sum + self.pdf(i) * self.pdf(i).ln())
+            -(0..self.n+1).fold(0.0, |sum, i| sum + self.pdf(i) * self.pdf(i).ln())
         }
     }
 
@@ -134,7 +104,7 @@ impl Distribution for Binomial {
         if x == 0 {
             return self.pdf(0);
         } else if x >= self.n {
-            return 1.
+            return 1.0;
         }
         let n_m_x = (self.n - x) as f64;
         let x_p_1 = (x + 1) as f64;
@@ -158,41 +128,37 @@ impl Distribution for Binomial {
         // Rename p as to not be confused with self.p.
         let u = p;
 
-        macro_rules! buttom_up_sum {
-            ($prod_term: expr) => {
-                {
-                    let mut k = 1;
-                    let mut a = self.q.powi(self.n);
-                    let mut sum = a - u;
-                    while sum < 0. {
-                        a *= $prod_term(k);
-                        sum += a;
-                        k += 1;
-                    }
-                    k - 1
+        macro_rules! buttom_up_sum(
+            ($prod_term: expr) => ({
+                let mut k = 1;
+                let mut a = self.q.powi(self.n);
+                let mut sum = a - u;
+                while sum < 0.0 {
+                    a *= $prod_term(k);
+                    sum += a;
+                    k += 1;
                 }
-            };
-        }
-        macro_rules! top_down_sum {
-            ($prod_term: expr) => {
-                {
-                    let mut k = 1;
-                    let mut a = self.p.powi(self.n);
-                    let mut sum = (1. - u) - a;
-                    while sum >= 0. {
-                        a *= $prod_term(k);
-                        sum -= a;
-                        k += 1;
-                    }
-                    self.n - k + 1
+                k - 1
+            });
+        );
+        macro_rules! top_down_sum(
+            ($prod_term: expr) => ({
+                let mut k = 1;
+                let mut a = self.p.powi(self.n);
+                let mut sum = (1.0 - u) - a;
+                while sum >= 0.0 {
+                    a *= $prod_term(k);
+                    sum -= a;
+                    k += 1;
                 }
-            };
-        }
+                self.n - k + 1
+            });
+        );
 
         // See [Moorhead, 2013, pp. 7].
         let normal_approx = |p: f64, np: f64, v:f64| -> f64 {
-            use distributions::Gaussian;
-            let w = Gaussian::new(0., 1.).inv_cdf(u);
+            use distributions::gaussian;
+            let w = gaussian::inv_cdf(u);
             let w2 = w * w;
             let w3 = w2 * w;
             let w4 = w3 * w;
@@ -263,7 +229,7 @@ impl Distribution for Binomial {
 
         let n = self.n as f64;
 
-        // strilerr(n) =  ln(n!) - ln(sqrt(2π * n) * (n/e)^n)
+        // strilerr(n) = ln(n!) - ln(sqrt(2π * n) * (n/e)^n)
         fn stirlerr(n: f64) -> f64 {
             const S0: f64 = 1. / 12.;
             const S1: f64 = 1. / 360.;
@@ -314,11 +280,15 @@ impl Distribution for Binomial {
             x * (x / np).ln() + np - x
         }
 
-        if self.p == 0. { if x == 0 { 1. } else { 0. } }
-        else if self.p == 1. { if x == self.n { 1. } else { 0. } }
-        else if x == 0 { (n * self.q.ln()).exp() }
-        else if x == self.n { (n * self.p.ln()).exp() }
-        else {
+        if self.p == 0.0 {
+            if x == 0 { 1.0 } else { 0.0 }
+        } else if self.p == 1.0 {
+            if x == self.n { 1.0 } else { 0.0 }
+        } else if x == 0 {
+            (n * self.q.ln()).exp()
+        } else if x == self.n {
+            (n * self.p.ln()).exp()
+        } else {
             let x = x as f64;
             let n_m_x = n - x;
             let ln_c = stirlerr(n) - stirlerr(x) - stirlerr(n_m_x)
@@ -346,19 +316,29 @@ mod tests {
     }
 
     #[test]
-    fn mean() { assert_eq!(new!(16, 0.25).mean(), 4.); }
+    fn mean() {
+        assert_eq!(new!(16, 0.25).mean(), 4.0);
+    }
 
     #[test]
-    fn var() { assert_eq!(new!(16, 0.25).var(), 3.); }
+    fn var() {
+        assert_eq!(new!(16, 0.25).var(), 3.0);
+    }
 
     #[test]
-    fn sd() { assert_eq!(new!(16, 0.5).sd(), 2.); }
+    fn sd() {
+        assert_eq!(new!(16, 0.5).sd(), 2.0);
+    }
 
     #[test]
-    fn skewness() { assert_eq!(new!(16, 0.25).skewness(), 0.2886751345948129); }
+    fn skewness() {
+        assert_eq!(new!(16, 0.25).skewness(), 0.2886751345948129);
+    }
 
     #[test]
-    fn kurtosis() { assert_eq!(new!(16, 0.25).kurtosis(), -0.041666666666666664); }
+    fn kurtosis() {
+        assert_eq!(new!(16, 0.25).kurtosis(), -0.041666666666666664);
+    }
 
     #[test]
     fn median() {
