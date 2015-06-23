@@ -72,9 +72,9 @@ impl Distribution for Uniform {
         }
     }
 
-    #[inline]
+    #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        self.a + (self.b - self.a) * generator.gen::<f64>()
+        self.a + (self.b - self.a) * generator.uniform()
     }
 }
 

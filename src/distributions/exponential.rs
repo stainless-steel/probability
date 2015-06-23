@@ -1,5 +1,3 @@
-use rand::distributions::{Exp, IndependentSample};
-
 use {Distribution, Generator};
 
 /// An exponential distribution.
@@ -7,8 +5,6 @@ use {Distribution, Generator};
 pub struct Exponential {
     /// The rate parameter.
     pub lambda: f64,
-
-    sampler: Exp,
 }
 
 impl Exponential {
@@ -20,7 +16,7 @@ impl Exponential {
     #[inline]
     pub fn new(lambda: f64) -> Exponential {
         should!(lambda > 0.0);
-        Exponential { lambda: lambda, sampler: Exp::new(lambda) }
+        Exponential { lambda: lambda }
     }
 }
 
@@ -70,9 +66,9 @@ impl Distribution for Exponential {
         -(-p).ln_1p() / self.lambda
     }
 
-    #[inline]
+    #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        self.sampler.ind_sample(generator)
+        -generator.uniform().ln() / self.lambda
     }
 }
 

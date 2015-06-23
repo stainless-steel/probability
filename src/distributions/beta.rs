@@ -1,6 +1,5 @@
-use rand::distributions::{Gamma, IndependentSample};
-
 use {Distribution, Generator};
+use distributions::Gamma;
 
 /// A beta distribution.
 #[derive(Clone, Copy)]
@@ -130,10 +129,10 @@ impl Distribution for Beta {
             self.ln_beta).exp() / norm
     }
 
-    #[inline]
+    #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        let x = self.gamma_alpha.ind_sample(generator);
-        let y = self.gamma_beta.ind_sample(generator);
+        let x = self.gamma_alpha.sample(generator);
+        let y = self.gamma_beta.sample(generator);
         self.a + (self.b - self.a) * x / (x + y)
     }
 }

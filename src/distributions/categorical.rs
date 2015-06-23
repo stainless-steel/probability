@@ -131,9 +131,9 @@ impl Distribution for Categorical {
         self.p[x]
     }
 
-    #[inline]
+    #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
-        self.inv_cdf(generator.gen::<f64>())
+        self.inv_cdf(generator.uniform())
     }
 }
 

@@ -95,9 +95,9 @@ impl Distribution for Bernoulli {
         if x == 0 { self.q } else if x == 1 { self.p } else { 0.0 }
     }
 
-    #[inline]
+    #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value {
-        if generator.gen::<f64>() < self.q { 0 } else { 1 }
+        if generator.uniform() < self.q { 0 } else { 1 }
     }
 }
 

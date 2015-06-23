@@ -1,5 +1,3 @@
-use rand::distributions::{Normal, IndependentSample};
-
 use {Distribution, Generator};
 
 /// A Gaussian distribution.
@@ -9,8 +7,6 @@ pub struct Gaussian {
     pub mu: f64,
     /// The standard deviation.
     pub sigma: f64,
-
-    normal: Normal,
 }
 
 impl Gaussian {
@@ -23,11 +19,7 @@ impl Gaussian {
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Gaussian {
         should!(sigma >= 0.0);
-        Gaussian {
-            mu: mu,
-            sigma: sigma,
-            normal: Normal::new(mu, sigma),
-        }
+        Gaussian { mu: mu, sigma: sigma }
     }
 }
 
@@ -161,9 +153,9 @@ impl Distribution for Gaussian {
         (-(x - self.mu).powi(2) / (2.0*var)).exp() / ((2.0*PI).sqrt() * self.sigma)
     }
 
-    #[inline]
+    #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        self.normal.ind_sample(generator)
+        self.sigma * generator.gaussian() + self.mu
     }
 }
 
