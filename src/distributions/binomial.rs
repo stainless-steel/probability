@@ -175,8 +175,10 @@ impl Distribution for Binomial {
             let mut m = modes[0];
             loop {
                 let next = (u - self.cdf(m)) / self.pdf(m);
-                if -0.5 < next && next < 0.5 { break; }
-                m += next.round() as usize;
+                if -0.5 < next && next < 0.5 {
+                    break;
+                }
+                m = (m as isize + next.round() as isize) as usize;
             }
             m
         }
