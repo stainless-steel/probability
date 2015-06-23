@@ -1,5 +1,4 @@
-use Distribution;
-use random::Generator;
+use {Distribution, Generator};
 
 /// A beta distribution.
 #[derive(Clone, Copy)]

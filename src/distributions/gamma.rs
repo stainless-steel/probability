@@ -1,4 +1,4 @@
-use random::Generator;
+use Generator;
 
 /// A gamma distribution.
 #[derive(Clone, Copy)]
