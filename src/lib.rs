@@ -9,7 +9,7 @@ extern crate special;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub use random::{Generator, Quantity};
+use random::{Generator, Quantity};
 use random::XorshiftPlus;
 
 macro_rules! should(

@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use Distribution;
+use random::Generator;
 
 /// A binomial distribution.
 #[derive(Clone, Copy)]
