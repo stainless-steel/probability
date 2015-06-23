@@ -346,16 +346,6 @@ mod tests {
     }
 
     #[test]
-    fn new() {
-        new!(16, 0.5);
-    }
-
-    #[test]
-    fn new_failure() {
-        new!(fail 16, 1e-24);
-    }
-
-    #[test]
     fn mean() { assert_eq!(new!(16, 0.25).mean(), 4.); }
 
     #[test]

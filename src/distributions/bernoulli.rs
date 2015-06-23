@@ -109,11 +109,6 @@ mod tests {
     );
 
     #[test]
-    fn new_failprob() {
-        new!(failure 1e-24);
-    }
-
-    #[test]
     fn mean() {
         assert_eq!(new!(0.5).mean(), 0.5);
     }
