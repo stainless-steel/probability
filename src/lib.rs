@@ -1,30 +1,7 @@
 //! A probability-theory toolbox.
 
-#[cfg(test)]
-extern crate assert;
-
-extern crate random;
+#[cfg(test)] extern crate assert;
 extern crate special;
-
-use std::cell::RefCell;
-use std::rc::Rc;
-
-pub use random::{Generator, Quantity};
-use random::XorshiftPlus;
-
-macro_rules! should(
-    ($requirement:expr) => ({
-        debug_assert!($requirement, stringify!($requirement))
-    });
-    ($requirement:expr, $code:expr) => ({
-        debug_assert!($code, stringify!($requirement))
-    });
-);
-
-pub mod distributions;
-
-/// The default generator, which is the Xorshift+ algorithm.
-pub struct DefaultGenerator(Rc<RefCell<XorshiftPlus>>);
 
 /// A probability distribution.
 pub trait Distribution {
@@ -68,34 +45,36 @@ pub trait Distribution {
     fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value;
 }
 
-impl DefaultGenerator {
-    /// Seed the generator.
-    #[inline(always)]
-    pub fn seed(&mut self, seed: [u64; 2]) -> &mut DefaultGenerator {
-        *self.0.borrow_mut() = XorshiftPlus::new(seed);
-        self
-    }
-}
+/// A source of randomness.
+pub trait Generator {
+    /// Read the next chunk.
+    fn read(&mut self) -> u64;
 
-impl Generator for DefaultGenerator {
-    #[inline(always)]
-    fn read(&mut self) -> u64 {
-        self.0.borrow_mut().read()
-    }
-
+    /// Read the next quantity.
     #[inline(always)]
     fn next<T: Quantity>(&mut self) -> T {
-        self.0.borrow_mut().next()
+        Quantity::make(self.read())
     }
 }
 
-/// Return the default generator.
-#[inline(always)]
-pub fn generator() -> DefaultGenerator {
-    thread_local!(static DEFAULT_GENERATOR: Rc<RefCell<XorshiftPlus>> = {
-        Rc::new(RefCell::new(XorshiftPlus::new([42, 69])))
-    });
-    DefaultGenerator(DEFAULT_GENERATOR.with(|generator| generator.clone()))
+/// A random quantity.
+pub trait Quantity {
+    /// Make up a random quantity.
+    fn make(u64) -> Self;
+}
+
+impl Quantity for f64 {
+    #[inline(always)]
+    fn make(chunk: u64) -> f64 {
+        chunk as f64 / (std::u64::MAX as f64 + 1.0)
+    }
+}
+
+impl Quantity for u64 {
+    #[inline(always)]
+    fn make(chunk: u64) -> u64 {
+        chunk
+    }
 }
 
 /// A means of drawing a sequence of samples from a probability distribution.
@@ -122,3 +101,17 @@ impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G>
         Some(self.0.sample(self.1))
     }
 }
+
+macro_rules! should(
+    ($requirement:expr) => ({
+        debug_assert!($requirement, stringify!($requirement))
+    });
+    ($requirement:expr, $code:expr) => ({
+        debug_assert!($code, stringify!($requirement))
+    });
+);
+
+pub mod distributions;
+pub mod generators;
+
+pub use generators::default as generator;
