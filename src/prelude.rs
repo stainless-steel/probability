@@ -1,4 +1,4 @@
-//! Reexports of probability distributions and accompanying trails.
+//! Reexports of the most common traits, types, and functions.
 
 pub use distribution::Distribution;
 pub use distribution::Bernoulli;
