@@ -93,8 +93,7 @@ impl Distribution for Binomial {
         } else if r.fract() != 0.0 {
             vec![r.floor() as usize]
         } else {
-            let r_int = r as usize;
-            vec![r_int - 1, r_int]
+            vec![r as usize - 1, r as usize]
         }
     }
 
@@ -106,7 +105,7 @@ impl Distribution for Binomial {
             // Use a normal approximation.
             0.5 * ((2.0 * PI * self.npq).ln() + 1.0)
         } else {
-            -(0..self.n+1).fold(0.0, |sum, i| sum + self.pdf(i) * self.pdf(i).ln())
+            -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.pdf(i) * self.pdf(i).ln())
         }
     }
 
@@ -116,11 +115,13 @@ impl Distribution for Binomial {
     #[inline]
     fn cdf(&self, x: usize) -> f64 {
         use special::{inc_beta, ln_beta};
+
         if x == 0 {
             return self.pdf(0);
         } else if x >= self.n {
             return 1.0;
         }
+
         let n_m_x = (self.n - x) as f64;
         let x_p_1 = (x + 1) as f64;
         inc_beta(self.q, n_m_x, x_p_1, ln_beta(n_m_x, x_p_1))
@@ -211,13 +212,15 @@ impl Distribution for Binomial {
     fn pdf(&self, x: usize) -> f64 {
         use std::f64::consts::PI;
 
-        let n = self.n as f64;
-
         if self.p == 0.0 {
-            if x == 0 { 1.0 } else { 0.0 }
-        } else if self.p == 1.0 {
-            if x == self.n { 1.0 } else { 0.0 }
-        } else if x == 0 {
+            return if x == 0 { 1.0 } else { 0.0 };
+        }
+        if self.p == 1.0 {
+            return if x == self.n { 1.0 } else { 0.0 };
+        }
+
+        let n = self.n as f64;
+        if x == 0 {
             (n * self.q.ln()).exp()
         } else if x == self.n {
             (n * self.p.ln()).exp()

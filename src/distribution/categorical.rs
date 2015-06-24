@@ -83,18 +83,18 @@ impl Distribution for Categorical {
     }
 
     fn modes(&self) -> Vec<usize> {
-        let mut m = Vec::new();
+        let mut modes = Vec::new();
         let mut max = 0.0;
         for (i, &p) in self.p.iter().enumerate() {
             if p == max {
-                m.push(i);
+                modes.push(i);
             }
             if p > max {
                 max = p;
-                m = vec![i];
+                modes = vec![i];
             }
         }
-        m
+        modes
     }
 
     #[inline]
@@ -114,7 +114,6 @@ impl Distribution for Categorical {
     fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
         if p == 0.0 {
-            // return the first non-zero index
             return self.p.iter().enumerate().find(|&(_, &p)| p > 0.0).unwrap().0;
         }
         let mut sum = 0.0;
