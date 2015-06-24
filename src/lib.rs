@@ -5,7 +5,7 @@ extern crate special;
 
 macro_rules! should(
     ($requirement:expr) => ({
-        debug_assert!($requirement, stringify!($requirement))
+        debug_assert!($requirement);
     });
     ($requirement:expr, $code:expr) => ({
         debug_assert!($code, stringify!($requirement))
