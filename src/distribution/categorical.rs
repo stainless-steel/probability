@@ -138,8 +138,7 @@ impl Distribution for Categorical {
 
 #[cfg(test)]
 mod tests {
-    use Sampler;
-    use distribution::{Categorical, Distribution};
+    use prelude::*;
 
     macro_rules! new(
         (equal $k:expr) => { Categorical::new(&[1.0 / $k as f64; $k]) };
@@ -237,7 +236,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut generator = ::generator();
+        let mut generator = generator();
         let sum = Sampler(&new!([0.0, 0.5, 0.5]), &mut generator).take(100).fold(0, |a, b| a + b);
         assert!(100 <= sum && sum <= 200);
     }

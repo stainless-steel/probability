@@ -66,8 +66,7 @@ impl Distribution for Uniform {
 
 #[cfg(test)]
 mod tests {
-    use Sampler;
-    use distribution::{Distribution, Uniform};
+    use prelude::*;
 
     macro_rules! new(
         ($a:expr, $b:expr) => (Uniform::new($a, $b));
@@ -143,7 +142,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Sampler(&new!(7.0, 42.0), &mut ::generator()).take(100) {
+        for x in Sampler(&new!(7.0, 42.0), &mut generator()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

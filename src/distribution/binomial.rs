@@ -325,8 +325,7 @@ fn ln_d0(x: f64, np: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use assert;
-
-    use distribution::{Binomial, Distribution};
+    use prelude::*;
 
     macro_rules! new {
         ($n:expr, $p:expr) => (Binomial::new($n, $p));

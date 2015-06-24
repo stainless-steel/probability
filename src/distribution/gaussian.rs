@@ -298,9 +298,8 @@ const W: [f64; 128] = [
 #[cfg(test)]
 mod tests {
     use assert;
+    use prelude::*;
     use std::f64::{INFINITY, NEG_INFINITY};
-
-    use distribution::{Distribution, Gaussian};
 
     macro_rules! new(
         ($mu:expr, $sigma:expr) => (Gaussian::new($mu, $sigma));

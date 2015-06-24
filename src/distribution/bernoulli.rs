@@ -86,9 +86,7 @@ impl Distribution for Bernoulli {
 #[cfg(test)]
 mod tests {
     use assert;
-
-    use Sampler;
-    use distribution::{Distribution, Bernoulli};
+    use prelude::*;
 
     macro_rules! new(
         (failure $q:expr) => (Bernoulli::new_failprob($q));
@@ -163,6 +161,6 @@ mod tests {
 
     #[test]
     fn sample() {
-        assert!(Sampler(&new!(0.25), &mut ::generator()).take(100).fold(0, |a, b| a + b) <= 100);
+        assert!(Sampler(&new!(0.25), &mut generator()).take(100).fold(0, |a, b| a + b) <= 100);
     }
 }

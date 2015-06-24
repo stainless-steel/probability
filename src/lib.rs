@@ -14,31 +14,6 @@ macro_rules! should(
 
 pub mod distribution;
 pub mod generator;
+pub mod sampler;
 
-pub use distribution::Distribution;
-pub use generator::Generator;
-pub use generator::default as generator;
-
-/// A means of drawing a sequence of samples from a probability distribution.
-///
-/// ## Example
-///
-/// ```
-/// use probability::{Sampler, generator};
-/// use probability::distribution::Uniform;
-///
-/// let uniform = Uniform::new(0.0, 1.0);
-/// let samples = Sampler(&uniform, &mut generator()).take(10).collect::<Vec<_>>();
-/// ```
-pub struct Sampler<D, G>(pub D, pub G);
-
-impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G>
-    where D: Distribution<Value=T>, G: Generator
-{
-    type Item = T;
-
-    #[inline]
-    fn next(&mut self) -> Option<T> {
-        Some(self.0.sample(self.1))
-    }
-}
+pub mod prelude;

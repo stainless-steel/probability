@@ -1,5 +1,4 @@
-use probability::{Sampler, generator};
-use probability::distribution::{Binomial, Distribution, Uniform};
+use probability::prelude::*;
 use test;
 
 #[bench]

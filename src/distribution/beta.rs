@@ -129,9 +129,7 @@ impl Distribution for Beta {
 #[cfg(test)]
 mod tests {
     use assert;
-
-    use Sampler;
-    use distribution::{Beta, Distribution};
+    use prelude::*;
 
     macro_rules! new(
         ($alpha:expr, $beta:expr, $a:expr, $b:expr) => (Beta::new($alpha, $beta, $a, $b));
@@ -286,7 +284,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Sampler(&new!(1.0, 2.0, 7.0, 42.0), &mut ::generator()).take(100) {
+        for x in Sampler(&new!(1.0, 2.0, 7.0, 42.0), &mut generator()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

@@ -63,8 +63,7 @@ impl Distribution for Exponential {
 #[cfg(test)]
 mod tests {
     use assert;
-
-    use distribution::{Distribution, Exponential};
+    use prelude::*;
 
     macro_rules! new(
         ($lambda:expr) => (Exponential::new($lambda));
