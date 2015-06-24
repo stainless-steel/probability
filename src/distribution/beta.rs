@@ -41,37 +41,37 @@ impl Distribution for Beta {
 
     #[inline]
     fn mean(&self) -> f64 {
-        let (loc, scale) = (self.a, self.b - self.a);
-        loc + scale * self.alpha / (self.alpha + self.beta)
+        self.a + (self.b - self.a) * self.alpha / (self.alpha + self.beta)
     }
 
     #[inline]
     fn var(&self) -> f64 {
-        let scale_sq = (self.b - self.a).powi(2);
-        let s = self.alpha + self.beta;
-        scale_sq * (self.alpha * self.beta) / (s.powi(2) * (s + 1.0))
+        let scale = self.b - self.a;
+        let sum = self.alpha + self.beta;
+        scale * scale * (self.alpha * self.beta) / (sum * sum * (sum + 1.0))
     }
 
     #[inline]
     fn skewness(&self) -> f64 {
-        let (a, b) = (self.alpha, self.beta);
-        (2.0 * (b - a) * (a + b + 1.0).sqrt()) / ((a + b + 2.0) * (a * b).sqrt())
+        let sum = self.alpha + self.beta;
+        2.0 * (self.beta - self.alpha) * (sum + 1.0).sqrt() /
+            ((sum + 2.0) * (self.alpha * self.beta).sqrt())
     }
 
     #[inline]
     fn kurtosis(&self) -> f64 {
-        let (a, b) = (self.alpha, self.beta);
-        let s = a + b;
-        let p = a * b;
-        (6.0 * ((a - b).powi(2) * (s + 1.0) - p * (s + 2.0))) / (p * (s + 2.0) * (s + 3.0))
+        let sum = self.alpha + self.beta;
+        let delta = self.alpha - self.beta;
+        let product = self.alpha * self.beta;
+        6.0 * (delta * delta * (sum + 1.0) - product * (sum + 2.0)) /
+            (product * (sum + 2.0) * (sum + 3.0))
     }
 
     fn median(&self) -> f64 {
         match (self.alpha, self.beta) {
             (alpha, beta) if alpha == beta => 0.5 * (self.b - self.a),
             (alpha, beta) if alpha > 1.0 && beta > 1.0 => {
-                let (loc, scale) = (self.a, self.b - self.a);
-                loc + scale * (alpha - 1.0 / 3.0) / (alpha + beta - 2.0 / 3.0)
+                self.a + (self.b - self.a) * (alpha - 1.0 / 3.0) / (alpha + beta - 2.0 / 3.0)
             },
             _ => self.inv_cdf(0.5),
         }
@@ -86,8 +86,7 @@ impl Distribution for Beta {
             (alpha, beta) if alpha < 1.0 && beta >= 1.0 => vec![self.a],
             (alpha, beta) if alpha >= 1.0 && beta < 1.0 => vec![self.b],
             (alpha, beta) => {
-                let (loc, scale) = (self.a, self.b - self.a);
-                vec![loc + scale * (alpha - 1.0) / (alpha + beta - 2.0)]
+                vec![self.a + (self.b - self.a) * (alpha - 1.0) / (alpha + beta - 2.0)]
             },
         }
     }
@@ -95,12 +94,9 @@ impl Distribution for Beta {
     #[inline]
     fn entropy(&self) -> f64 {
         use special::digamma;
-
-        let (a, b) = (self.alpha, self.beta);
-        let scale = self.b - self.a;
-        let s = a + b;
-        scale.ln() + self.ln_beta - (a - 1.0) * digamma(a) -
-            (b - 1.0) * digamma(b) + (s - 2.0) * digamma(s)
+        let sum = self.alpha + self.beta;
+        (self.b - self.a).ln() + self.ln_beta - (self.alpha - 1.0) * digamma(self.alpha) -
+            (self.beta - 1.0) * digamma(self.beta) + (sum - 2.0) * digamma(sum)
     }
 
     #[inline]
@@ -118,10 +114,10 @@ impl Distribution for Beta {
 
     #[inline]
     fn pdf(&self, x: f64) -> f64 {
-        let range = self.b - self.a;
-        let x = (x - self.a) / range;
+        let scale = self.b - self.a;
+        let x = (x - self.a) / scale;
         ((self.alpha - 1.0) * x.ln() + (self.beta - 1.0) * (1.0 - x).ln() -
-            self.ln_beta).exp() / range
+            self.ln_beta).exp() / scale
     }
 
     #[inline]
@@ -153,7 +149,6 @@ mod tests {
         assert_eq!(new!(1.0, 1.0, 0.0, 1.0).var(), 1.0 / 12.0);
         assert_eq!(new!(2.0, 3.0, 0.0, 1.0).var(), 0.04);
         assert_eq!(new!(2.0, 3.0, -1.0, 2.0).var(), 0.36);
-        // Variance symmetry
         assert_eq!(new!(5.0, 0.05, 0.0, 1.0).var(), new!(0.05, 5.0, 0.0, 1.0).var());
     }
 
@@ -162,7 +157,6 @@ mod tests {
         assert_eq!(new!(1.0, 1.0, 0.0, 1.0).sd(), (1f64 / 12.0).sqrt());
         assert_eq!(new!(2.0, 3.0, 0.0, 1.0).sd(), 0.2);
         assert_eq!(new!(2.0, 3.0, -1.0, 2.0).sd(), 0.6);
-        // Variance symmetry
         assert_eq!(new!(5.0, 0.05, 0.0, 1.0).sd(), new!(0.05, 5.0, 0.0, 1.0).sd());
     }
 
@@ -190,29 +184,17 @@ mod tests {
     #[test]
     fn modes() {
         let betas: [Beta; 9] = [
-            new!(1.0, 1.0, -1.0, 2.0),
-            new!(0.05, 0.05, -1.0, 2.0),
-            new!(0.05, 5.0, -1.0, 2.0),
-            new!(5.0, 0.05, -1.0, 2.0),
-            new!(0.05, 3.0, -1.0, 2.0),
-            new!(2.0, 0.05, -1.0, 2.0),
-            new!(1.0, 3.0, -1.0, 2.0),
-            new!(2.0, 1.0, -1.0, 2.0),
-            new!(2.0, 3.0, -1.0, 2.0),
+            new!(1.0, 1.0, -1.0, 2.0), new!(0.05, 0.05, -1.0, 2.0), new!(0.05, 5.0, -1.0, 2.0),
+            new!(5.0, 0.05, -1.0, 2.0), new!(0.05, 3.0, -1.0, 2.0), new!(2.0, 0.05, -1.0, 2.0),
+            new!(1.0, 3.0, -1.0, 2.0), new!(2.0, 1.0, -1.0, 2.0), new!(2.0, 3.0, -1.0, 2.0),
         ];
         let modes: [Vec<f64>; 9] = [
-            vec![],
-            vec![-1.0, 2.0],
-            vec![-1.0],
-            vec![2.0],
-            vec![-1.0],
-            vec![2.0],
-            vec![-1.0],
-            vec![2.0],
-            vec![0.0],
+            vec![], vec![-1.0, 2.0], vec![-1.0],
+            vec![2.0], vec![-1.0], vec![2.0],
+            vec![-1.0], vec![2.0], vec![0.0],
         ];
-        for eq in betas.iter().map(|&d| d.modes()).zip(modes.iter()) {
-            assert_eq!(eq.0, *eq.1);
+        for (ref actual, expected) in betas.iter().map(|&beta| beta.modes()).zip(modes.iter()) {
+            assert_eq!(actual, expected);
         }
     }
 
@@ -220,10 +202,8 @@ mod tests {
     fn entropy() {
         use std::f64::consts::E;
         let betas = vec![
-            new!(1.0, 1.0, 0.0, 1.0),
-            new!(1.0, 1.0, 0.0, E),
-            new!(2.0, 3.0, 0.0, 1.0),
-            new!(2.0, 3.0, -1.0, 2.0),
+            new!(1.0, 1.0, 0.0, 1.0), new!(1.0, 1.0, 0.0, E),
+            new!(2.0, 3.0, 0.0, 1.0), new!(2.0, 3.0, -1.0, 2.0),
         ];
         assert::close(&betas.iter().map(|beta| beta.entropy()).collect::<Vec<_>>(),
                       &vec![0.0, 1.0, -0.2349066497879999, 0.8637056388801096], 1e-15);
@@ -233,8 +213,8 @@ mod tests {
     fn pdf() {
         let beta = new!(2.0, 3.0, -1.0, 2.0);
         let x = vec![
-            -1.00, -0.85, -0.70, -0.55, -0.40, -0.25, -0.10, 0.05, 0.20, 0.35, 0.50, 0.65, 0.80,
-             0.95,  1.10,  1.25,  1.40,  1.55,  1.70,  1.85, 2.00,
+            -1.0, -0.85, -0.7, -0.55, -0.4, -0.25, -0.1, 0.05, 0.2, 0.35,
+            0.5, 0.65, 0.8, 0.95, 1.1, 1.25, 1.4, 1.55, 1.7, 1.85, 2.0,
         ];
         let p = vec![
             0.000000000000000e+00, 1.805000000000000e-01, 3.240000000000001e-01,
@@ -245,7 +225,6 @@ mod tests {
             1.875000000000000e-01, 1.280000000000001e-01, 7.650000000000003e-02,
             3.600000000000000e-02, 9.499999999999982e-03, 0.000000000000000e+00
         ];
-
         assert::close(&x.iter().map(|&x| beta.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
@@ -253,8 +232,8 @@ mod tests {
     fn cdf() {
         let beta = new!(2.0, 3.0, -1.0, 2.0);
         let x = vec![
-            -1.00, -0.85, -0.70, -0.55, -0.40, -0.25, -0.10, 0.05, 0.20, 0.35, 0.50, 0.65, 0.80,
-             0.95,  1.10,  1.25,  1.40,  1.55,  1.70,  1.85, 2.00,
+            -1.0, -0.85, -0.7, -0.55, -0.4, -0.25, -0.1, 0.05, 0.2, 0.35,
+            0.5, 0.65, 0.8, 0.95, 1.1, 1.25, 1.4, 1.55, 1.7, 1.85, 2.0,
         ];
         let p = vec![
             0.000000000000000e+00, 1.401875000000000e-02, 5.230000000000002e-02,
@@ -265,7 +244,6 @@ mod tests {
             9.492187500000000e-01, 9.728000000000000e-01, 9.880187500000001e-01,
             9.963000000000000e-01, 9.995187500000000e-01, 1.000000000000000e+00,
         ];
-
         assert::close(&x.iter().map(|&x| beta.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
@@ -273,8 +251,8 @@ mod tests {
     fn inv_cdf() {
         let beta = new!(1.0, 2.0, 3.0, 4.0);
         let p = vec![
-            0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65,
-            0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00,
+            0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
+            0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0,
         ];
         let x = vec![
             3.000000000000000e+00, 3.025320565519104e+00, 3.051316701949486e+00,
@@ -285,7 +263,6 @@ mod tests {
             3.500000000000000e+00, 3.552786404500042e+00, 3.612701665379257e+00,
             3.683772233983162e+00, 3.776393202250021e+00, 4.000000000000000e+00,
         ];
-
         assert::close(&p.iter().map(|&p| beta.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 
