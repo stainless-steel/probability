@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use distribution::Distribution;
+use generator::Generator;
 
 /// An exponential distribution.
 #[derive(Clone, Copy)]
@@ -63,8 +64,7 @@ impl Distribution for Exponential {
 mod tests {
     use assert;
 
-    use Distribution;
-    use distributions::Exponential;
+    use distribution::{Distribution, Exponential};
 
     macro_rules! new(
         ($lambda:expr) => (Exponential::new($lambda));

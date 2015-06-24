@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use distribution::Distribution;
+use generator::Generator;
 
 /// A Bernoulli distribution.
 #[derive(Clone, Copy)]
@@ -86,8 +87,8 @@ impl Distribution for Bernoulli {
 mod tests {
     use assert;
 
-    use {Distribution, Sampler};
-    use distributions::Bernoulli;
+    use Sampler;
+    use distribution::{Distribution, Bernoulli};
 
     macro_rules! new(
         (failure $q:expr) => (Bernoulli::new_failprob($q));

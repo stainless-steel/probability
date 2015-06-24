@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use distribution::Distribution;
+use generator::Generator;
 
 /// A continuous uniform distribution.
 #[derive(Clone, Copy)]
@@ -65,8 +66,8 @@ impl Distribution for Uniform {
 
 #[cfg(test)]
 mod tests {
-    use {Distribution, Sampler};
-    use distributions::Uniform;
+    use Sampler;
+    use distribution::{Distribution, Uniform};
 
     macro_rules! new(
         ($a:expr, $b:expr) => (Uniform::new($a, $b));

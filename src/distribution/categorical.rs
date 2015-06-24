@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use distribution::Distribution;
+use generator::Generator;
 
 /// A categorical distribution.
 #[derive(Clone)]
@@ -137,8 +138,8 @@ impl Distribution for Categorical {
 
 #[cfg(test)]
 mod tests {
-    use {Distribution, Sampler};
-    use distributions::Categorical;
+    use Sampler;
+    use distribution::{Categorical, Distribution};
 
     macro_rules! new(
         (equal $k:expr) => { Categorical::new(&[1.0 / $k as f64; $k]) };

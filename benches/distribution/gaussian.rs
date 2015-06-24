@@ -1,5 +1,5 @@
-use probability::{Distribution, Sampler, generator};
-use probability::distributions::{Gaussian, Uniform};
+use probability::{Sampler, generator};
+use probability::distribution::{Distribution, Gaussian, Uniform};
 use test;
 
 #[bench]

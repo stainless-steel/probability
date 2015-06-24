@@ -1,4 +1,4 @@
-use Generator;
+use generator::Generator;
 
 /// A gamma distribution.
 #[derive(Clone, Copy)]
@@ -35,7 +35,7 @@ impl Gamma {
 
 /// Draw a sample from a Gamma distribution.
 pub fn sample<G: Generator>(alpha: f64, beta: f64, generator: &mut G) -> f64 {
-    use distributions::gaussian;
+    use distribution::gaussian;
 
     if alpha < 1.0 {
         return sample(1.0 + alpha, beta, generator) * generator.next::<f64>().powf(1.0 / alpha);

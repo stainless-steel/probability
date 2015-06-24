@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use distribution::Distribution;
+use generator::Generator;
 
 /// A Gaussian distribution.
 #[derive(Clone, Copy)]
@@ -299,8 +300,7 @@ mod tests {
     use assert;
     use std::f64::{INFINITY, NEG_INFINITY};
 
-    use Distribution;
-    use distributions::Gaussian;
+    use distribution::{Distribution, Gaussian};
 
     macro_rules! new(
         ($mu:expr, $sigma:expr) => (Gaussian::new($mu, $sigma));

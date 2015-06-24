@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use distribution::Distribution;
+use generator::Generator;
 
 /// A beta distribution.
 #[derive(Clone, Copy)]
@@ -118,7 +119,7 @@ impl Distribution for Beta {
 
     #[inline(always)]
     fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
-        use distributions::gamma;
+        use distribution::gamma;
         let x = gamma::sample(self.alpha, 1.0, generator);
         let y = gamma::sample(self.beta, 1.0, generator);
         self.a + (self.b - self.a) * x / (x + y)
@@ -129,8 +130,8 @@ impl Distribution for Beta {
 mod tests {
     use assert;
 
-    use {Distribution, Sampler, generator};
-    use distributions::Beta;
+    use Sampler;
+    use distribution::{Beta, Distribution};
 
     macro_rules! new(
         ($alpha:expr, $beta:expr, $a:expr, $b:expr) => (Beta::new($alpha, $beta, $a, $b));
@@ -285,7 +286,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Sampler(&new!(1.0, 2.0, 7.0, 42.0), &mut generator()).take(100) {
+        for x in Sampler(&new!(1.0, 2.0, 7.0, 42.0), &mut ::generator()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

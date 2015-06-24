@@ -3,4 +3,4 @@
 extern crate probability;
 extern crate test;
 
-mod distributions;
+mod distribution;

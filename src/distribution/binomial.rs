@@ -1,4 +1,5 @@
-use {Distribution, Generator};
+use distribution::Distribution;
+use generator::Generator;
 
 /// A binomial distribution.
 #[derive(Clone, Copy)]
@@ -223,7 +224,7 @@ impl Distribution for Binomial {
 
 // See [Moorhead, 2013, pp. 7].
 fn approximate_by_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
-    use distributions::gaussian;
+    use distribution::gaussian;
 
     let w = gaussian::inv_cdf(u);
     let w2 = w * w;
@@ -325,8 +326,7 @@ fn ln_d0(x: f64, np: f64) -> f64 {
 mod tests {
     use assert;
 
-    use Distribution;
-    use distributions::Binomial;
+    use distribution::{Binomial, Distribution};
 
     macro_rules! new {
         ($n:expr, $p:expr) => (Binomial::new($n, $p));

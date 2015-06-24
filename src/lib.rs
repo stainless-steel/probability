@@ -3,88 +3,13 @@
 #[cfg(test)] extern crate assert;
 extern crate special;
 
-/// A probability distribution.
-pub trait Distribution {
-    type Value;
-
-    /// Compute the expected value.
-    fn mean(&self) -> f64;
-
-    /// Compute the variance.
-    fn var(&self) -> f64;
-
-    /// Compute the standard deviation.
-    #[inline]
-    fn sd(&self) -> f64 { self.var().sqrt() }
-
-    /// Compute the skewness.
-    fn skewness(&self) -> f64;
-
-    /// Compute the excess kurtosis.
-    fn kurtosis(&self) -> f64;
-
-    /// Compute the median.
-    fn median(&self) -> f64;
-
-    /// Compute all the modes.
-    fn modes(&self) -> Vec<Self::Value>;
-
-    /// Compute the differential entropy (measured in nats).
-    fn entropy(&self) -> f64;
-
-    /// Compute the cumulative distribution function.
-    fn cdf(&self, x: Self::Value) -> f64;
-
-    /// Compute the inverse of the cumulative distribution function.
-    fn inv_cdf(&self, p: f64) -> Self::Value;
-
-    /// Compute the probability density function.
-    fn pdf(&self, x: Self::Value) -> f64;
-
-    /// Draw a sample.
-    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value;
-}
-
-/// A source of randomness.
-pub trait Generator {
-    /// Read the next chunk.
-    fn read(&mut self) -> u64;
-
-    /// Read the next quantity.
-    #[inline(always)]
-    fn next<T: Quantity>(&mut self) -> T {
-        Quantity::make(self.read())
-    }
-}
-
-/// A random quantity.
-pub trait Quantity {
-    /// Make up a random quantity.
-    fn make(u64) -> Self;
-}
-
-impl Quantity for f64 {
-    #[inline(always)]
-    fn make(chunk: u64) -> f64 {
-        chunk as f64 / (std::u64::MAX as f64 + 1.0)
-    }
-}
-
-impl Quantity for u64 {
-    #[inline(always)]
-    fn make(chunk: u64) -> u64 {
-        chunk
-    }
-}
-
 /// A means of drawing a sequence of samples from a probability distribution.
 ///
 /// ## Example
 ///
 /// ```
-/// use probability::generator;
-/// use probability::Sampler;
-/// use probability::distributions::Uniform;
+/// use probability::{Sampler, generator};
+/// use probability::distribution::Uniform;
 ///
 /// let uniform = Uniform::new(0.0, 1.0);
 /// let samples = Sampler(&uniform, &mut generator()).take(10).collect::<Vec<_>>();
@@ -111,7 +36,9 @@ macro_rules! should(
     });
 );
 
-pub mod distributions;
-pub mod generators;
+pub mod distribution;
+pub mod generator;
 
-pub use generators::default as generator;
+pub use distribution::Distribution;
+pub use generator::Generator;
+pub use generator::default as generator;
