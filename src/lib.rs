@@ -3,6 +3,22 @@
 #[cfg(test)] extern crate assert;
 extern crate special;
 
+macro_rules! should(
+    ($requirement:expr) => ({
+        debug_assert!($requirement, stringify!($requirement))
+    });
+    ($requirement:expr, $code:expr) => ({
+        debug_assert!($code, stringify!($requirement))
+    });
+);
+
+pub mod distribution;
+pub mod generator;
+
+pub use distribution::Distribution;
+pub use generator::Generator;
+pub use generator::default as generator;
+
 /// A means of drawing a sequence of samples from a probability distribution.
 ///
 /// ## Example
@@ -26,19 +42,3 @@ impl<'a, T, D, G> Iterator for Sampler<&'a D, &'a mut G>
         Some(self.0.sample(self.1))
     }
 }
-
-macro_rules! should(
-    ($requirement:expr) => ({
-        debug_assert!($requirement, stringify!($requirement))
-    });
-    ($requirement:expr, $code:expr) => ({
-        debug_assert!($code, stringify!($requirement))
-    });
-);
-
-pub mod distribution;
-pub mod generator;
-
-pub use distribution::Distribution;
-pub use generator::Generator;
-pub use generator::default as generator;

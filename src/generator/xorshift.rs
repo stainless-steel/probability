@@ -1,4 +1,4 @@
-use Generator;
+use generator::Generator;
 
 /// The Xorshift+ algorithm.
 ///
