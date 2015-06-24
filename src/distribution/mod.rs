@@ -14,7 +14,9 @@ pub trait Distribution {
 
     /// Compute the standard deviation.
     #[inline]
-    fn sd(&self) -> f64 { self.var().sqrt() }
+    fn sd(&self) -> f64 {
+        self.var().sqrt()
+    }
 
     /// Compute the skewness.
     fn skewness(&self) -> f64;

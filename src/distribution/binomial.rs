@@ -55,11 +55,20 @@ impl Distribution for Binomial {
 
     #[inline] fn mean(&self) -> f64 { self.np }
     #[inline] fn var(&self) -> f64 { self.npq }
-    #[inline] fn skewness(&self) -> f64 { (1.0 - 2.0 * self.p) / (self.npq).sqrt() }
-    #[inline] fn kurtosis(&self) -> f64 { (1.0 - 6.0 * self.p * self.q) / (self.npq) }
+
+    #[inline]
+    fn skewness(&self) -> f64 {
+        (1.0 - 2.0 * self.p) / (self.npq).sqrt()
+    }
+
+    #[inline]
+    fn kurtosis(&self) -> f64 {
+        (1.0 - 6.0 * self.p * self.q) / self.npq
+    }
 
     fn median(&self) -> f64 {
         use std::f64::consts::LN_2;
+
         if self.np.fract() == 0.0 {
             self.np
         } else if self.p == 0.5 && self.n % 2 != 0 {

@@ -39,18 +39,15 @@ impl Categorical {
 impl Distribution for Categorical {
     type Value = usize;
 
-    #[inline]
     fn mean(&self) -> f64 {
         self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + i as f64 * p)
     }
 
-    #[inline]
     fn var(&self) -> f64 {
         let mu = self.mean();
         self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + (i as f64 - mu).powi(2) * p)
     }
 
-    #[inline]
     fn skewness(&self) -> f64 {
         let mu = self.mean();
         let sigma2 = self.var();
@@ -107,8 +104,9 @@ impl Distribution for Categorical {
 
     #[inline]
     fn cdf(&self, x: usize) -> f64 {
-        if x >= self.k - 1 { 1.0 }
-        else {
+        if x >= self.k - 1 {
+            1.0
+        } else {
             self.p.iter().take(x + 1).fold(0.0, |a, b| a + b)
         }
     }

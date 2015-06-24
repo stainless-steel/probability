@@ -30,12 +30,21 @@ impl Distribution for Gaussian {
     type Value = f64;
 
     #[inline] fn mean(&self) -> f64 { self.mu }
-    #[inline] fn var(&self) -> f64 { self.sigma * self.sigma }
+
+    #[inline]
+    fn var(&self) -> f64 {
+        self.sigma * self.sigma
+    }
+
     #[inline] fn sd(&self) -> f64 { self.sigma }
     #[inline] fn skewness(&self) -> f64 { 0.0 }
     #[inline] fn kurtosis(&self) -> f64 { 0.0 }
     #[inline] fn median(&self) -> f64 { self.mu }
-    #[inline] fn modes(&self) -> Vec<f64> { vec![self.mu] }
+
+    #[inline]
+    fn modes(&self) -> Vec<f64> {
+        vec![self.mu]
+    }
 
     #[inline]
     fn entropy(&self) -> f64 {
