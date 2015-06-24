@@ -3,9 +3,7 @@ use generator::Generator;
 /// A gamma distribution.
 #[derive(Clone, Copy)]
 pub struct Gamma {
-    /// The shape parameter.
     alpha: f64,
-    /// The rate parameter.
     beta: f64,
 }
 
@@ -19,6 +17,12 @@ impl Gamma {
         should!(alpha > 0.0 && beta > 0.0);
         Gamma { alpha: alpha, beta: beta }
     }
+
+    /// Return the shape parameter.
+    #[inline(always)] pub fn alpha(&self) -> f64 { self.alpha }
+
+    /// Return the rate parameter.
+    #[inline(always)] pub fn beta(&self) -> f64 { self.beta }
 
     /// Draw a sample.
     ///

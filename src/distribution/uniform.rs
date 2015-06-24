@@ -4,10 +4,8 @@ use generator::Generator;
 /// A continuous uniform distribution.
 #[derive(Clone, Copy)]
 pub struct Uniform {
-    /// The left endpoint of the support.
-    pub a: f64,
-    /// The right endpoint of the support.
-    pub b: f64,
+    a: f64,
+    b: f64,
 }
 
 impl Uniform {
@@ -19,6 +17,12 @@ impl Uniform {
         should!(a < b);
         Uniform { a: a, b: b }
     }
+
+    /// Return the left endpoint of the support.
+    #[inline(always)] pub fn a(&self) -> f64 { self.a }
+
+    /// Return the right endpoint of the support.
+    #[inline(always)] pub fn b(&self) -> f64 { self.a }
 }
 
 impl Distribution for Uniform {

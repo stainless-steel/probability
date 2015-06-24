@@ -4,10 +4,8 @@ use generator::Generator;
 /// A categorical distribution.
 #[derive(Clone)]
 pub struct Categorical {
-    /// The size of the probabilty vector.
-    pub k: usize,
-    /// The probability vector.
-    pub p: Vec<f64>,
+    k: usize,
+    p: Vec<f64>,
 }
 
 impl Categorical {
@@ -30,6 +28,12 @@ impl Categorical {
         });
         Categorical { k: p.len(), p: p.to_vec() }
     }
+
+    /// Return the number of categories.
+    #[inline(always)] pub fn k(&self) -> usize { self.k }
+
+    /// Return the event probabilities.
+    #[inline(always)] pub fn p(&self) -> &[f64] { &self.p }
 }
 
 impl Distribution for Categorical {

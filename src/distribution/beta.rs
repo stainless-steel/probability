@@ -4,15 +4,10 @@ use generator::Generator;
 /// A beta distribution.
 #[derive(Clone, Copy)]
 pub struct Beta {
-    /// The first shape parameter.
-    pub alpha: f64,
-    /// The second shape parameter.
-    pub beta: f64,
-    /// The left endpoint of the support.
-    pub a: f64,
-    /// The right endpoint of the support.
-    pub b: f64,
-
+    alpha: f64,
+    beta: f64,
+    a: f64,
+    b: f64,
     ln_beta: f64,
 }
 
@@ -27,6 +22,18 @@ impl Beta {
         should!(alpha > 0.0 && beta > 0.0 && a < b);
         Beta { alpha: alpha, beta: beta, a: a, b: b, ln_beta: ln_beta(alpha, beta) }
     }
+
+    /// Return the first shape parameter.
+    #[inline(always)] pub fn alpha(&self) -> f64 { self.alpha }
+
+    /// Return the second shape parameter.
+    #[inline(always)] pub fn beta(&self) -> f64 { self.beta }
+
+    /// Return the left endpoint of the support.
+    #[inline(always)] pub fn a(&self) -> f64 { self.a }
+
+    /// Return the right endpoint of the support.
+    #[inline(always)] pub fn b(&self) -> f64 { self.b }
 }
 
 impl Distribution for Beta {

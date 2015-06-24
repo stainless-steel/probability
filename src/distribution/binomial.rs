@@ -4,13 +4,9 @@ use generator::Generator;
 /// A binomial distribution.
 #[derive(Clone, Copy)]
 pub struct Binomial {
-    /// The number of trials.
-    pub n: usize,
-    /// The success probability.
-    pub p: f64,
-    /// The probability of failure.
-    pub q: f64,
-
+    n: usize,
+    p: f64,
+    q: f64,
     np: f64,
     nq: f64,
     npq: f64,
@@ -43,6 +39,15 @@ impl Binomial {
         let nq = n as f64 * q;
         Binomial { n: n, p: p, q: q, np: np, nq: nq, npq: np * q }
     }
+
+    /// Return the number of trials.
+    #[inline(always)] pub fn n(&self) -> usize { self.n }
+
+    /// Return the success probability.
+    #[inline(always)] pub fn p(&self) -> f64 { self.p }
+
+    /// Return the failure probability.
+    #[inline(always)] pub fn q(&self) -> f64 { self.q }
 }
 
 impl Distribution for Binomial {

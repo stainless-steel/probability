@@ -4,11 +4,8 @@ use generator::Generator;
 /// A Bernoulli distribution.
 #[derive(Clone, Copy)]
 pub struct Bernoulli {
-    /// The probability of success.
-    pub p: f64,
-    /// The probability of failure.
-    pub q: f64,
-
+    p: f64,
+    q: f64,
     pq: f64,
 }
 
@@ -31,6 +28,12 @@ impl Bernoulli {
         should!(q > 0.0 && q < 1.0);
         Bernoulli { p: 1.0 - q, q: q, pq: (1.0 - q) * q }
     }
+
+    /// Return the success probability.
+    #[inline(always)] pub fn p(&self) -> f64 { self.p }
+
+    /// Return the failure probability.
+    #[inline(always)] pub fn q(&self) -> f64 { self.q }
 }
 
 impl Distribution for Bernoulli {

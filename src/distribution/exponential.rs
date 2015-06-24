@@ -4,8 +4,7 @@ use generator::Generator;
 /// An exponential distribution.
 #[derive(Clone, Copy)]
 pub struct Exponential {
-    /// The rate parameter.
-    pub lambda: f64,
+    lambda: f64,
 }
 
 impl Exponential {
@@ -17,6 +16,9 @@ impl Exponential {
         should!(lambda > 0.0);
         Exponential { lambda: lambda }
     }
+
+    /// Return the rate parameter.
+    #[inline(always)] pub fn lambda(&self) -> f64 { self.lambda }
 }
 
 impl Distribution for Exponential {

@@ -4,10 +4,8 @@ use generator::Generator;
 /// A Gaussian distribution.
 #[derive(Clone, Copy)]
 pub struct Gaussian {
-    /// The mean value.
-    pub mu: f64,
-    /// The standard deviation.
-    pub sigma: f64,
+    mu: f64,
+    sigma: f64,
 }
 
 impl Gaussian {
@@ -20,6 +18,12 @@ impl Gaussian {
         should!(sigma > 0.0);
         Gaussian { mu: mu, sigma: sigma }
     }
+
+    /// Return the mean.
+    #[inline(always)] pub fn mu(&self) -> f64 { self.mu }
+
+    /// Return the standard deviation.
+    #[inline(always)] pub fn sigma(&self) -> f64 { self.sigma }
 }
 
 impl Distribution for Gaussian {
