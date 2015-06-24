@@ -1,6 +1,8 @@
 //! A probability-theory toolbox.
 
-#[cfg(test)] extern crate assert;
+#[cfg(test)]
+extern crate assert;
+
 extern crate special;
 
 macro_rules! should(
@@ -14,6 +16,5 @@ macro_rules! should(
 
 pub mod distribution;
 pub mod generator;
-pub mod sampler;
-
 pub mod prelude;
+pub mod sampler;

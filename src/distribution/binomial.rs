@@ -217,7 +217,7 @@ impl Distribution for Binomial {
     }
 
     #[inline(always)]
-    fn sample<G: Generator>(&self, generator: &mut G) -> usize {
+    fn sample<G>(&self, generator: &mut G) -> usize where G: Generator {
         self.inv_cdf(generator.next::<f64>())
     }
 }

@@ -118,7 +118,7 @@ impl Distribution for Beta {
     }
 
     #[inline(always)]
-    fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
+    fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
         use distribution::gamma;
         let x = gamma::sample(self.alpha, 1.0, generator);
         let y = gamma::sample(self.beta, 1.0, generator);

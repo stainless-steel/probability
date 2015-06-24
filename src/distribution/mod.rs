@@ -25,10 +25,10 @@ pub trait Distribution {
     /// Compute the median.
     fn median(&self) -> f64;
 
-    /// Compute all the modes.
+    /// Compute the modes.
     fn modes(&self) -> Vec<Self::Value>;
 
-    /// Compute the differential entropy (measured in nats).
+    /// Compute the differential entropy in nats.
     fn entropy(&self) -> f64;
 
     /// Compute the cumulative distribution function.
@@ -41,7 +41,7 @@ pub trait Distribution {
     fn pdf(&self, x: Self::Value) -> f64;
 
     /// Draw a sample.
-    fn sample<G: Generator>(&self, generator: &mut G) -> Self::Value;
+    fn sample<G>(&self, generator: &mut G) -> Self::Value where G: Generator;
 }
 
 pub use self::bernoulli::Bernoulli;

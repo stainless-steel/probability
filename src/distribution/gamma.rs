@@ -28,7 +28,7 @@ impl Gamma {
     ///    Gamma Variables,” ACM Transactions on Mathematical Software, vol. 26,
     ///    no. 3, 2000, pp. 363–372.
     #[inline(always)]
-    pub fn sample<G: Generator>(&self, generator: &mut G) -> f64 {
+    pub fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
         sample(self.alpha, self.beta, generator)
     }
 }

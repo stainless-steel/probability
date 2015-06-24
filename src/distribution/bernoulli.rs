@@ -78,7 +78,7 @@ impl Distribution for Bernoulli {
     }
 
     #[inline(always)]
-    fn sample<G: Generator>(&self, generator: &mut G) -> u8 {
+    fn sample<G>(&self, generator: &mut G) -> u8 where G: Generator {
         if generator.next::<f64>() < self.q { 0 } else { 1 }
     }
 }
