@@ -80,7 +80,7 @@ impl Distribution for Bernoulli {
         if x == 0 { self.q } else if x == 1 { self.p } else { 0.0 }
     }
 
-    #[inline(always)]
+    #[inline]
     fn sample<G>(&self, generator: &mut G) -> u8 where G: Generator {
         if generator.next::<f64>() < self.q { 0 } else { 1 }
     }

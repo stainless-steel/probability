@@ -55,7 +55,7 @@ impl Distribution for Exponential {
         -(-p).ln_1p() / self.lambda
     }
 
-    #[inline(always)]
+    #[inline]
     fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
         -generator.next::<f64>().ln() / self.lambda
     }

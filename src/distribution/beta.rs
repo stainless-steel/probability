@@ -124,7 +124,7 @@ impl Distribution for Beta {
             self.ln_beta).exp() / range
     }
 
-    #[inline(always)]
+    #[inline]
     fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
         use distribution::gamma;
         let x = gamma::sample(self.alpha, 1.0, generator);

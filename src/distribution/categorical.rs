@@ -134,7 +134,7 @@ impl Distribution for Categorical {
         self.p[x]
     }
 
-    #[inline(always)]
+    #[inline]
     fn sample<G>(&self, generator: &mut G) -> usize where G: Generator {
         self.inv_cdf(generator.next::<f64>())
     }

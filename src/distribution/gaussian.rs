@@ -79,7 +79,7 @@ impl Distribution for Gaussian {
     ///    vol. 5, no. 8, 2000.
     ///
     /// 2. Dirk Eddelbuettel, “Ziggurat Revisited,” 2014.
-    #[inline(always)]
+    #[inline]
     fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
         self.sigma * sample(generator) + self.mu
     }
