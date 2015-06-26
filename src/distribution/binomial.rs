@@ -32,7 +32,7 @@ impl Binomial {
     /// It should hold that if `q >= 0` or `q <= 1`. This constructor is
     /// preferable when `q` is very small.
     #[inline]
-    pub fn new_failprob(n: usize, q: f64) -> Binomial {
+    pub fn with_failure(n: usize, q: f64) -> Binomial {
         should!(0.0 < q && q < 1.0);
         let p = 1.0 - q;
         let np = n as f64 * p;
@@ -346,7 +346,6 @@ mod tests {
 
     macro_rules! new {
         ($n:expr, $p:expr) => (Binomial::new($n, $p));
-        (fail $n:expr, $p:expr) => (Binomial::new_failprob($n, $p));
     }
 
     #[test]

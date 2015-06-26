@@ -24,7 +24,7 @@ impl Bernoulli {
     /// It should hold that `q > 0` and `q < 1`. This constructor is preferable
     /// when `q` is very small.
     #[inline]
-    pub fn new_failprob(q: f64) -> Bernoulli {
+    pub fn with_failure(q: f64) -> Bernoulli {
         should!(q > 0.0 && q < 1.0);
         Bernoulli { p: 1.0 - q, q: q, pq: (1.0 - q) * q }
     }
@@ -107,7 +107,7 @@ mod tests {
     use prelude::*;
 
     macro_rules! new(
-        (failure $q:expr) => (Bernoulli::new_failprob($q));
+        (failure $q:expr) => (Bernoulli::with_failure($q));
         ($p:expr) => (Bernoulli::new($p));
     );
 
