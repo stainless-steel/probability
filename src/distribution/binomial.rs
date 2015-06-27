@@ -135,9 +135,9 @@ impl Distribution for Binomial {
     ///
     /// ## References
     ///
-    /// 1. Sean Moorhead, “Efficient Evaluation of the Inverse Binomial
-    ///    Cumulative Distribution Function Where the Number of Trials Is
-    ///    Large,” Oxford University, 2013.
+    /// 1. S. Moorhead, “Efficient evaluation of the inverse binomial cumulative
+    ///    distribution function where the number of trials is large,” Oxford
+    ///    University, 2013.
     fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
 
@@ -207,8 +207,8 @@ impl Distribution for Binomial {
     ///
     /// ## References
     ///
-    /// 1. Catherine Loader, “Fast and Accurate Computation of Binomial
-    ///    Probabilities,” 2000.
+    /// 1. C. Loader, “Fast and Accurate Computation of Binomial Probabilities,”
+    ///    2000.
     fn pdf(&self, x: usize) -> f64 {
         use std::f64::consts::PI;
 

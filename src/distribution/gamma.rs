@@ -28,9 +28,9 @@ impl Gamma {
     ///
     /// ## References
     ///
-    /// 1. George Marsaglia and Wai Wan Tsang, “A Simple Method for Generating
-    ///    Gamma Variables,” ACM Transactions on Mathematical Software, vol. 26,
-    ///    no. 3, 2000, pp. 363–372.
+    /// 1. G. Marsaglia and W. W. Tsang, “A simple method for generating gamma
+    ///    variables,” ACM Transactions on Mathematical Software, vol. 26,
+    ///    no. 3, pp. 363–372, September 2000.
     #[inline]
     pub fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
         sample(self.alpha, self.beta, generator)

@@ -63,9 +63,9 @@ impl Distribution for Gaussian {
     ///
     /// ## References
     ///
-    /// 1. Michael Wichura, “The Percentage Points of the Normal Distribution,”
-    ///    Algorithm AS 241, Applied Statistics, vol. 37, no. 3, pp. 477–484,
-    ///    1988.
+    /// 1. M. J. Wichura, “Algorithm as 241: The percentage points of the normal
+    ///    distribution,” Journal of the Royal Statistical Society. Series C
+    ///    (Applied Statistics), vol. 37, no. 3, pp. pp. 477–484, 1988.
     ///
     /// 2. http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     #[inline(always)]
@@ -83,11 +83,11 @@ impl Distribution for Gaussian {
     ///
     /// ## References
     ///
-    /// 1. George Marsaglia and Wai Wan Tsang, “The Ziggurat Method for
-    ///    Generating Random Variables,” Journal of Statistical Software,
-    ///    vol. 5, no. 8, 2000.
+    /// 1. G. Marsaglia and W. W. Tsang, “The ziggurat method for generating
+    ///    random variables," Journal of Statistical Software, vol. 5, no. 8,
+    ///    pp. 1–7, 10 2000.
     ///
-    /// 2. Dirk Eddelbuettel, “Ziggurat Revisited,” 2014.
+    /// 2. D. Eddelbuettel, “Ziggurat Revisited,” 2014.
     #[inline]
     fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
         self.sigma * sample(generator) + self.mu
