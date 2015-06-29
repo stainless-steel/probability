@@ -165,7 +165,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Sampler(&new!(7.0, 42.0), &mut generator()).take(100) {
+        for x in Independent(&new!(7.0, 42.0), &mut generator()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

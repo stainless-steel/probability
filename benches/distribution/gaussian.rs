@@ -5,7 +5,7 @@ use test::{Bencher, black_box};
 fn cdf(bencher: &mut Bencher) {
     let mut generator = generator();
     let gaussian = Gaussian::new(0.0, 1.0);
-    let x = Sampler(&gaussian, &mut generator).take(1000).collect::<Vec<_>>();
+    let x = Independent(&gaussian, &mut generator).take(1000).collect::<Vec<_>>();
 
     bencher.iter(|| black_box(x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>()));
 }
@@ -15,7 +15,7 @@ fn inv_cdf(bencher: &mut Bencher) {
     let mut generator = generator();
     let gaussian = Gaussian::new(0.0, 1.0);
     let uniform = Uniform::new(0.0, 1.0);
-    let p = Sampler(&uniform, &mut generator).take(1000).collect::<Vec<_>>();
+    let p = Independent(&uniform, &mut generator).take(1000).collect::<Vec<_>>();
 
     bencher.iter(|| black_box(p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>()));
 }

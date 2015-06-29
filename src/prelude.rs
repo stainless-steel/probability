@@ -13,4 +13,4 @@ pub use distribution::Uniform;
 pub use generator::Generator;
 pub use generator::default as generator;
 
-pub use sampler::Sampler;
+pub use sampler::Independent;
