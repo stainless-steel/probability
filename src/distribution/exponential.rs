@@ -34,7 +34,8 @@ impl Distribution for Exponential {
         self.lambda.powi(-2)
     }
 
-    #[inline] fn sd(&self) -> f64 {
+    #[inline]
+    fn sd(&self) -> f64 {
         self.lambda.recip()
     }
 
