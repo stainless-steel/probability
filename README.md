@@ -4,6 +4,16 @@ The package provides a probability-theory toolbox.
 
 ## [Documentation][docs]
 
+## Example
+
+```rust
+use probability::prelude::*;
+
+let uniform = Uniform::new(0.0, 1.0);
+let mut generator = generator::default();
+let samples = Independent(&uniform, &mut generator).take(10).collect::<Vec<_>>();
+```
+
 ## Contributing
 
 1. Fork the project.

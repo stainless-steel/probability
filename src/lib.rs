@@ -1,4 +1,14 @@
 //! A probability-theory toolbox.
+//!
+//! ## Example
+//!
+//! ```
+//! use probability::prelude::*;
+//!
+//! let uniform = Uniform::new(0.0, 1.0);
+//! let mut generator = generator::default();
+//! let samples = Independent(&uniform, &mut generator).take(10).collect::<Vec<_>>();
+//! ```
 
 #[cfg(test)]
 extern crate assert;
