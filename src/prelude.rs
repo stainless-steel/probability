@@ -10,7 +10,6 @@ pub use distribution::Gamma;
 pub use distribution::Gaussian;
 pub use distribution::Uniform;
 
-pub use generator::Generator;
-pub use generator::default as generator;
+pub use generator::{self, Generator};
 
 pub use sampler::Independent;

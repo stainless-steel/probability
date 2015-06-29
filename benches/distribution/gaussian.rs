@@ -3,7 +3,7 @@ use test::{Bencher, black_box};
 
 #[bench]
 fn cdf(bencher: &mut Bencher) {
-    let mut generator = generator();
+    let mut generator = generator::default();
     let gaussian = Gaussian::new(0.0, 1.0);
     let x = Independent(&gaussian, &mut generator).take(1000).collect::<Vec<_>>();
 
@@ -12,7 +12,7 @@ fn cdf(bencher: &mut Bencher) {
 
 #[bench]
 fn inv_cdf(bencher: &mut Bencher) {
-    let mut generator = generator();
+    let mut generator = generator::default();
     let gaussian = Gaussian::new(0.0, 1.0);
     let uniform = Uniform::new(0.0, 1.0);
     let p = Independent(&uniform, &mut generator).take(1000).collect::<Vec<_>>();

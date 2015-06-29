@@ -11,7 +11,7 @@ use generator::Generator;
 /// use probability::prelude::*;
 ///
 /// let uniform = Uniform::new(0.0, 1.0);
-/// let samples = Independent(&uniform, &mut generator()).take(10).collect::<Vec<_>>();
+/// let samples = Independent(&uniform, &mut generator::default()).take(10).collect::<Vec<_>>();
 /// ```
 pub struct Independent<D, G>(pub D, pub G);
 
