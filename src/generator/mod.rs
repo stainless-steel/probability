@@ -60,6 +60,10 @@ impl Generator for Default {
 }
 
 /// Return the default generator.
+///
+/// Each thread has its own copy of the generator, and each copy is initialized
+/// with the same default seed. Consequently, the usage is thread safe; however,
+/// each thread is responsible for reseeding its default generator.
 #[inline(always)]
 pub fn default() -> Default {
     thread_local!(static DEFAULT: Rc<RefCell<XorshiftPlus>> = {
