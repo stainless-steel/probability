@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use random::Generator;
+use random::Source;
 
 /// A beta distribution.
 #[derive(Clone, Copy)]
@@ -121,10 +121,10 @@ impl Distribution for Beta {
     }
 
     #[inline]
-    fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         use distribution::gamma;
-        let x = gamma::sample(self.alpha, 1.0, generator);
-        let y = gamma::sample(self.beta, 1.0, generator);
+        let x = gamma::sample(self.alpha, 1.0, source);
+        let y = gamma::sample(self.beta, 1.0, source);
         self.a + (self.b - self.a) * x / (x + y)
     }
 }

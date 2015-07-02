@@ -1,6 +1,6 @@
 //! Reexports of the most common traits, types, and functions.
 
-pub use random::{self, Generator};
+pub use random::{self, Source};
 
 pub use distribution::Distribution;
 pub use distribution::Bernoulli;

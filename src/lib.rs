@@ -6,8 +6,8 @@
 //! use probability::prelude::*;
 //!
 //! let uniform = Uniform::new(0.0, 1.0);
-//! let mut generator = random::default();
-//! let samples = Independent(&uniform, &mut generator).take(10).collect::<Vec<_>>();
+//! let mut source = random::default();
+//! let samples = Independent(&uniform, &mut source).take(10).collect::<Vec<_>>();
 //! ```
 
 #[cfg(test)]

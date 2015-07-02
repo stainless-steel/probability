@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use random::Generator;
+use random::Source;
 
 /// A binomial distribution.
 #[derive(Clone, Copy)]
@@ -234,8 +234,8 @@ impl Distribution for Binomial {
     }
 
     #[inline]
-    fn sample<G>(&self, generator: &mut G) -> usize where G: Generator {
-        self.inv_cdf(generator.next::<f64>())
+    fn sample<S>(&self, source: &mut S) -> usize where S: Source {
+        self.inv_cdf(source.take::<f64>())
     }
 }
 

@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use random::Generator;
+use random::Source;
 
 /// A Bernoulli distribution.
 #[derive(Clone, Copy)]
@@ -96,8 +96,8 @@ impl Distribution for Bernoulli {
     }
 
     #[inline]
-    fn sample<G>(&self, generator: &mut G) -> u8 where G: Generator {
-        if generator.next::<f64>() < self.q { 0 } else { 1 }
+    fn sample<S>(&self, source: &mut S) -> u8 where S: Source {
+        if source.take::<f64>() < self.q { 0 } else { 1 }
     }
 }
 

@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use random::Generator;
+use random::Source;
 
 /// A continuous uniform distribution.
 #[derive(Clone, Copy)]
@@ -82,8 +82,8 @@ impl Distribution for Uniform {
     }
 
     #[inline]
-    fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
-        self.a + (self.b - self.a) * generator.next::<f64>()
+    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+        self.a + (self.b - self.a) * source.take::<f64>()
     }
 }
 

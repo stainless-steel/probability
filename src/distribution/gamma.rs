@@ -1,4 +1,4 @@
-use random::Generator;
+use random::Source;
 
 /// A gamma distribution.
 #[derive(Clone, Copy)]
@@ -32,24 +32,24 @@ impl Gamma {
     ///    variables,” ACM Transactions on Mathematical Software, vol. 26,
     ///    no. 3, pp. 363–372, September 2000.
     #[inline]
-    pub fn sample<G>(&self, generator: &mut G) -> f64 where G: Generator {
-        sample(self.alpha, self.beta, generator)
+    pub fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+        sample(self.alpha, self.beta, source)
     }
 }
 
 /// Draw a sample from a Gamma distribution.
-pub fn sample<G: Generator>(alpha: f64, beta: f64, generator: &mut G) -> f64 {
+pub fn sample<S: Source>(alpha: f64, beta: f64, source: &mut S) -> f64 {
     use distribution::gaussian;
 
     if alpha < 1.0 {
-        return sample(1.0 + alpha, beta, generator) * generator.next::<f64>().powf(1.0 / alpha);
+        return sample(1.0 + alpha, beta, source) * source.take::<f64>().powf(1.0 / alpha);
     }
 
     let d = alpha - 1.0 / 3.0;
     let c = (1.0 / 3.0) / d.sqrt();
 
     loop {
-        let mut x = gaussian::sample(generator);
+        let mut x = gaussian::sample(source);
         let mut v = 1.0 + c * x;
         if v <= 0.0 {
             continue;
@@ -59,7 +59,7 @@ pub fn sample<G: Generator>(alpha: f64, beta: f64, generator: &mut G) -> f64 {
         v = v * v * v;
 
         loop {
-            let u = generator.next::<f64>();
+            let u = source.take::<f64>();
             if u == 0.0 {
                 continue;
             }
