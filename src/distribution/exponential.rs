@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use generator::Generator;
+use random::Generator;
 
 /// An exponential distribution.
 #[derive(Clone, Copy)]

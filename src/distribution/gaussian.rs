@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use generator::Generator;
+use random::Generator;
 
 /// A Gaussian distribution.
 #[derive(Clone, Copy)]

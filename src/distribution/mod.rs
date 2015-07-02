@@ -1,6 +1,6 @@
 //! Probability distributions.
 
-use generator::Generator;
+use random::Generator;
 
 /// A probability distribution.
 pub trait Distribution {

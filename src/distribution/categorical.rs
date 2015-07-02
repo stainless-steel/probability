@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use generator::Generator;
+use random::Generator;
 
 /// A categorical distribution.
 #[derive(Clone)]
@@ -237,7 +237,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut generator = generator::default();
+        let mut generator = random::default();
         let sum = Independent(&new!([0.0, 0.5, 0.5]), &mut generator).take(100)
                                                                      .fold(0, |a, b| a + b);
         assert!(100 <= sum && sum <= 200);

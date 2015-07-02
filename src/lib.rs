@@ -6,13 +6,14 @@
 //! use probability::prelude::*;
 //!
 //! let uniform = Uniform::new(0.0, 1.0);
-//! let mut generator = generator::default();
+//! let mut generator = random::default();
 //! let samples = Independent(&uniform, &mut generator).take(10).collect::<Vec<_>>();
 //! ```
 
 #[cfg(test)]
 extern crate assert;
 
+extern crate random;
 extern crate special;
 
 macro_rules! should(
@@ -25,6 +26,5 @@ macro_rules! should(
 );
 
 pub mod distribution;
-pub mod generator;
 pub mod prelude;
 pub mod sampler;

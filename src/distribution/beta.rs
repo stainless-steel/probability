@@ -1,5 +1,5 @@
 use distribution::Distribution;
-use generator::Generator;
+use random::Generator;
 
 /// A beta distribution.
 #[derive(Clone, Copy)]
@@ -260,7 +260,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Independent(&new!(1.0, 2.0, 7.0, 42.0), &mut generator::default()).take(100) {
+        for x in Independent(&new!(1.0, 2.0, 7.0, 42.0), &mut random::default()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }
