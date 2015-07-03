@@ -22,7 +22,7 @@ fn inv_cdf(bencher: &mut Bencher) {
 
 #[bench]
 fn sample(bencher: &mut Bencher) {
-    let mut source = random::XorshiftPlus::new([42, 42]);
+    let mut source = random::Xorshift128Plus::new([42, 69]);
     let gaussian = Gaussian::new(0.0, 1.0);
 
     bencher.iter(|| black_box(gaussian.sample(&mut source)));
