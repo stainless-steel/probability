@@ -40,7 +40,7 @@ pub trait Distribution {
     fn inv_cdf(&self, f64) -> Self::Value;
 
     /// Compute the probability density function.
-    fn pdf(&self, Self::Value) -> f64 where Self: Continuous {
+    fn pdf(&self, f64) -> f64 where Self: Continuous {
         unimplemented!();
     }
 
