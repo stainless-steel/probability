@@ -47,24 +47,22 @@ impl Distribution for Categorical {
     }
 
     fn var(&self) -> f64 {
-        let mu = self.mean();
-        self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + (i as f64 - mu).powi(2) * p)
+        let mean = self.mean();
+        self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(2) * p)
     }
 
     fn skewness(&self) -> f64 {
-        let mu = self.mean();
-        let sigma2 = self.var();
+        let (mean, var) = (self.mean(), self.var());
         let skew = self.p.iter().enumerate()
-                         .fold(0.0, |sum, (i, p)| sum + (i as f64 - mu).powi(3) * p);
-        skew / (sigma2 * sigma2.sqrt())
+                                .fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(3) * p);
+        skew / (var * var.sqrt())
     }
 
     fn kurtosis(&self) -> f64 {
-        let mu = self.mean();
-        let sigma2 = self.var();
+        let (mean, var) = (self.mean(), self.var());
         let kurt = self.p.iter().enumerate()
-                         .fold(0.0, |sum, (i, p)| sum + (i as f64 - mu).powi(4) * p);
-        kurt / sigma2.powi(2) - 3.0
+                                .fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(4) * p);
+        kurt / var.powi(2) - 3.0
     }
 
     fn median(&self) -> f64 {
