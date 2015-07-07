@@ -15,6 +15,7 @@ impl Categorical {
     #[inline]
     pub fn new(p: &[f64]) -> Categorical {
         should!(is_probability_vector(p), {
+            const EPSILON: f64 = 1e-12;
             let mut in_unit = true;
             let mut sum = 0.0;
             for &p in p.iter() {
@@ -24,7 +25,7 @@ impl Categorical {
                 }
                 sum += p;
             }
-            in_unit && (sum - 1.0).abs() <= 1e-12
+            in_unit && (sum - 1.0).abs() <= EPSILON
         });
         Categorical { k: p.len(), p: p.to_vec() }
     }
