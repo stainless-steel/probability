@@ -34,7 +34,7 @@ pub trait Distribution {
     fn entropy(&self) -> f64;
 
     /// Compute the cumulative distribution function.
-    fn cdf(&self, Self::Value) -> f64;
+    fn cdf(&self, f64) -> f64;
 
     /// Compute the inverse of the cumulative distribution function.
     fn inv_cdf(&self, f64) -> Self::Value;

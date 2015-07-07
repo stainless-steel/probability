@@ -104,7 +104,11 @@ impl Distribution for Categorical {
     }
 
     #[inline]
-    fn cdf(&self, x: usize) -> f64 {
+    fn cdf(&self, x: f64) -> f64 {
+        if x < 0.0 {
+            return 0.0;
+        }
+        let x = x as usize;
         if x >= self.k - 1 {
             1.0
         } else {
@@ -215,13 +219,23 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let d1 = new!([0.0, 0.75, 0.25, 0.0]);
-        assert_eq!(&(0..4).map(|x| d1.cdf(x)).collect::<Vec<_>>(),
-                   &vec![0.0, 0.75, 1.0, 1.0]);
+        let d = new!([0.0, 0.75, 0.25, 0.0]);
+        let p = vec![0.0, 0.0, 0.75, 1.0, 1.0];
 
-        let d2 = new!(equal 3);
-        assert_eq!(&(0..3).map(|x| d2.cdf(x)).collect::<Vec<_>>(),
-                   &vec![1.0 / 3.0, 2.0 / 3.0, 1.0]);
+        let x = (-1..4).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
+
+        let x = (-1..4).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
+
+        let d = new!(equal 3);
+        let p = vec![0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0];
+
+        let x = (-1..3).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
+
+        let x = (-1..3).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
     }
 
     #[test]

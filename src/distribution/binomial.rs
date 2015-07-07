@@ -119,18 +119,21 @@ impl Distribution for Binomial {
     ///
     /// The implementation is based on the incomplete beta function.
     #[inline]
-    fn cdf(&self, x: usize) -> f64 {
+    fn cdf(&self, x: f64) -> f64 {
         use special::{inc_beta, ln_beta};
 
+        if x < 0.0 {
+            return 0.0;
+        }
+        let x = x as usize;
         if x == 0 {
-            return self.pdf(0);
-        } else if x >= self.n {
+            return self.q.powi(self.n as i32);
+        }
+        if x >= self.n {
             return 1.0;
         }
-
-        let n_m_x = (self.n - x) as f64;
-        let x_p_1 = (x + 1) as f64;
-        inc_beta(self.q, n_m_x, x_p_1, ln_beta(n_m_x, x_p_1))
+        let (p, q) = ((self.n - x) as f64, (x + 1) as f64);
+        inc_beta(self.q, p, q, ln_beta(p, q))
     }
 
     /// Compute the inverse of the cumulative distribution function.
@@ -183,7 +186,7 @@ impl Distribution for Binomial {
             0
         } else if self.n < 1000 {
             // Find if top-down or bottom-up summation is better.
-            if u <= self.cdf(self.n / 2) {
+            if u <= self.cdf((self.n / 2) as f64) {
                 buttom_up_sum!(|k| self.p / self.q * ((self.n - k + 1) as f64 / k as f64))
             } else {
                 top_down_sum!(|k| self.q / self.p * ((self.n - k + 1) as f64 / k as f64))
@@ -196,7 +199,7 @@ impl Distribution for Binomial {
             let modes = self.modes();
             let mut m = modes[0];
             loop {
-                let next = (u - self.cdf(m)) / self.pdf(m);
+                let next = (u - self.cdf(m as f64)) / self.pdf(m);
                 if -0.5 < next && next < 0.5 {
                     break;
                 }
@@ -415,13 +418,19 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let binom = new!(16, 0.75);
-        let probs = vec![
-            2.328306436538699e-10, 2.628657966852194e-07, 3.810715861618527e-05,
-            1.644465373829007e-03, 2.712995628826319e-02, 1.896545726340262e-01,
-            5.950128899421541e-01, 9.365235602017492e-01, 1.000000000000000e+00,
+        let d = new!(16, 0.75);
+        let p = vec![
+            0.000000000000000e+00, 2.328306436538699e-10, 2.628657966852194e-07,
+            3.810715861618527e-05, 1.644465373829007e-03, 2.712995628826319e-02,
+            1.896545726340262e-01, 5.950128899421541e-01, 9.365235602017492e-01,
+            1.000000000000000e+00,
         ];
-        assert::close(&(0..9).map(|i| binom.cdf(2 * i)).collect::<Vec<_>>(), &probs, 1e-14);
+
+        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64)).collect::<Vec<_>>();
+        assert::close(&x, &p, 1e-14);
+
+        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64 + 0.5)).collect::<Vec<_>>();
+        assert::close(&x, &p, 1e-14);
     }
 
     #[test]
@@ -432,7 +441,7 @@ mod tests {
 
         let x = 1298;
         let binom2 = new!(2500, 0.55);
-        assert_eq!(binom2.inv_cdf(binom2.cdf(x)), x);
+        assert_eq!(binom2.inv_cdf(binom2.cdf(x as f64)), x);
         assert_eq!(new!(1001, 0.25).inv_cdf(0.5), 250);
         assert_eq!(new!(1500, 0.15).inv_cdf(0.2), 213);
 

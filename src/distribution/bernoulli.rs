@@ -85,8 +85,14 @@ impl Distribution for Bernoulli {
     }
 
     #[inline]
-    fn cdf(&self, x: u8) -> f64 {
-        if x == 0 { self.q } else { 1.0 }
+    fn cdf(&self, x: f64) -> f64 {
+        if x < 0.0 {
+            0.0
+        } else if x < 1.0 {
+            self.q
+        } else {
+            1.0
+        }
     }
 
     #[inline]
@@ -170,8 +176,10 @@ mod tests {
 
     #[test]
     fn cdf() {
-        let bernoulli = new!(0.25);
-        assert_eq!(&(0..3).map(|x| bernoulli.cdf(x)).collect::<Vec<_>>(), &[0.75, 1.0, 1.0]);
+        let d = new!(0.25);
+        let x = vec![-0.1, 0.0, 0.1, 0.25, 0.5, 1.0, 1.1];
+        let p = vec![0.0, 0.75, 0.75, 0.75, 0.75, 1.0, 1.0];
+        assert_eq!(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]
