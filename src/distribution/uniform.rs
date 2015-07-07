@@ -83,7 +83,7 @@ impl Distribution for Uniform {
 
     #[inline]
     fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
-        self.a + (self.b - self.a) * source.take::<f64>()
+        self.a + (self.b - self.a) * source.read::<f64>()
     }
 }
 

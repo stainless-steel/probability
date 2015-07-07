@@ -133,7 +133,7 @@ impl Distribution for Categorical {
 
     #[inline]
     fn sample<S>(&self, source: &mut S) -> usize where S: Source {
-        self.inv_cdf(source.take::<f64>())
+        self.inv_cdf(source.read::<f64>())
     }
 }
 

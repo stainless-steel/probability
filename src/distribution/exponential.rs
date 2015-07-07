@@ -76,7 +76,7 @@ impl Distribution for Exponential {
 
     #[inline]
     fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
-        -source.take::<f64>().ln() / self.lambda
+        -source.read::<f64>().ln() / self.lambda
     }
 }
 

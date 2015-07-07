@@ -97,7 +97,7 @@ impl Distribution for Bernoulli {
 
     #[inline]
     fn sample<S>(&self, source: &mut S) -> u8 where S: Source {
-        if source.take::<f64>() < self.q { 0 } else { 1 }
+        if source.read::<f64>() < self.q { 0 } else { 1 }
     }
 }
 

@@ -42,7 +42,7 @@ pub fn sample<S: Source>(alpha: f64, beta: f64, source: &mut S) -> f64 {
     use distribution::gaussian;
 
     if alpha < 1.0 {
-        return sample(1.0 + alpha, beta, source) * source.take::<f64>().powf(1.0 / alpha);
+        return sample(1.0 + alpha, beta, source) * source.read::<f64>().powf(1.0 / alpha);
     }
 
     let d = alpha - 1.0 / 3.0;
@@ -59,7 +59,7 @@ pub fn sample<S: Source>(alpha: f64, beta: f64, source: &mut S) -> f64 {
         v = v * v * v;
 
         loop {
-            let u = source.take::<f64>();
+            let u = source.read::<f64>();
             if u == 0.0 {
                 continue;
             }

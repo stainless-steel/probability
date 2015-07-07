@@ -174,7 +174,7 @@ pub fn inv_cdf(p: f64) -> f64 {
 /// Draw a sample from the standard Gaussian distribution.
 pub fn sample<S: Source>(source: &mut S) -> f64 {
     loop {
-        let u = source.take::<u64>();
+        let u = source.read::<u64>();
 
         let i = (u & 0x7F) as usize;
         let j = ((u >> 8) & 0xFFFFFF) as u32;
@@ -187,11 +187,11 @@ pub fn sample<S: Source>(source: &mut S) -> f64 {
 
         let (x, y) = if i < 127 {
             let x = j as f64 * W[i];
-            let y = Y[i + 1] + (Y[i] - Y[i + 1]) * source.take::<f64>();
+            let y = Y[i + 1] + (Y[i] - Y[i + 1]) * source.read::<f64>();
             (x, y)
         } else {
-            let x = R - (1.0 - source.take::<f64>()).ln() / R;
-            let y = (-R * (x - 0.5 * R)).exp() * source.take::<f64>();
+            let x = R - (1.0 - source.read::<f64>()).ln() / R;
+            let y = (-R * (x - 0.5 * R)).exp() * source.read::<f64>();
             (x, y)
         };
 
