@@ -9,8 +9,8 @@ The package provides a probability-theory toolbox.
 ```rust
 use probability::prelude::*;
 
-let uniform = Uniform::new(0.0, 1.0);
 let mut source = random::default();
+let uniform = Uniform::new(0.0, 1.0);
 let samples = Independent(&uniform, &mut source).take(10).collect::<Vec<_>>();
 ```
 
