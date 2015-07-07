@@ -117,7 +117,7 @@ impl Distribution for Categorical {
     fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
         if p == 0.0 {
-            return self.p.iter().enumerate().find(|&(_, &p)| p > 0.0).unwrap().0;
+            return self.p.iter().position(|&p| p > 0.0).unwrap();
         }
         let mut sum = 0.0;
         for i in 0..self.k {
