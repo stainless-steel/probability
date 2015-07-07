@@ -1,6 +1,6 @@
 [package]
 name = "probability"
-version = "0.10.0"
+version = "0.11.0"
 authors = [
   "Ivan Ukhov <ivan.ukhov@gmail.com>",
   "Jon Lund Steffensen <jonlst@gmail.com>",
