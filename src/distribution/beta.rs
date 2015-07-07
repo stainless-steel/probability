@@ -1,4 +1,4 @@
-use distribution::Distribution;
+use distribution::{Continuous, Distribution};
 use random::Source;
 
 /// A beta distribution.
@@ -131,6 +131,9 @@ impl Distribution for Beta {
         let y = gamma::sample(self.beta, 1.0, source);
         self.a + (self.b - self.a) * x / (x + y)
     }
+}
+
+impl Continuous for Beta {
 }
 
 #[cfg(test)]

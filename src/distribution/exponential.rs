@@ -1,4 +1,4 @@
-use distribution::Distribution;
+use distribution::{Continuous, Distribution};
 use random::Source;
 
 /// An exponential distribution.
@@ -84,6 +84,8 @@ impl Distribution for Exponential {
     }
 }
 
+impl Continuous for Exponential {
+}
 
 #[cfg(test)]
 mod tests {

@@ -40,10 +40,25 @@ pub trait Distribution {
     fn inv_cdf(&self, f64) -> Self::Value;
 
     /// Compute the probability density function.
-    fn pdf(&self, Self::Value) -> f64;
+    fn pdf(&self, Self::Value) -> f64 where Self: Continuous {
+        unimplemented!();
+    }
+
+    /// Compute the probability mass function.
+    fn pmf(&self, Self::Value) -> f64 where Self: Discrete {
+        unimplemented!();
+    }
 
     /// Draw a sample.
     fn sample<S>(&self, &mut S) -> Self::Value where S: Source;
+}
+
+/// A continuous probability distribution.
+pub trait Continuous {
+}
+
+/// A discrete probability distribution.
+pub trait Discrete {
 }
 
 pub use self::bernoulli::Bernoulli;

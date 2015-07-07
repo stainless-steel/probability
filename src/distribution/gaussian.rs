@@ -1,4 +1,4 @@
-use distribution::Distribution;
+use distribution::{Continuous, Distribution};
 use random::Source;
 
 /// A Gaussian distribution.
@@ -102,6 +102,9 @@ impl Distribution for Gaussian {
     fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         self.sigma * sample(source) + self.mu
     }
+}
+
+impl Continuous for Gaussian {
 }
 
 /// Compute the inverse cumulative distribution function of the standard

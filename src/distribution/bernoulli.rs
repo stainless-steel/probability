@@ -1,4 +1,4 @@
-use distribution::Distribution;
+use distribution::{Discrete, Distribution};
 use random::Source;
 
 /// A Bernoulli distribution.
@@ -102,7 +102,7 @@ impl Distribution for Bernoulli {
     }
 
     #[inline]
-    fn pdf(&self, x: u8) -> f64 {
+    fn pmf(&self, x: u8) -> f64 {
         if x == 0 { self.q } else if x == 1 { self.p } else { 0.0 }
     }
 
@@ -110,6 +110,9 @@ impl Distribution for Bernoulli {
     fn sample<S>(&self, source: &mut S) -> u8 where S: Source {
         if source.read::<f64>() < self.q { 0 } else { 1 }
     }
+}
+
+impl Discrete for Bernoulli {
 }
 
 #[cfg(test)]
@@ -169,9 +172,9 @@ mod tests {
     }
 
     #[test]
-    fn pdf() {
+    fn pmf() {
         let bernoulli = new!(0.25);
-        assert_eq!(&(0..3).map(|x| bernoulli.pdf(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
+        assert_eq!(&(0..3).map(|x| bernoulli.pmf(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
     }
 
     #[test]

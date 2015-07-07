@@ -1,4 +1,4 @@
-use distribution::Distribution;
+use distribution::{Continuous, Distribution};
 use random::Source;
 
 /// A continuous uniform distribution.
@@ -91,6 +91,9 @@ impl Distribution for Uniform {
     fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         self.a + (self.b - self.a) * source.read::<f64>()
     }
+}
+
+impl Continuous for Uniform {
 }
 
 #[cfg(test)]

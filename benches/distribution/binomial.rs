@@ -19,9 +19,9 @@ fn inv_cdf(bencher: &mut Bencher) {
 }
 
 #[bench]
-fn pdf(bencher: &mut Bencher) {
+fn pmf(bencher: &mut Bencher) {
     let binom = Binomial::new(100_000, 0.845);
     let x = Independent(&binom, &mut random::default()).take(1000).collect::<Vec<_>>();
 
-    bencher.iter(|| black_box(x.iter().map(|&x| binom.pdf(x)).collect::<Vec<_>>()));
+    bencher.iter(|| black_box(x.iter().map(|&x| binom.pmf(x)).collect::<Vec<_>>()));
 }

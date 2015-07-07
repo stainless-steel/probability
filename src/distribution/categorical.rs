@@ -1,4 +1,4 @@
-use distribution::Distribution;
+use distribution::{Discrete, Distribution};
 use random::Source;
 
 /// A categorical distribution.
@@ -132,7 +132,7 @@ impl Distribution for Categorical {
     }
 
     #[inline]
-    fn pdf(&self, x: usize) -> f64 {
+    fn pmf(&self, x: usize) -> f64 {
         self.p[x]
     }
 
@@ -140,6 +140,9 @@ impl Distribution for Categorical {
     fn sample<S>(&self, source: &mut S) -> usize where S: Source {
         self.inv_cdf(source.read::<f64>())
     }
+}
+
+impl Discrete for Categorical {
 }
 
 #[cfg(test)]
@@ -208,13 +211,13 @@ mod tests {
     }
 
     #[test]
-    fn pdf() {
+    fn pmf() {
         let p = [0.0, 0.75, 0.25, 0.0];
         let d1 = new!(p);
-        assert_eq!(&(0..4).map(|x| d1.pdf(x)).collect::<Vec<_>>(), &p.to_vec());
+        assert_eq!(&(0..4).map(|x| d1.pmf(x)).collect::<Vec<_>>(), &p.to_vec());
 
         let d2 = new!(equal 3);
-        assert_eq!(&(0..3).map(|x| d2.pdf(x)).collect::<Vec<_>>(), &vec![1.0 / 3.0; 3])
+        assert_eq!(&(0..3).map(|x| d2.pmf(x)).collect::<Vec<_>>(), &vec![1.0 / 3.0; 3])
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use distribution::Distribution;
+use distribution::{Discrete, Distribution};
 use random::Source;
 
 /// A binomial distribution.
@@ -111,7 +111,7 @@ impl Distribution for Binomial {
             // Use a normal approximation.
             0.5 * ((2.0 * PI * self.npq).ln() + 1.0)
         } else {
-            -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.pdf(i) * self.pdf(i).ln())
+            -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.pmf(i) * self.pmf(i).ln())
         }
     }
 
@@ -199,7 +199,7 @@ impl Distribution for Binomial {
             let modes = self.modes();
             let mut m = modes[0];
             loop {
-                let next = (u - self.cdf(m as f64)) / self.pdf(m);
+                let next = (u - self.cdf(m as f64)) / self.pmf(m);
                 if -0.5 < next && next < 0.5 {
                     break;
                 }
@@ -209,7 +209,7 @@ impl Distribution for Binomial {
         }
     }
 
-    /// Compute the probability density function.
+    /// Compute the probability mass function.
     ///
     /// For large `n`, a saddle-point expansion is used for more accurate
     /// computation.
@@ -218,7 +218,7 @@ impl Distribution for Binomial {
     ///
     /// 1. C. Loader, “Fast and Accurate Computation of Binomial Probabilities,”
     ///    2000.
-    fn pdf(&self, x: usize) -> f64 {
+    fn pmf(&self, x: usize) -> f64 {
         use std::f64::consts::PI;
 
         if self.p == 0.0 {
@@ -246,6 +246,9 @@ impl Distribution for Binomial {
     fn sample<S>(&self, source: &mut S) -> usize where S: Source {
         self.inv_cdf(source.read::<f64>())
     }
+}
+
+impl Discrete for Binomial {
 }
 
 // See [Moorhead, 2013, pp. 7].
@@ -405,7 +408,7 @@ mod tests {
     }
 
     #[test]
-    fn pdf() {
+    fn pmf() {
         let binom = new!(16, 0.25);
         let probs = vec![
             1.002259575761855e-02, 1.336346101015806e-01, 2.251990651711821e-01,
@@ -413,7 +416,7 @@ mod tests {
             3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
         ];
 
-        assert::close(&(0..9).map(|i| binom.pdf(2 * i)).collect::<Vec<_>>(), &probs, 1e-14);
+        assert::close(&(0..9).map(|i| binom.pmf(2 * i)).collect::<Vec<_>>(), &probs, 1e-14);
     }
 
     #[test]
