@@ -30,17 +30,22 @@ impl Bernoulli {
     }
 
     /// Return the success probability.
-    #[inline(always)] pub fn p(&self) -> f64 { self.p }
+    #[inline(always)]
+    pub fn p(&self) -> f64 { self.p }
 
     /// Return the failure probability.
-    #[inline(always)] pub fn q(&self) -> f64 { self.q }
+    #[inline(always)]
+    pub fn q(&self) -> f64 { self.q }
 }
 
 impl Distribution for Bernoulli {
     type Value = u8;
 
-    #[inline] fn mean(&self) -> f64 { self.p }
-    #[inline] fn var(&self) -> f64 { self.pq }
+    #[inline]
+    fn mean(&self) -> f64 { self.p }
+
+    #[inline]
+    fn var(&self) -> f64 { self.pq }
 
     #[inline]
     fn skewness(&self) -> f64 {

@@ -24,16 +24,20 @@ impl Beta {
     }
 
     /// Return the first shape parameter.
-    #[inline(always)] pub fn alpha(&self) -> f64 { self.alpha }
+    #[inline(always)]
+    pub fn alpha(&self) -> f64 { self.alpha }
 
     /// Return the second shape parameter.
-    #[inline(always)] pub fn beta(&self) -> f64 { self.beta }
+    #[inline(always)]
+    pub fn beta(&self) -> f64 { self.beta }
 
     /// Return the left endpoint of the support.
-    #[inline(always)] pub fn a(&self) -> f64 { self.a }
+    #[inline(always)]
+    pub fn a(&self) -> f64 { self.a }
 
     /// Return the right endpoint of the support.
-    #[inline(always)] pub fn b(&self) -> f64 { self.b }
+    #[inline(always)]
+    pub fn b(&self) -> f64 { self.b }
 }
 
 impl Distribution for Beta {

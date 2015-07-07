@@ -30,10 +30,12 @@ impl Categorical {
     }
 
     /// Return the number of categories.
-    #[inline(always)] pub fn k(&self) -> usize { self.k }
+    #[inline(always)]
+    pub fn k(&self) -> usize { self.k }
 
     /// Return the event probabilities.
-    #[inline(always)] pub fn p(&self) -> &[f64] { &self.p }
+    #[inline(always)]
+    pub fn p(&self) -> &[f64] { &self.p }
 }
 
 impl Distribution for Categorical {

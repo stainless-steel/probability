@@ -20,26 +20,36 @@ impl Gaussian {
     }
 
     /// Return the mean.
-    #[inline(always)] pub fn mu(&self) -> f64 { self.mu }
+    #[inline(always)]
+    pub fn mu(&self) -> f64 { self.mu }
 
     /// Return the standard deviation.
-    #[inline(always)] pub fn sigma(&self) -> f64 { self.sigma }
+    #[inline(always)]
+    pub fn sigma(&self) -> f64 { self.sigma }
 }
 
 impl Distribution for Gaussian {
     type Value = f64;
 
-    #[inline] fn mean(&self) -> f64 { self.mu }
+    #[inline]
+    fn mean(&self) -> f64 { self.mu }
 
     #[inline]
     fn var(&self) -> f64 {
         self.sigma * self.sigma
     }
 
-    #[inline] fn sd(&self) -> f64 { self.sigma }
-    #[inline] fn skewness(&self) -> f64 { 0.0 }
-    #[inline] fn kurtosis(&self) -> f64 { 0.0 }
-    #[inline] fn median(&self) -> f64 { self.mu }
+    #[inline]
+    fn sd(&self) -> f64 { self.sigma }
+
+    #[inline]
+    fn skewness(&self) -> f64 { 0.0 }
+
+    #[inline]
+    fn kurtosis(&self) -> f64 { 0.0 }
+
+    #[inline]
+    fn median(&self) -> f64 { self.mu }
 
     #[inline]
     fn modes(&self) -> Vec<f64> {

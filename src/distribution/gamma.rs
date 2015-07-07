@@ -19,10 +19,12 @@ impl Gamma {
     }
 
     /// Return the shape parameter.
-    #[inline(always)] pub fn alpha(&self) -> f64 { self.alpha }
+    #[inline(always)]
+    pub fn alpha(&self) -> f64 { self.alpha }
 
     /// Return the rate parameter.
-    #[inline(always)] pub fn beta(&self) -> f64 { self.beta }
+    #[inline(always)]
+    pub fn beta(&self) -> f64 { self.beta }
 
     /// Draw a sample.
     ///

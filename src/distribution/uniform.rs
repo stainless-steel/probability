@@ -19,10 +19,12 @@ impl Uniform {
     }
 
     /// Return the left endpoint of the support.
-    #[inline(always)] pub fn a(&self) -> f64 { self.a }
+    #[inline(always)]
+    pub fn a(&self) -> f64 { self.a }
 
     /// Return the right endpoint of the support.
-    #[inline(always)] pub fn b(&self) -> f64 { self.a }
+    #[inline(always)]
+    pub fn b(&self) -> f64 { self.a }
 }
 
 impl Distribution for Uniform {
@@ -38,8 +40,11 @@ impl Distribution for Uniform {
         (self.b - self.a).powi(2) / 12.0
     }
 
-    #[inline] fn skewness(&self) -> f64 { 0.0 }
-    #[inline] fn kurtosis(&self) -> f64 { -1.2 }
+    #[inline]
+    fn skewness(&self) -> f64 { 0.0 }
+
+    #[inline]
+    fn kurtosis(&self) -> f64 { -1.2 }
 
     #[inline]
     fn median(&self) -> f64 {
@@ -51,7 +56,8 @@ impl Distribution for Uniform {
         Vec::new()
     }
 
-    #[inline] fn entropy(&self) -> f64 {
+    #[inline]
+    fn entropy(&self) -> f64 {
         (self.b - self.a).ln()
     }
 

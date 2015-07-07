@@ -18,7 +18,8 @@ impl Exponential {
     }
 
     /// Return the rate parameter.
-    #[inline(always)] pub fn lambda(&self) -> f64 { self.lambda }
+    #[inline(always)]
+    pub fn lambda(&self) -> f64 { self.lambda }
 }
 
 impl Distribution for Exponential {
@@ -39,8 +40,11 @@ impl Distribution for Exponential {
         self.lambda.recip()
     }
 
-    #[inline] fn skewness(&self) -> f64 { 2.0 }
-    #[inline] fn kurtosis(&self) -> f64 { 6.0 }
+    #[inline]
+    fn skewness(&self) -> f64 { 2.0 }
+
+    #[inline]
+    fn kurtosis(&self) -> f64 { 6.0 }
 
     #[inline]
     fn median(&self) -> f64 {
