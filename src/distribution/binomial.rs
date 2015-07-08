@@ -371,11 +371,6 @@ mod tests {
     }
 
     #[test]
-    fn sd() {
-        assert_eq!(new!(16, 0.5).sd(), 2.0);
-    }
-
-    #[test]
     fn skewness() {
         assert_eq!(new!(16, 0.25).skewness(), 0.2886751345948129);
     }
