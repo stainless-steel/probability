@@ -17,7 +17,6 @@ impl Binomial {
     /// `p`.
     ///
     /// It should hold that `p >= 0` and `p <= 1`.
-    #[inline]
     pub fn new(n: usize, p: f64) -> Binomial {
         should!(0.0 < p && p < 1.0);
         let q = 1.0 - p;
@@ -31,7 +30,6 @@ impl Binomial {
     ///
     /// It should hold that if `q >= 0` or `q <= 1`. This constructor is
     /// preferable when `q` is very small.
-    #[inline]
     pub fn with_failure(n: usize, q: f64) -> Binomial {
         should!(0.0 < q && q < 1.0);
         let p = 1.0 - q;
@@ -59,7 +57,6 @@ impl distribution::Distribution for Binomial {
     /// Compute the cumulative distribution function.
     ///
     /// The implementation is based on the incomplete beta function.
-    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::{inc_beta, ln_beta};
 
@@ -114,7 +111,6 @@ impl distribution::Discrete for Binomial {
 }
 
 impl distribution::Entropy for Binomial {
-    #[inline]
     fn entropy(&self) -> f64 {
         use distribution::Discrete;
         use std::f64::consts::PI;

@@ -42,7 +42,6 @@ impl Categorical {
 impl distribution::Distribution for Categorical {
     type Value = usize;
 
-    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         if x < 0.0 {
             return 0.0;
@@ -59,12 +58,12 @@ impl distribution::Distribution for Categorical {
 impl distribution::Discrete for Categorical {
     #[inline]
     fn pmf(&self, x: usize) -> f64 {
+        should!(x < self.k);
         self.p[x]
     }
 }
 
 impl distribution::Entropy for Categorical {
-    #[inline]
     fn entropy(&self) -> f64 {
         -self.p.iter().fold(0.0, |sum, p| sum + p * p.ln())
     }

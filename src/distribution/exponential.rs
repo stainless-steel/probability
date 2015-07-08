@@ -27,14 +27,22 @@ impl distribution::Distribution for Exponential {
 
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
-        if x <= 0.0 { 0.0 } else { -(-self.lambda * x).exp_m1() }
+        if x <= 0.0 {
+            0.0
+        } else {
+            -(-self.lambda * x).exp_m1()
+        }
     }
 }
 
 impl distribution::Continuous for Exponential {
     #[inline]
     fn pdf(&self, x: f64) -> f64 {
-        if x < 0.0 { 0.0 } else { self.lambda * (-self.lambda * x).exp() }
+        if x < 0.0 {
+            0.0
+        } else {
+            self.lambda * (-self.lambda * x).exp()
+        }
     }
 }
 

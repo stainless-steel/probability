@@ -51,7 +51,6 @@ impl distribution::Distribution for Beta {
 }
 
 impl distribution::Continuous for Beta {
-    #[inline]
     fn pdf(&self, x: f64) -> f64 {
         let scale = self.b - self.a;
         let x = (x - self.a) / scale;
@@ -61,7 +60,6 @@ impl distribution::Continuous for Beta {
 }
 
 impl distribution::Entropy for Beta {
-    #[inline]
     fn entropy(&self) -> f64 {
         use special::digamma;
         let sum = self.alpha + self.beta;
@@ -87,7 +85,6 @@ impl distribution::Inverse for Beta {
 }
 
 impl distribution::Kurtosis for Beta {
-    #[inline]
     fn kurtosis(&self) -> f64 {
         let sum = self.alpha + self.beta;
         let delta = self.alpha - self.beta;
@@ -137,7 +134,6 @@ impl distribution::Sample for Beta {
 }
 
 impl distribution::Skewness for Beta {
-    #[inline]
     fn skewness(&self) -> f64 {
         let sum = self.alpha + self.beta;
         2.0 * (self.beta - self.alpha) * (sum + 1.0).sqrt() /
@@ -146,7 +142,6 @@ impl distribution::Skewness for Beta {
 }
 
 impl distribution::Variance for Beta {
-    #[inline]
     fn variance(&self) -> f64 {
         let scale = self.b - self.a;
         let sum = self.alpha + self.beta;

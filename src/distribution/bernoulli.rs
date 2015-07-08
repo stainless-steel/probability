@@ -56,12 +56,17 @@ impl distribution::Distribution for Bernoulli {
 impl distribution::Discrete for Bernoulli {
     #[inline]
     fn pmf(&self, x: u8) -> f64 {
-        if x == 0 { self.q } else if x == 1 { self.p } else { 0.0 }
+        if x == 0 {
+            self.q
+        } else if x == 1 {
+            self.p
+        } else {
+            0.0
+        }
     }
 }
 
 impl distribution::Entropy for Bernoulli {
-    #[inline]
     fn entropy(&self) -> f64 {
         -self.q * self.q.ln() - self.p * self.p.ln()
     }
@@ -88,7 +93,6 @@ impl distribution::Kurtosis for Bernoulli {
 }
 
 impl distribution::Median for Bernoulli {
-    #[inline]
     fn median(&self) -> f64 {
         use std::cmp::Ordering::*;
         match self.p.partial_cmp(&self.q) {
@@ -101,7 +105,6 @@ impl distribution::Median for Bernoulli {
 }
 
 impl distribution::Modes for Bernoulli {
-    #[inline]
     fn modes(&self) -> Vec<u8> {
         use std::cmp::Ordering::*;
         match self.p.partial_cmp(&self.q) {

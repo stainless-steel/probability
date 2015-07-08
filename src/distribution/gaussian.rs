@@ -31,7 +31,6 @@ impl Gaussian {
 impl distribution::Distribution for Gaussian {
     type Value = f64;
 
-    #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::erf;
         use std::f64::consts::SQRT_2;
@@ -40,7 +39,6 @@ impl distribution::Distribution for Gaussian {
 }
 
 impl distribution::Continuous for Gaussian {
-    #[inline]
     fn pdf(&self, x: f64) -> f64 {
         use distribution::Variance;
         use std::f64::consts::PI;
