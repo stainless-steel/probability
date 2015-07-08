@@ -4,6 +4,7 @@ use random::Source;
 
 /// A probability distribution.
 pub trait Distribution {
+    /// The type of outcomes.
     type Value;
 
     /// Compute the expected value.
