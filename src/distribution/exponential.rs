@@ -53,13 +53,6 @@ impl distribution::Entropy for Exponential {
     }
 }
 
-impl distribution::Expectation for Exponential {
-    #[inline]
-    fn expectation(&self) -> f64 {
-        self.lambda.recip()
-    }
-}
-
 impl distribution::Inverse for Exponential {
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
@@ -71,6 +64,13 @@ impl distribution::Inverse for Exponential {
 impl distribution::Kurtosis for Exponential {
     #[inline]
     fn kurtosis(&self) -> f64 { 6.0 }
+}
+
+impl distribution::Mean for Exponential {
+    #[inline]
+    fn mean(&self) -> f64 {
+        self.lambda.recip()
+    }
 }
 
 impl distribution::Median for Exponential {
@@ -157,11 +157,6 @@ mod tests {
     }
 
     #[test]
-    fn expectation() {
-        assert_eq!(new!(2.0).expectation(), 0.5);
-    }
-
-    #[test]
     fn inv_cdf() {
         use std::f64::INFINITY;
 
@@ -183,6 +178,11 @@ mod tests {
     #[test]
     fn kurtosis() {
         assert_eq!(new!(2.0).kurtosis(), 6.0);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(2.0).mean(), 0.5);
     }
 
     #[test]

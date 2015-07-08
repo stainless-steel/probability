@@ -8,9 +8,9 @@ pub use distribution::Continuous;
 pub use distribution::Discrete;
 
 pub use distribution::Entropy;
-pub use distribution::Expectation;
 pub use distribution::Inverse;
 pub use distribution::Kurtosis;
+pub use distribution::Mean;
 pub use distribution::Median;
 pub use distribution::Modes;
 pub use distribution::Sample;

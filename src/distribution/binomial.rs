@@ -124,11 +124,6 @@ impl distribution::Entropy for Binomial {
     }
 }
 
-impl distribution::Expectation for Binomial {
-    #[inline]
-    fn expectation(&self) -> f64 { self.np }
-}
-
 impl distribution::Inverse for Binomial {
     /// Compute the inverse of the cumulative distribution function.
     ///
@@ -211,6 +206,11 @@ impl distribution::Kurtosis for Binomial {
     fn kurtosis(&self) -> f64 {
         (1.0 - 6.0 * self.p * self.q) / self.npq
     }
+}
+
+impl distribution::Mean for Binomial {
+    #[inline]
+    fn mean(&self) -> f64 { self.np }
 }
 
 impl distribution::Median for Binomial {
@@ -414,11 +414,6 @@ mod tests {
     }
 
     #[test]
-    fn expectation() {
-        assert_eq!(new!(16, 0.25).expectation(), 4.0);
-    }
-
-    #[test]
     fn inv_cdf() {
         let d = Binomial::new(250, 0.55);
         assert_eq!(d.inv_cdf(0.1), 127);
@@ -438,6 +433,11 @@ mod tests {
     #[test]
     fn kurtosis() {
         assert_eq!(new!(16, 0.25).kurtosis(), -0.041666666666666664);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(16, 0.25).mean(), 4.0);
     }
 
     #[test]

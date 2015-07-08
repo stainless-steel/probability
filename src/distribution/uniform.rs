@@ -60,13 +60,6 @@ impl distribution::Entropy for Uniform {
     }
 }
 
-impl distribution::Expectation for Uniform {
-    #[inline]
-    fn expectation(&self) -> f64 {
-        (self.a + self.b) / 2.0
-    }
-}
-
 impl distribution::Inverse for Uniform {
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
@@ -80,11 +73,18 @@ impl distribution::Kurtosis for Uniform {
     fn kurtosis(&self) -> f64 { -1.2 }
 }
 
+impl distribution::Mean for Uniform {
+    #[inline]
+    fn mean(&self) -> f64 {
+        (self.a + self.b) / 2.0
+    }
+}
+
 impl distribution::Median for Uniform {
     #[inline]
     fn median(&self) -> f64 {
-        use distribution::Expectation;
-        self.expectation()
+        use distribution::Mean;
+        self.mean()
     }
 }
 
@@ -140,11 +140,6 @@ mod tests {
     }
 
     #[test]
-    fn expectation() {
-        assert_eq!(new!(0.0, 2.0).expectation(), 1.0);
-    }
-
-    #[test]
     fn inv_cdf() {
         let d = new!(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
@@ -156,6 +151,11 @@ mod tests {
     #[test]
     fn kurtosis() {
         assert_eq!(new!(0.0, 2.0).kurtosis(), -1.2);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(0.0, 2.0).mean(), 1.0);
     }
 
     #[test]

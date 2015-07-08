@@ -33,22 +33,6 @@ pub trait Entropy: Distribution {
     fn entropy(&self) -> f64;
 }
 
-/// A distribution capable of computing the expected value.
-///
-/// The trait is applicable when the expected value exists, that is, finite.
-pub trait Expectation: Distribution {
-    /// Compute the expected value.
-    fn expectation(&self) -> f64;
-
-    /// Compute the expected value.
-    ///
-    /// The function is an alias for `expectation`.
-    #[inline(always)]
-    fn mean(&self) -> f64 {
-        self.expectation()
-    }
-}
-
 /// A distribution capable of inverting the distribution function.
 pub trait Inverse: Distribution {
     /// Compute the inverse of the distribution function.
@@ -59,6 +43,14 @@ pub trait Inverse: Distribution {
 pub trait Kurtosis: Skewness {
     /// Compute the excess kurtosis.
     fn kurtosis(&self) -> f64;
+}
+
+/// A distribution capable of computing the expected value.
+///
+/// The trait is applicable when the expected value exists, that is, finite.
+pub trait Mean: Distribution {
+    /// Compute the expected value.
+    fn mean(&self) -> f64;
 }
 
 /// A distribution capable of computing the median.
@@ -92,7 +84,7 @@ pub trait Skewness: Variance {
 /// A distribution capable of computing the variance.
 ///
 /// The trait is applicable when the variance exists, that is, finite.
-pub trait Variance: Expectation {
+pub trait Variance: Mean {
     /// Compute the variance.
     fn variance(&self) -> f64;
 

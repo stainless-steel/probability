@@ -72,11 +72,6 @@ impl distribution::Entropy for Bernoulli {
     }
 }
 
-impl distribution::Expectation for Bernoulli {
-    #[inline]
-    fn expectation(&self) -> f64 { self.p }
-}
-
 impl distribution::Inverse for Bernoulli {
     #[inline]
     fn inv_cdf(&self, p: f64) -> u8 {
@@ -90,6 +85,11 @@ impl distribution::Kurtosis for Bernoulli {
     fn kurtosis(&self) -> f64 {
         (1.0 - 6.0 * self.pq) / (self.pq)
     }
+}
+
+impl distribution::Mean for Bernoulli {
+    #[inline]
+    fn mean(&self) -> f64 { self.p }
 }
 
 impl distribution::Median for Bernoulli {
@@ -167,11 +167,6 @@ mod tests {
     }
 
     #[test]
-    fn expectation() {
-        assert_eq!(new!(0.5).expectation(), 0.5);
-    }
-
-    #[test]
     fn inv_cdf() {
         let d = new!(0.25);
         let p = vec![0.0, 0.25, 0.5, 0.75, 0.75000000001, 1.0];
@@ -182,6 +177,11 @@ mod tests {
     #[test]
     fn kurtosis() {
         assert_eq!(new!(0.5).kurtosis(), -2.0);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(0.5).mean(), 0.5);
     }
 
     #[test]

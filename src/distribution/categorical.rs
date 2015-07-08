@@ -69,12 +69,6 @@ impl distribution::Entropy for Categorical {
     }
 }
 
-impl distribution::Expectation for Categorical {
-    fn expectation(&self) -> f64 {
-        self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + i as f64 * p)
-    }
-}
-
 impl distribution::Inverse for Categorical {
     fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
@@ -90,12 +84,18 @@ impl distribution::Inverse for Categorical {
 
 impl distribution::Kurtosis for Categorical {
     fn kurtosis(&self) -> f64 {
-        use distribution::{Expectation, Variance};
-        let (mean, variance) = (self.expectation(), self.variance());
+        use distribution::{Mean, Variance};
+        let (mean, variance) = (self.mean(), self.variance());
         let kurt = self.p.iter().enumerate().fold(0.0, |sum, (i, p)| {
             sum + (i as f64 - mean).powi(4) * p
         });
         kurt / variance.powi(2) - 3.0
+    }
+}
+
+impl distribution::Mean for Categorical {
+    fn mean(&self) -> f64 {
+        self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + i as f64 * p)
     }
 }
 
@@ -146,8 +146,8 @@ impl distribution::Sample for Categorical {
 
 impl distribution::Skewness for Categorical {
     fn skewness(&self) -> f64 {
-        use distribution::{Expectation, Variance};
-        let (mean, variance) = (self.expectation(), self.variance());
+        use distribution::{Mean, Variance};
+        let (mean, variance) = (self.mean(), self.variance());
         let skew = self.p.iter().enumerate().fold(0.0, |sum, (i, p)| {
             sum + (i as f64 - mean).powi(3) * p
         });
@@ -157,8 +157,8 @@ impl distribution::Skewness for Categorical {
 
 impl distribution::Variance for Categorical {
     fn variance(&self) -> f64 {
-        use distribution::Expectation;
-        let mean = self.expectation();
+        use distribution::Mean;
+        let mean = self.mean();
         self.p.iter().enumerate().fold(0.0, |sum, (i, p)| {
             sum + (i as f64 - mean).powi(2) * p
         })
@@ -213,13 +213,6 @@ mod tests {
     }
 
     #[test]
-    fn expectation() {
-        assert_eq!(new!(equal 3).expectation(), 1.0);
-        assert_eq!(new!([0.3, 0.3, 0.4]).expectation(), 1.1);
-        assert_eq!(new!([1.0 / 6.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 6.0]).expectation(), 1.5);
-    }
-
-    #[test]
     fn inv_cdf() {
         let d = new!([0.0, 0.75, 0.25, 0.0]);
         let p = vec![0.0, 0.75, 0.7500001, 1.0];
@@ -234,6 +227,13 @@ mod tests {
     fn kurtosis() {
         assert_eq!(new!(equal 2).kurtosis(), -2.0);
         assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).kurtosis(), -0.7999999999999998);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(equal 3).mean(), 1.0);
+        assert_eq!(new!([0.3, 0.3, 0.4]).mean(), 1.1);
+        assert_eq!(new!([1.0 / 6.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 6.0]).mean(), 1.5);
     }
 
     #[test]

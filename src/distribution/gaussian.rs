@@ -55,11 +55,6 @@ impl distribution::Entropy for Gaussian {
     }
 }
 
-impl distribution::Expectation for Gaussian {
-    #[inline]
-    fn expectation(&self) -> f64 { self.mu }
-}
-
 impl distribution::Inverse for Gaussian {
     /// Compute the inverse of the cumulative distribution function.
     ///
@@ -79,6 +74,11 @@ impl distribution::Inverse for Gaussian {
 impl distribution::Kurtosis for Gaussian {
     #[inline]
     fn kurtosis(&self) -> f64 { 0.0 }
+}
+
+impl distribution::Mean for Gaussian {
+    #[inline]
+    fn mean(&self) -> f64 { self.mu }
 }
 
 impl distribution::Median for Gaussian {
@@ -393,11 +393,6 @@ mod tests {
     }
 
     #[test]
-    fn expectation() {
-        assert_eq!(new!(0.0, 1.0).expectation(), 0.0);
-    }
-
-    #[test]
     fn inv_cdf() {
         let d = new!(-1.0, 0.25);
         let p = vec![
@@ -420,6 +415,11 @@ mod tests {
     #[test]
     fn kurtosis() {
         assert_eq!(new!(0.0, 2.0).kurtosis(), 0.0);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(0.0, 1.0).mean(), 0.0);
     }
 
     #[test]

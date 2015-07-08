@@ -68,13 +68,6 @@ impl distribution::Entropy for Beta {
     }
 }
 
-impl distribution::Expectation for Beta {
-    #[inline]
-    fn expectation(&self) -> f64 {
-        self.a + (self.b - self.a) * self.alpha / (self.alpha + self.beta)
-    }
-}
-
 impl distribution::Inverse for Beta {
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
@@ -91,6 +84,13 @@ impl distribution::Kurtosis for Beta {
         let product = self.alpha * self.beta;
         6.0 * (delta * delta * (sum + 1.0) - product * (sum + 2.0)) /
             (product * (sum + 2.0) * (sum + 3.0))
+    }
+}
+
+impl distribution::Mean for Beta {
+    #[inline]
+    fn mean(&self) -> f64 {
+        self.a + (self.b - self.a) * self.alpha / (self.alpha + self.beta)
     }
 }
 
@@ -208,12 +208,6 @@ mod tests {
     }
 
     #[test]
-    fn expectation() {
-        assert_eq!(new!(0.5, 0.5, 0.0, 1.0).expectation(), 0.5);
-        assert_eq!(new!(0.0005, 0.9995, -1.0, 2.0).expectation(), -0.9985);
-    }
-
-    #[test]
     fn inv_cdf() {
         let d = new!(1.0, 2.0, 3.0, 4.0);
         let p = vec![
@@ -237,6 +231,12 @@ mod tests {
         assert_eq!(new!(1.0, 1.0, 0.0, 1.0).kurtosis(), -6.0 / 5.0);
         assert_eq!(new!(2.0, 3.0, -1.0, 2.0).kurtosis(), -0.6428571428571429);
         assert_eq!(new!(3.0, 2.0, -1.0, 2.0).kurtosis(), -0.6428571428571429);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(0.5, 0.5, 0.0, 1.0).mean(), 0.5);
+        assert_eq!(new!(0.0005, 0.9995, -1.0, 2.0).mean(), -0.9985);
     }
 
     #[test]
