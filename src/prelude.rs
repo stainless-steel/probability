@@ -2,7 +2,8 @@
 
 pub use random::{self, Source};
 
-pub use distribution::Distribution;
+pub use distribution::{Continuous, Discrete, Distribution};
+
 pub use distribution::Bernoulli;
 pub use distribution::Beta;
 pub use distribution::Binomial;
