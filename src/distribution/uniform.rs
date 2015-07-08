@@ -142,29 +142,29 @@ mod tests {
 
     #[test]
     fn pdf() {
-        let uniform = new!(-1.0, 1.0);
+        let d = new!(-1.0, 1.0);
         let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
         let p = vec![0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0];
 
-        assert_eq!(&x.iter().map(|&x| uniform.pdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&x.iter().map(|&x| d.pdf(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]
     fn cdf() {
-        let uniform = new!(-1.0, 1.0);
+        let d = new!(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
         let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
 
-        assert_eq!(&x.iter().map(|&x| uniform.cdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]
     fn inv_cdf() {
-        let uniform = new!(-1.0, 1.0);
+        let d = new!(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
         let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
 
-        assert_eq!(&p.iter().map(|&p| uniform.inv_cdf(p)).collect::<Vec<_>>(), &x);
+        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x);
     }
 
     #[test]

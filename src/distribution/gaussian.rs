@@ -374,7 +374,7 @@ mod tests {
 
     #[test]
     fn pdf() {
-        let gaussian = new!(1.0, 2.0);
+        let d = new!(1.0, 2.0);
         let x = vec![
             -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
              4.0
@@ -388,12 +388,12 @@ mod tests {
             9.132454269451096e-02, 6.475879783294587e-02
         ];
 
-        assert::close(&x.iter().map(|&x| gaussian.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| d.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
     fn cdf() {
-        let gaussian = new!(1.0, 2.0);
+        let d = new!(1.0, 2.0);
         let x = vec![
             -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
              4.0,
@@ -407,12 +407,12 @@ mod tests {
             8.943502263331446e-01, 9.331927987311419e-01,
         ];
 
-        assert::close(&x.iter().map(|&x| gaussian.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
     fn inv_cdf() {
-        let gaussian = new!(-1.0, 0.25);
+        let d = new!(-1.0, 0.25);
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65,
             0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00,
@@ -427,6 +427,6 @@ mod tests {
             -6.796121086138498e-01, -5.887865932621319e-01,               INFINITY,
         ];
 
-        assert::close(&p.iter().map(|&p| gaussian.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 }

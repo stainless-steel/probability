@@ -404,14 +404,14 @@ mod tests {
 
     #[test]
     fn pmf() {
-        let binom = new!(16, 0.25);
-        let probs = vec![
+        let d = new!(16, 0.25);
+        let p = vec![
             1.002259575761855e-02, 1.336346101015806e-01, 2.251990651711821e-01,
             1.100973207503558e-01, 1.966023584827779e-02, 1.359226182103156e-03,
             3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
         ];
 
-        assert::close(&(0..9).map(|i| binom.pmf(2 * i)).collect::<Vec<_>>(), &probs, 1e-14);
+        assert::close(&(0..9).map(|i| d.pmf(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
@@ -433,13 +433,14 @@ mod tests {
 
     #[test]
     fn inv_cdf() {
-        let binom = Binomial::new(250, 0.55);
-        assert_eq!(binom.inv_cdf(0.1), 127);
-        assert_eq!(binom.inv_cdf(0.025), 122);
+        let d = Binomial::new(250, 0.55);
+        assert_eq!(d.inv_cdf(0.1), 127);
+        assert_eq!(d.inv_cdf(0.025), 122);
 
         let x = 1298;
-        let binom2 = new!(2500, 0.55);
-        assert_eq!(binom2.inv_cdf(binom2.cdf(x as f64)), x);
+        let d = new!(2500, 0.55);
+        assert_eq!(d.inv_cdf(d.cdf(x as f64)), x);
+
         assert_eq!(new!(1001, 0.25).inv_cdf(0.5), 250);
         assert_eq!(new!(1500, 0.15).inv_cdf(0.2), 213);
 
