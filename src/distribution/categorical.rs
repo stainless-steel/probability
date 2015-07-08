@@ -118,17 +118,13 @@ impl Distribution for Categorical {
 
     fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
-        if p == 0.0 {
-            return self.p.iter().position(|&p| p > 0.0).unwrap();
-        }
         let mut sum = 0.0;
-        for i in 0..self.k {
-            sum += self.p[i];
-            if sum >= p || sum == 1.0 {
-                return i;
-            }
-        }
-        self.k - 1
+        self.p.iter().position(|&pi| {
+            sum += pi;
+            pi > 0.0 && sum >= p
+        }).unwrap_or_else(|| {
+            self.p.iter().rposition(|&pi| pi > 0.0).unwrap()
+        })
     }
 
     #[inline]
