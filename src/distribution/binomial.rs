@@ -76,12 +76,6 @@ impl distribution::Distribution for Binomial {
         let (p, q) = ((self.n - x) as f64, (x + 1) as f64);
         inc_beta(self.q, p, q, ln_beta(p, q))
     }
-
-    #[inline]
-    fn mean(&self) -> f64 { self.np }
-
-    #[inline]
-    fn var(&self) -> f64 { self.npq }
 }
 
 impl distribution::Discrete for Binomial {
@@ -132,6 +126,11 @@ impl distribution::Entropy for Binomial {
             -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.pmf(i) * self.pmf(i).ln())
         }
     }
+}
+
+impl distribution::Expectation for Binomial {
+    #[inline]
+    fn expectation(&self) -> f64 { self.np }
 }
 
 impl distribution::Inverse for Binomial {
@@ -269,6 +268,11 @@ impl distribution::Skewness for Binomial {
     }
 }
 
+impl distribution::Variance for Binomial {
+    #[inline]
+    fn variance(&self) -> f64 { self.npq }
+}
+
 // See [Moorhead, 2013, pp. 7].
 fn approximate_by_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
     use distribution::gaussian;
@@ -396,16 +400,6 @@ mod tests {
     }
 
     #[test]
-    fn mean() {
-        assert_eq!(new!(16, 0.25).mean(), 4.0);
-    }
-
-    #[test]
-    fn var() {
-        assert_eq!(new!(16, 0.25).var(), 3.0);
-    }
-
-    #[test]
     fn pmf() {
         let d = new!(16, 0.25);
         let p = vec![
@@ -421,6 +415,11 @@ mod tests {
     fn entropy() {
         assert_eq!(new!(16, 0.25).entropy(), 1.9588018945068573);
         assert_eq!(new!(10_000_000, 0.5).entropy(), 8.784839178123887);
+    }
+
+    #[test]
+    fn expectation() {
+        assert_eq!(new!(16, 0.25).expectation(), 4.0);
     }
 
     #[test]
@@ -464,5 +463,10 @@ mod tests {
     #[test]
     fn skewness() {
         assert_eq!(new!(16, 0.25).skewness(), 0.2886751345948129);
+    }
+
+    #[test]
+    fn variance() {
+        assert_eq!(new!(16, 0.25).variance(), 3.0);
     }
 }

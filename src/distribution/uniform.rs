@@ -40,16 +40,6 @@ impl distribution::Distribution for Uniform {
             (x - self.a) / (self.b - self.a)
         }
     }
-
-    #[inline]
-    fn mean(&self) -> f64 {
-        (self.a + self.b) / 2.0
-    }
-
-    #[inline]
-    fn var(&self) -> f64 {
-        (self.b - self.a).powi(2) / 12.0
-    }
 }
 
 impl distribution::Continuous for Uniform {
@@ -70,6 +60,13 @@ impl distribution::Entropy for Uniform {
     }
 }
 
+impl distribution::Expectation for Uniform {
+    #[inline]
+    fn expectation(&self) -> f64 {
+        (self.a + self.b) / 2.0
+    }
+}
+
 impl distribution::Inverse for Uniform {
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
@@ -86,8 +83,8 @@ impl distribution::Kurtosis for Uniform {
 impl distribution::Median for Uniform {
     #[inline]
     fn median(&self) -> f64 {
-        use distribution::Distribution;
-        self.mean()
+        use distribution::Expectation;
+        self.expectation()
     }
 }
 
@@ -101,6 +98,13 @@ impl distribution::Sample for Uniform {
 impl distribution::Skewness for Uniform {
     #[inline]
     fn skewness(&self) -> f64 { 0.0 }
+}
+
+impl distribution::Variance for Uniform {
+    #[inline]
+    fn variance(&self) -> f64 {
+        (self.b - self.a).powi(2) / 12.0
+    }
 }
 
 #[cfg(test)]
@@ -121,16 +125,6 @@ mod tests {
     }
 
     #[test]
-    fn mean() {
-        assert_eq!(new!(0.0, 2.0).mean(), 1.0);
-    }
-
-    #[test]
-    fn var() {
-        assert_eq!(new!(0.0, 12.0).var(), 12.0);
-    }
-
-    #[test]
     fn pdf() {
         let d = new!(-1.0, 1.0);
         let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
@@ -143,6 +137,11 @@ mod tests {
     fn entropy() {
         use std::f64::consts::E;
         assert_eq!(new!(0.0, E).entropy(), 1.0);
+    }
+
+    #[test]
+    fn expectation() {
+        assert_eq!(new!(0.0, 2.0).expectation(), 1.0);
     }
 
     #[test]
@@ -174,5 +173,10 @@ mod tests {
     #[test]
     fn skewness() {
         assert_eq!(new!(0.0, 2.0).skewness(), 0.0);
+    }
+
+    #[test]
+    fn variance() {
+        assert_eq!(new!(0.0, 12.0).variance(), 12.0);
     }
 }

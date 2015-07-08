@@ -35,16 +35,6 @@ impl distribution::Distribution for Gamma {
     fn cdf(&self, _: f64) -> f64 {
         unreachable!();
     }
-
-    #[inline]
-    fn mean(&self) -> f64 {
-        unreachable!();
-    }
-
-    #[inline]
-    fn var(&self) -> f64 {
-        unreachable!();
-    }
 }
 
 impl distribution::Sample for Gamma {

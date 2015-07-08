@@ -37,35 +37,29 @@ impl distribution::Distribution for Gaussian {
         use std::f64::consts::SQRT_2;
         (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
     }
-
-    #[inline]
-    fn mean(&self) -> f64 { self.mu }
-
-    #[inline]
-    fn var(&self) -> f64 {
-        self.sigma * self.sigma
-    }
-
-    #[inline]
-    fn sd(&self) -> f64 { self.sigma }
 }
 
 impl distribution::Continuous for Gaussian {
     #[inline]
     fn pdf(&self, x: f64) -> f64 {
-        use distribution::Distribution;
+        use distribution::Variance;
         use std::f64::consts::PI;
-        (-(x - self.mu).powi(2) / (2.0 * self.var())).exp() / ((2.0 * PI).sqrt() * self.sigma)
+        (-(x - self.mu).powi(2) / (2.0 * self.variance())).exp() / ((2.0 * PI).sqrt() * self.sigma)
     }
 }
 
 impl distribution::Entropy for Gaussian {
     #[inline]
     fn entropy(&self) -> f64 {
-        use distribution::Distribution;
+        use distribution::Variance;
         use std::f64::consts::{E, PI};
-        0.5 * (2.0 * PI * E * self.var()).ln()
+        0.5 * (2.0 * PI * E * self.variance()).ln()
     }
+}
+
+impl distribution::Expectation for Gaussian {
+    #[inline]
+    fn expectation(&self) -> f64 { self.mu }
 }
 
 impl distribution::Inverse for Gaussian {
@@ -120,6 +114,16 @@ impl distribution::Sample for Gaussian {
 impl distribution::Skewness for Gaussian {
     #[inline]
     fn skewness(&self) -> f64 { 0.0 }
+}
+
+impl distribution::Variance for Gaussian {
+    #[inline]
+    fn variance(&self) -> f64 {
+        self.sigma * self.sigma
+    }
+
+    #[inline]
+    fn deviation(&self) -> f64 { self.sigma }
 }
 
 /// Compute the inverse cumulative distribution function of the standard
@@ -366,21 +370,6 @@ mod tests {
     }
 
     #[test]
-    fn mean() {
-        assert_eq!(new!(0.0, 1.0).mean(), 0.0);
-    }
-
-    #[test]
-    fn var() {
-        assert_eq!(new!(0.0, 2.0).var(), 4.0);
-    }
-
-    #[test]
-    fn sd() {
-        assert_eq!(new!(0.0, 2.0).sd(), 2.0);
-    }
-
-    #[test]
     fn pdf() {
         let d = new!(1.0, 2.0);
         let x = vec![
@@ -403,6 +392,11 @@ mod tests {
     fn entropy() {
         use std::f64::consts::PI;
         assert_eq!(new!(0.0, 1.0).entropy(), ((2.0 * PI).ln() + 1.0) / 2.0);
+    }
+
+    #[test]
+    fn expectation() {
+        assert_eq!(new!(0.0, 1.0).expectation(), 0.0);
     }
 
     #[test]
@@ -443,5 +437,15 @@ mod tests {
     #[test]
     fn skewness() {
         assert_eq!(new!(0.0, 2.0).skewness(), 0.0);
+    }
+
+    #[test]
+    fn variance() {
+        assert_eq!(new!(0.0, 2.0).variance(), 4.0);
+    }
+
+    #[test]
+    fn deviation() {
+        assert_eq!(new!(0.0, 2.0).deviation(), 2.0);
     }
 }

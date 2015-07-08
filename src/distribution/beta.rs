@@ -48,18 +48,6 @@ impl distribution::Distribution for Beta {
         use special::inc_beta;
         inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
     }
-
-    #[inline]
-    fn mean(&self) -> f64 {
-        self.a + (self.b - self.a) * self.alpha / (self.alpha + self.beta)
-    }
-
-    #[inline]
-    fn var(&self) -> f64 {
-        let scale = self.b - self.a;
-        let sum = self.alpha + self.beta;
-        scale * scale * (self.alpha * self.beta) / (sum * sum * (sum + 1.0))
-    }
 }
 
 impl distribution::Continuous for Beta {
@@ -79,6 +67,13 @@ impl distribution::Entropy for Beta {
         let sum = self.alpha + self.beta;
         (self.b - self.a).ln() + self.ln_beta - (self.alpha - 1.0) * digamma(self.alpha) -
             (self.beta - 1.0) * digamma(self.beta) + (sum - 2.0) * digamma(sum)
+    }
+}
+
+impl distribution::Expectation for Beta {
+    #[inline]
+    fn expectation(&self) -> f64 {
+        self.a + (self.b - self.a) * self.alpha / (self.alpha + self.beta)
     }
 }
 
@@ -150,6 +145,15 @@ impl distribution::Skewness for Beta {
     }
 }
 
+impl distribution::Variance for Beta {
+    #[inline]
+    fn variance(&self) -> f64 {
+        let scale = self.b - self.a;
+        let sum = self.alpha + self.beta;
+        scale * scale * (self.alpha * self.beta) / (sum * sum * (sum + 1.0))
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use assert;
@@ -176,20 +180,6 @@ mod tests {
             9.963000000000000e-01, 9.995187500000000e-01, 1.000000000000000e+00,
         ];
         assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
-    }
-
-    #[test]
-    fn mean() {
-        assert_eq!(new!(0.5, 0.5, 0.0, 1.0).mean(), 0.5);
-        assert_eq!(new!(0.0005, 0.9995, -1.0, 2.0).mean(), -0.9985);
-    }
-
-    #[test]
-    fn var() {
-        assert_eq!(new!(1.0, 1.0, 0.0, 1.0).var(), 1.0 / 12.0);
-        assert_eq!(new!(2.0, 3.0, 0.0, 1.0).var(), 0.04);
-        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).var(), 0.36);
-        assert_eq!(new!(5.0, 0.05, 0.0, 1.0).var(), new!(0.05, 5.0, 0.0, 1.0).var());
     }
 
     #[test]
@@ -220,6 +210,12 @@ mod tests {
         ];
         assert::close(&ds.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
                       &vec![0.0, 1.0, -0.2349066497879999, 0.8637056388801096], 1e-15);
+    }
+
+    #[test]
+    fn expectation() {
+        assert_eq!(new!(0.5, 0.5, 0.0, 1.0).expectation(), 0.5);
+        assert_eq!(new!(0.0005, 0.9995, -1.0, 2.0).expectation(), -0.9985);
     }
 
     #[test]
@@ -284,5 +280,13 @@ mod tests {
         assert_eq!(new!(1.0, 1.0, 0.0, 1.0).skewness(), 0.0);
         assert_eq!(new!(2.0, 3.0, -1.0, 2.0).skewness(), 0.28571428571428575);
         assert_eq!(new!(3.0, 2.0, -1.0, 2.0).skewness(), -0.28571428571428575);
+    }
+
+    #[test]
+    fn variance() {
+        assert_eq!(new!(1.0, 1.0, 0.0, 1.0).variance(), 1.0 / 12.0);
+        assert_eq!(new!(2.0, 3.0, 0.0, 1.0).variance(), 0.04);
+        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).variance(), 0.36);
+        assert_eq!(new!(5.0, 0.05, 0.0, 1.0).variance(), new!(0.05, 5.0, 0.0, 1.0).variance());
     }
 }

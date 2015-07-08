@@ -51,12 +51,6 @@ impl distribution::Distribution for Bernoulli {
             1.0
         }
     }
-
-    #[inline]
-    fn mean(&self) -> f64 { self.p }
-
-    #[inline]
-    fn var(&self) -> f64 { self.pq }
 }
 
 impl distribution::Discrete for Bernoulli {
@@ -71,6 +65,11 @@ impl distribution::Entropy for Bernoulli {
     fn entropy(&self) -> f64 {
         -self.q * self.q.ln() - self.p * self.p.ln()
     }
+}
+
+impl distribution::Expectation for Bernoulli {
+    #[inline]
+    fn expectation(&self) -> f64 { self.p }
 }
 
 impl distribution::Inverse for Bernoulli {
@@ -128,6 +127,11 @@ impl distribution::Skewness for Bernoulli {
     }
 }
 
+impl distribution::Variance for Bernoulli {
+    #[inline]
+    fn variance(&self) -> f64 { self.pq }
+}
+
 #[cfg(test)]
 mod tests {
     use assert;
@@ -147,16 +151,6 @@ mod tests {
     }
 
     #[test]
-    fn mean() {
-        assert_eq!(new!(0.5).mean(), 0.5);
-    }
-
-    #[test]
-    fn var() {
-        assert_eq!(new!(0.25).var(), 0.1875);
-    }
-
-    #[test]
     fn pmf() {
         let d = new!(0.25);
         assert_eq!(&(0..3).map(|x| d.pmf(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
@@ -167,6 +161,11 @@ mod tests {
         let ds = vec![new!(0.25), new!(0.5), new!(0.75)];
         assert::close(&ds.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
                       &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
+    }
+
+    #[test]
+    fn expectation() {
+        assert_eq!(new!(0.5).expectation(), 0.5);
     }
 
     #[test]
@@ -205,5 +204,10 @@ mod tests {
     #[test]
     fn skewness() {
         assert_eq!(new!(0.5).skewness(), 0.0);
+    }
+
+    #[test]
+    fn variance() {
+        assert_eq!(new!(0.25).variance(), 0.1875);
     }
 }

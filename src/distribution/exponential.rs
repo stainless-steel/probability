@@ -29,21 +29,6 @@ impl distribution::Distribution for Exponential {
     fn cdf(&self, x: f64) -> f64 {
         if x <= 0.0 { 0.0 } else { -(-self.lambda * x).exp_m1() }
     }
-
-    #[inline]
-    fn mean(&self) -> f64 {
-        self.lambda.recip()
-    }
-
-    #[inline]
-    fn var(&self) -> f64 {
-        self.lambda.powi(-2)
-    }
-
-    #[inline]
-    fn sd(&self) -> f64 {
-        self.lambda.recip()
-    }
 }
 
 impl distribution::Continuous for Exponential {
@@ -57,6 +42,13 @@ impl distribution::Entropy for Exponential {
     #[inline]
     fn entropy(&self) -> f64 {
         1.0 - self.lambda.ln()
+    }
+}
+
+impl distribution::Expectation for Exponential {
+    #[inline]
+    fn expectation(&self) -> f64 {
+        self.lambda.recip()
     }
 }
 
@@ -100,6 +92,18 @@ impl distribution::Skewness for Exponential {
     fn skewness(&self) -> f64 { 2.0 }
 }
 
+impl distribution::Variance for Exponential {
+    #[inline]
+    fn variance(&self) -> f64 {
+        self.lambda.powi(-2)
+    }
+
+    #[inline]
+    fn deviation(&self) -> f64 {
+        self.lambda.recip()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use assert;
@@ -125,21 +129,6 @@ mod tests {
     }
 
     #[test]
-    fn mean() {
-        assert_eq!(new!(2.0).mean(), 0.5);
-    }
-
-    #[test]
-    fn var() {
-        assert_eq!(new!(2.0).var(), 0.25);
-    }
-
-    #[test]
-    fn sd() {
-        assert_eq!(new!(2.0).sd(), 0.5);
-    }
-
-    #[test]
     fn pdf() {
         let d = new!(2.0);
         let x = vec![-1.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 12.0];
@@ -157,6 +146,11 @@ mod tests {
     fn entropy() {
         use std::f64::consts::E;
         assert_eq!(new!(E).entropy(), 0.0);
+    }
+
+    #[test]
+    fn expectation() {
+        assert_eq!(new!(2.0).expectation(), 0.5);
     }
 
     #[test]
@@ -197,5 +191,15 @@ mod tests {
     #[test]
     fn skewness() {
         assert_eq!(new!(2.0).skewness(), 2.0);
+    }
+
+    #[test]
+    fn variance() {
+        assert_eq!(new!(2.0).variance(), 0.25);
+    }
+
+    #[test]
+    fn deviation() {
+        assert_eq!(new!(2.0).deviation(), 0.5);
     }
 }
