@@ -1,4 +1,5 @@
-use random::Source;
+use distribution;
+use random;
 
 /// A gamma distribution.
 #[derive(Clone, Copy)]
@@ -25,7 +26,28 @@ impl Gamma {
     /// Return the rate parameter.
     #[inline(always)]
     pub fn beta(&self) -> f64 { self.beta }
+}
 
+impl distribution::Distribution for Gamma {
+    type Value = f64;
+
+    #[inline]
+    fn cdf(&self, _: f64) -> f64 {
+        unreachable!();
+    }
+
+    #[inline]
+    fn mean(&self) -> f64 {
+        unreachable!();
+    }
+
+    #[inline]
+    fn var(&self) -> f64 {
+        unreachable!();
+    }
+}
+
+impl distribution::Sample for Gamma {
     /// Draw a sample.
     ///
     /// ## References
@@ -34,13 +56,13 @@ impl Gamma {
     ///    variables,” ACM Transactions on Mathematical Software, vol. 26,
     ///    no. 3, pp. 363–372, September 2000.
     #[inline]
-    pub fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
         sample(self.alpha, self.beta, source)
     }
 }
 
 /// Draw a sample from a Gamma distribution.
-pub fn sample<S: Source>(alpha: f64, beta: f64, source: &mut S) -> f64 {
+pub fn sample<S: random::Source>(alpha: f64, beta: f64, source: &mut S) -> f64 {
     use distribution::gaussian;
 
     if alpha < 1.0 {

@@ -1,5 +1,5 @@
-use distribution::{Discrete, Distribution};
-use random::Source;
+use distribution;
+use random;
 
 /// A categorical distribution.
 #[derive(Clone)]
@@ -39,8 +39,21 @@ impl Categorical {
     pub fn p(&self) -> &[f64] { &self.p }
 }
 
-impl Distribution for Categorical {
+impl distribution::Distribution for Categorical {
     type Value = usize;
+
+    #[inline]
+    fn cdf(&self, x: f64) -> f64 {
+        if x < 0.0 {
+            return 0.0;
+        }
+        let x = x as usize;
+        if x >= self.k - 1 {
+            1.0
+        } else {
+            self.p.iter().take(x + 1).fold(0.0, |a, b| a + b)
+        }
+    }
 
     fn mean(&self) -> f64 {
         self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + i as f64 * p)
@@ -50,21 +63,46 @@ impl Distribution for Categorical {
         let mean = self.mean();
         self.p.iter().enumerate().fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(2) * p)
     }
+}
 
-    fn skewness(&self) -> f64 {
-        let (mean, var) = (self.mean(), self.var());
-        let skew = self.p.iter().enumerate()
-                                .fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(3) * p);
-        skew / (var * var.sqrt())
+impl distribution::Discrete for Categorical {
+    #[inline]
+    fn pmf(&self, x: usize) -> f64 {
+        self.p[x]
     }
+}
 
+impl distribution::Entropy for Categorical {
+    #[inline]
+    fn entropy(&self) -> f64 {
+        -self.p.iter().fold(0.0, |sum, p| sum + p * p.ln())
+    }
+}
+
+impl distribution::Inverse for Categorical {
+    fn inv_cdf(&self, p: f64) -> usize {
+        should!(0.0 <= p && p <= 1.0);
+        let mut sum = 0.0;
+        self.p.iter().position(|&pi| {
+            sum += pi;
+            pi > 0.0 && sum >= p
+        }).unwrap_or_else(|| {
+            self.p.iter().rposition(|&pi| pi > 0.0).unwrap()
+        })
+    }
+}
+
+impl distribution::Kurtosis for Categorical {
     fn kurtosis(&self) -> f64 {
+        use distribution::Distribution;
         let (mean, var) = (self.mean(), self.var());
         let kurt = self.p.iter().enumerate()
                                 .fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(4) * p);
         kurt / var.powi(2) - 3.0
     }
+}
 
+impl distribution::Median for Categorical {
     fn median(&self) -> f64 {
         if self.p[0] > 0.5 {
             return 0.0;
@@ -82,7 +120,9 @@ impl Distribution for Categorical {
         }
         unreachable!()
     }
+}
 
+impl distribution::Modes for Categorical {
     fn modes(&self) -> Vec<usize> {
         let mut modes = Vec::new();
         let mut max = 0.0;
@@ -97,48 +137,24 @@ impl Distribution for Categorical {
         }
         modes
     }
+}
 
+impl distribution::Sample for Categorical {
     #[inline]
-    fn entropy(&self) -> f64 {
-        -self.p.iter().fold(0.0, |sum, p| sum + p * p.ln())
-    }
-
-    #[inline]
-    fn cdf(&self, x: f64) -> f64 {
-        if x < 0.0 {
-            return 0.0;
-        }
-        let x = x as usize;
-        if x >= self.k - 1 {
-            1.0
-        } else {
-            self.p.iter().take(x + 1).fold(0.0, |a, b| a + b)
-        }
-    }
-
-    fn inv_cdf(&self, p: f64) -> usize {
-        should!(0.0 <= p && p <= 1.0);
-        let mut sum = 0.0;
-        self.p.iter().position(|&pi| {
-            sum += pi;
-            pi > 0.0 && sum >= p
-        }).unwrap_or_else(|| {
-            self.p.iter().rposition(|&pi| pi > 0.0).unwrap()
-        })
-    }
-
-    #[inline]
-    fn pmf(&self, x: usize) -> f64 {
-        self.p[x]
-    }
-
-    #[inline]
-    fn sample<S>(&self, source: &mut S) -> usize where S: Source {
+    fn sample<S>(&self, source: &mut S) -> usize where S: random::Source {
+        use distribution::Inverse;
         self.inv_cdf(source.read::<f64>())
     }
 }
 
-impl Discrete for Categorical {
+impl distribution::Skewness for Categorical {
+    fn skewness(&self) -> f64 {
+        use distribution::Distribution;
+        let (mean, var) = (self.mean(), self.var());
+        let skew = self.p.iter().enumerate()
+                                .fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(3) * p);
+        skew / (var * var.sqrt())
+    }
 }
 
 #[cfg(test)]
@@ -149,6 +165,27 @@ mod tests {
         (equal $k:expr) => { Categorical::new(&[1.0 / $k as f64; $k]) };
         ($p:expr) => { Categorical::new(&$p); }
     );
+
+    #[test]
+    fn cdf() {
+        let d = new!([0.0, 0.75, 0.25, 0.0]);
+        let p = vec![0.0, 0.0, 0.75, 1.0, 1.0];
+
+        let x = (-1..4).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
+
+        let x = (-1..4).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
+
+        let d = new!(equal 3);
+        let p = vec![0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0];
+
+        let x = (-1..3).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
+
+        let x = (-1..3).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
+        assert_eq!(&x, &p);
+    }
 
     #[test]
     fn mean() {
@@ -164,10 +201,31 @@ mod tests {
     }
 
     #[test]
-    fn skewness() {
-        assert_eq!(new!(equal 6).skewness(), 0.0);
-        assert_eq!(new!([1.0 / 6.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 6.0]).skewness(), 0.0);
-        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).skewness(), -0.6);
+    fn pmf() {
+        let p = [0.0, 0.75, 0.25, 0.0];
+        let d = new!(p);
+        assert_eq!(&(0..4).map(|x| d.pmf(x)).collect::<Vec<_>>(), &p.to_vec());
+
+        let d = new!(equal 3);
+        assert_eq!(&(0..3).map(|x| d.pmf(x)).collect::<Vec<_>>(), &vec![1.0 / 3.0; 3])
+    }
+
+    #[test]
+    fn entropy() {
+        use std::f64::consts::LN_2;
+        assert_eq!(new!(equal 2).entropy(), LN_2);
+        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).entropy(), 1.2798542258336676);
+    }
+
+    #[test]
+    fn inv_cdf() {
+        let d = new!([0.0, 0.75, 0.25, 0.0]);
+        let p = vec![0.0, 0.75, 0.7500001, 1.0];
+        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &vec![1, 1, 2, 2]);
+
+        let d = new!(equal 3);
+        let p = vec![0.0, 0.5, 0.75, 1.0];
+        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &vec![0, 1, 2, 2]);
     }
 
     #[test]
@@ -194,59 +252,16 @@ mod tests {
     }
 
     #[test]
-    fn entropy() {
-        use std::f64::consts::LN_2;
-        assert_eq!(new!(equal 2).entropy(), LN_2);
-        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).entropy(), 1.2798542258336676);
-    }
-
-    #[test]
-    fn pmf() {
-        let p = [0.0, 0.75, 0.25, 0.0];
-        let d = new!(p);
-        assert_eq!(&(0..4).map(|x| d.pmf(x)).collect::<Vec<_>>(), &p.to_vec());
-
-        let d = new!(equal 3);
-        assert_eq!(&(0..3).map(|x| d.pmf(x)).collect::<Vec<_>>(), &vec![1.0 / 3.0; 3])
-    }
-
-    #[test]
-    fn cdf() {
-        let d = new!([0.0, 0.75, 0.25, 0.0]);
-        let p = vec![0.0, 0.0, 0.75, 1.0, 1.0];
-
-        let x = (-1..4).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
-        assert_eq!(&x, &p);
-
-        let x = (-1..4).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
-        assert_eq!(&x, &p);
-
-        let d = new!(equal 3);
-        let p = vec![0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0];
-
-        let x = (-1..3).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
-        assert_eq!(&x, &p);
-
-        let x = (-1..3).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
-        assert_eq!(&x, &p);
-    }
-
-    #[test]
-    fn inv_cdf() {
-        let d = new!([0.0, 0.75, 0.25, 0.0]);
-        let p = vec![0.0, 0.75, 0.7500001, 1.0];
-        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &vec![1, 1, 2, 2]);
-
-        let d = new!(equal 3);
-        let p = vec![0.0, 0.5, 0.75, 1.0];
-        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &vec![0, 1, 2, 2]);
-
-    }
-
-    #[test]
     fn sample() {
         let mut source = random::default();
         let sum = Independent(&new!([0.0, 0.5, 0.5]), &mut source).take(100).fold(0, |a, b| a + b);
         assert!(100 <= sum && sum <= 200);
+    }
+
+    #[test]
+    fn skewness() {
+        assert_eq!(new!(equal 6).skewness(), 0.0);
+        assert_eq!(new!([1.0 / 6.0, 1.0 / 3.0, 1.0 / 3.0, 1.0 / 6.0]).skewness(), 0.0);
+        assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).skewness(), -0.6);
     }
 }

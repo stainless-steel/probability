@@ -7,59 +7,85 @@ pub trait Distribution {
     /// The type of outcomes.
     type Value;
 
+    /// Compute the distribution function.
+    ///
+    /// The function is also known as the cumulative distribution function.
+    fn cdf(&self, f64) -> f64;
+
     /// Compute the expected value.
+    ///
+    /// By convention, the function returns `f64::INFINITY` if the distribution
+    /// does not have an expected value.
     fn mean(&self) -> f64;
 
     /// Compute the variance.
+    ///
+    /// By convention, the function returns `f64::INFINITY` if the distribution
+    /// does not have a variance.
     fn var(&self) -> f64;
 
     /// Compute the standard deviation.
+    ///
+    /// By convention, the function returns `f64::INFINITY` if the distribution
+    /// does not have a variance and, hence, does not have a standard deviation.
     #[inline]
     fn sd(&self) -> f64 {
         self.var().sqrt()
     }
+}
 
-    /// Compute the skewness.
-    fn skewness(&self) -> f64;
+/// A continuous distribution.
+pub trait Continuous: Distribution {
+    /// Compute the probability density function.
+    fn pdf(&self, f64) -> f64;
+}
 
+/// A discrete distribution.
+pub trait Discrete: Distribution {
+    /// Compute the probability mass function.
+    fn pmf(&self, Self::Value) -> f64;
+}
+
+/// A distribution capable of computing the differential entropy.
+pub trait Entropy: Distribution {
+    /// Compute the differential entropy measured in nats.
+    fn entropy(&self) -> f64;
+}
+
+/// A distribution capable of inverting the distribution function.
+pub trait Inverse: Distribution {
+    /// Compute the inverse of the distribution function.
+    fn inv_cdf(&self, f64) -> Self::Value;
+}
+
+/// A distribution capable of computing the excess kurtosis.
+pub trait Kurtosis: Distribution {
     /// Compute the excess kurtosis.
     fn kurtosis(&self) -> f64;
+}
 
+/// A distribution capable of computing the median.
+pub trait Median: Distribution {
     /// Compute the median.
     fn median(&self) -> f64;
+}
 
+/// A distribution capable of computing the modes.
+pub trait Modes: Distribution {
     /// Compute the modes.
     fn modes(&self) -> Vec<Self::Value>;
+}
 
-    /// Compute the differential entropy in nats.
-    fn entropy(&self) -> f64;
-
-    /// Compute the cumulative distribution function.
-    fn cdf(&self, f64) -> f64;
-
-    /// Compute the inverse of the cumulative distribution function.
-    fn inv_cdf(&self, f64) -> Self::Value;
-
-    /// Compute the probability density function.
-    fn pdf(&self, f64) -> f64 where Self: Continuous {
-        unimplemented!();
-    }
-
-    /// Compute the probability mass function.
-    fn pmf(&self, Self::Value) -> f64 where Self: Discrete {
-        unimplemented!();
-    }
-
+/// A distribution capable of sampling.
+pub trait Sample: Distribution {
     /// Draw a sample.
     fn sample<S>(&self, &mut S) -> Self::Value where S: Source;
 }
 
-/// A continuous probability distribution.
-pub trait Continuous {
-}
-
-/// A discrete probability distribution.
-pub trait Discrete {
+/// A distribution capable of computing the skewness.
+pub trait Skewness: Distribution {
+    /// Compute the skewness.
+    fn skewness(&self) -> f64;
 }
 
 pub use self::bernoulli::Bernoulli;

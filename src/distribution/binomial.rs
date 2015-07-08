@@ -1,5 +1,5 @@
-use distribution::{Discrete, Distribution};
-use random::Source;
+use distribution;
+use random;
 
 /// A binomial distribution.
 #[derive(Clone, Copy)]
@@ -53,67 +53,8 @@ impl Binomial {
     pub fn q(&self) -> f64 { self.q }
 }
 
-impl Distribution for Binomial {
+impl distribution::Distribution for Binomial {
     type Value = usize;
-
-    #[inline]
-    fn mean(&self) -> f64 { self.np }
-
-    #[inline]
-    fn var(&self) -> f64 { self.npq }
-
-    #[inline]
-    fn skewness(&self) -> f64 {
-        (1.0 - 2.0 * self.p) / (self.npq).sqrt()
-    }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 {
-        (1.0 - 6.0 * self.p * self.q) / self.npq
-    }
-
-    fn median(&self) -> f64 {
-        use std::f64::consts::LN_2;
-
-        if self.np.fract() == 0.0 {
-            self.np
-        } else if self.p == 0.5 && self.n % 2 != 0 {
-            self.np
-        } else if self.p <= 1.0 - LN_2 || self.p >= LN_2 ||
-                  (self.np.round() - self.np).abs() <= self.p.min(self.q) {
-            self.np.round()
-        } else if self.n > 1000 && self.npq > 80.0 {
-            // Use a normal approximation.
-            self.np.floor()
-        } else {
-            self.inv_cdf(0.5) as f64
-        }
-    }
-
-    fn modes(&self) -> Vec<usize> {
-        let r = self.p * (self.n + 1) as f64;
-        if r == 0.0 {
-            vec![0]
-        } else if self.p == 1.0 {
-            vec![self.n]
-        } else if r.fract() != 0.0 {
-            vec![r.floor() as usize]
-        } else {
-            vec![r as usize - 1, r as usize]
-        }
-    }
-
-    #[inline]
-    fn entropy(&self) -> f64 {
-        use std::f64::consts::PI;
-
-        if self.n > 10000 && self.npq > 80.0 {
-            // Use a normal approximation.
-            0.5 * ((2.0 * PI * self.npq).ln() + 1.0)
-        } else {
-            -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.pmf(i) * self.pmf(i).ln())
-        }
-    }
 
     /// Compute the cumulative distribution function.
     ///
@@ -136,6 +77,64 @@ impl Distribution for Binomial {
         inc_beta(self.q, p, q, ln_beta(p, q))
     }
 
+    #[inline]
+    fn mean(&self) -> f64 { self.np }
+
+    #[inline]
+    fn var(&self) -> f64 { self.npq }
+}
+
+impl distribution::Discrete for Binomial {
+    /// Compute the probability mass function.
+    ///
+    /// For large `n`, a saddle-point expansion is used for more accurate
+    /// computation.
+    ///
+    /// ## References
+    ///
+    /// 1. C. Loader, “Fast and Accurate Computation of Binomial Probabilities,”
+    ///    2000.
+    fn pmf(&self, x: usize) -> f64 {
+        use std::f64::consts::PI;
+
+        if self.p == 0.0 {
+            return if x == 0 { 1.0 } else { 0.0 };
+        }
+        if self.p == 1.0 {
+            return if x == self.n { 1.0 } else { 0.0 };
+        }
+
+        let n = self.n as f64;
+        if x == 0 {
+            (n * self.q.ln()).exp()
+        } else if x == self.n {
+            (n * self.p.ln()).exp()
+        } else {
+            let x = x as f64;
+            let n_m_x = n - x;
+            let ln_c = stirlerr(n) - stirlerr(x) - stirlerr(n_m_x)
+                - ln_d0(x, self.np) - ln_d0(n_m_x, self.nq);
+            ln_c.exp() * (n / (2.0 * PI * x * (n_m_x))).sqrt()
+        }
+    }
+}
+
+impl distribution::Entropy for Binomial {
+    #[inline]
+    fn entropy(&self) -> f64 {
+        use distribution::Discrete;
+        use std::f64::consts::PI;
+
+        if self.n > 10000 && self.npq > 80.0 {
+            // Use a normal approximation.
+            0.5 * ((2.0 * PI * self.npq).ln() + 1.0)
+        } else {
+            -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.pmf(i) * self.pmf(i).ln())
+        }
+    }
+}
+
+impl distribution::Inverse for Binomial {
     /// Compute the inverse of the cumulative distribution function.
     ///
     /// For small `n`, a simple summation is utilized. For large `n` and large
@@ -148,6 +147,8 @@ impl Distribution for Binomial {
     ///    distribution function where the number of trials is large,” Oxford
     ///    University, 2013.
     fn inv_cdf(&self, p: f64) -> usize {
+        use distribution::{Distribution, Discrete, Modes};
+
         should!(0.0 <= p && p <= 1.0);
 
         // Rename p as to not be confused with self.p.
@@ -208,47 +209,64 @@ impl Distribution for Binomial {
             m
         }
     }
+}
 
-    /// Compute the probability mass function.
-    ///
-    /// For large `n`, a saddle-point expansion is used for more accurate
-    /// computation.
-    ///
-    /// ## References
-    ///
-    /// 1. C. Loader, “Fast and Accurate Computation of Binomial Probabilities,”
-    ///    2000.
-    fn pmf(&self, x: usize) -> f64 {
-        use std::f64::consts::PI;
+impl distribution::Kurtosis for Binomial {
+    #[inline]
+    fn kurtosis(&self) -> f64 {
+        (1.0 - 6.0 * self.p * self.q) / self.npq
+    }
+}
 
-        if self.p == 0.0 {
-            return if x == 0 { 1.0 } else { 0.0 };
-        }
-        if self.p == 1.0 {
-            return if x == self.n { 1.0 } else { 0.0 };
-        }
+impl distribution::Median for Binomial {
+    fn median(&self) -> f64 {
+        use distribution::Inverse;
+        use std::f64::consts::LN_2;
 
-        let n = self.n as f64;
-        if x == 0 {
-            (n * self.q.ln()).exp()
-        } else if x == self.n {
-            (n * self.p.ln()).exp()
+        if self.np.fract() == 0.0 {
+            self.np
+        } else if self.p == 0.5 && self.n % 2 != 0 {
+            self.np
+        } else if self.p <= 1.0 - LN_2 || self.p >= LN_2 ||
+                  (self.np.round() - self.np).abs() <= self.p.min(self.q) {
+            self.np.round()
+        } else if self.n > 1000 && self.npq > 80.0 {
+            // Use a normal approximation.
+            self.np.floor()
         } else {
-            let x = x as f64;
-            let n_m_x = n - x;
-            let ln_c = stirlerr(n) - stirlerr(x) - stirlerr(n_m_x)
-                - ln_d0(x, self.np) - ln_d0(n_m_x, self.nq);
-            ln_c.exp() * (n / (2.0 * PI * x * (n_m_x))).sqrt()
+            self.inv_cdf(0.5) as f64
         }
     }
+}
 
+impl distribution::Modes for Binomial {
+    fn modes(&self) -> Vec<usize> {
+        let r = self.p * (self.n + 1) as f64;
+        if r == 0.0 {
+            vec![0]
+        } else if self.p == 1.0 {
+            vec![self.n]
+        } else if r.fract() != 0.0 {
+            vec![r.floor() as usize]
+        } else {
+            vec![r as usize - 1, r as usize]
+        }
+    }
+}
+
+impl distribution::Sample for Binomial {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> usize where S: Source {
+    fn sample<S>(&self, source: &mut S) -> usize where S: random::Source {
+        use distribution::Inverse;
         self.inv_cdf(source.read::<f64>())
     }
 }
 
-impl Discrete for Binomial {
+impl distribution::Skewness for Binomial {
+    #[inline]
+    fn skewness(&self) -> f64 {
+        (1.0 - 2.0 * self.p) / (self.npq).sqrt()
+    }
 }
 
 // See [Moorhead, 2013, pp. 7].
@@ -361,6 +379,23 @@ mod tests {
     }
 
     #[test]
+    fn cdf() {
+        let d = new!(16, 0.75);
+        let p = vec![
+            0.000000000000000e+00, 2.328306436538699e-10, 2.628657966852194e-07,
+            3.810715861618527e-05, 1.644465373829007e-03, 2.712995628826319e-02,
+            1.896545726340262e-01, 5.950128899421541e-01, 9.365235602017492e-01,
+            1.000000000000000e+00,
+        ];
+
+        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64)).collect::<Vec<_>>();
+        assert::close(&x, &p, 1e-14);
+
+        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64 + 0.5)).collect::<Vec<_>>();
+        assert::close(&x, &p, 1e-14);
+    }
+
+    #[test]
     fn mean() {
         assert_eq!(new!(16, 0.25).mean(), 4.0);
     }
@@ -371,8 +406,38 @@ mod tests {
     }
 
     #[test]
-    fn skewness() {
-        assert_eq!(new!(16, 0.25).skewness(), 0.2886751345948129);
+    fn pmf() {
+        let d = new!(16, 0.25);
+        let p = vec![
+            1.002259575761855e-02, 1.336346101015806e-01, 2.251990651711821e-01,
+            1.100973207503558e-01, 1.966023584827779e-02, 1.359226182103156e-03,
+            3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
+        ];
+
+        assert::close(&(0..9).map(|i| d.pmf(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
+    }
+
+    #[test]
+    fn entropy() {
+        assert_eq!(new!(16, 0.25).entropy(), 1.9588018945068573);
+        assert_eq!(new!(10_000_000, 0.5).entropy(), 8.784839178123887);
+    }
+
+    #[test]
+    fn inv_cdf() {
+        let d = Binomial::new(250, 0.55);
+        assert_eq!(d.inv_cdf(0.1), 127);
+        assert_eq!(d.inv_cdf(0.025), 122);
+
+        let x = 1298;
+        let d = new!(2500, 0.55);
+        assert_eq!(d.inv_cdf(d.cdf(x as f64)), x);
+
+        assert_eq!(new!(1001, 0.25).inv_cdf(0.5), 250);
+        assert_eq!(new!(1500, 0.15).inv_cdf(0.2), 213);
+
+        assert_eq!(new!(1_000_000, 2.5e-5).inv_cdf(0.9995), 42);
+        assert_eq!(new!(1_000_000_000, 6.66e-9).inv_cdf(0.8), 8);
     }
 
     #[test]
@@ -397,54 +462,7 @@ mod tests {
     }
 
     #[test]
-    fn entropy() {
-        assert_eq!(new!(16, 0.25).entropy(), 1.9588018945068573);
-        assert_eq!(new!(10_000_000, 0.5).entropy(), 8.784839178123887);
-    }
-
-    #[test]
-    fn pmf() {
-        let d = new!(16, 0.25);
-        let p = vec![
-            1.002259575761855e-02, 1.336346101015806e-01, 2.251990651711821e-01,
-            1.100973207503558e-01, 1.966023584827779e-02, 1.359226182103156e-03,
-            3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
-        ];
-
-        assert::close(&(0..9).map(|i| d.pmf(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
-    }
-
-    #[test]
-    fn cdf() {
-        let d = new!(16, 0.75);
-        let p = vec![
-            0.000000000000000e+00, 2.328306436538699e-10, 2.628657966852194e-07,
-            3.810715861618527e-05, 1.644465373829007e-03, 2.712995628826319e-02,
-            1.896545726340262e-01, 5.950128899421541e-01, 9.365235602017492e-01,
-            1.000000000000000e+00,
-        ];
-
-        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64)).collect::<Vec<_>>();
-        assert::close(&x, &p, 1e-14);
-
-        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64 + 0.5)).collect::<Vec<_>>();
-        assert::close(&x, &p, 1e-14);
-    }
-
-    #[test]
-    fn inv_cdf() {
-        let d = Binomial::new(250, 0.55);
-        assert_eq!(d.inv_cdf(0.1), 127);
-        assert_eq!(d.inv_cdf(0.025), 122);
-
-        let x = 1298;
-        let d = new!(2500, 0.55);
-        assert_eq!(d.inv_cdf(d.cdf(x as f64)), x);
-
-        assert_eq!(new!(1001, 0.25).inv_cdf(0.5), 250);
-        assert_eq!(new!(1500, 0.15).inv_cdf(0.2), 213);
-
-        assert_eq!(new!(1_000_000, 2.5e-5).inv_cdf(0.9995), 42);
-        assert_eq!(new!(1_000_000_000, 6.66e-9).inv_cdf(0.8), 8);
+    fn skewness() {
+        assert_eq!(new!(16, 0.25).skewness(), 0.2886751345948129);
     }
 }

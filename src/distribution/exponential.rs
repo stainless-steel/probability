@@ -1,5 +1,5 @@
-use distribution::{Continuous, Distribution};
-use random::Source;
+use distribution;
+use random;
 
 /// An exponential distribution.
 #[derive(Clone, Copy)]
@@ -22,8 +22,13 @@ impl Exponential {
     pub fn lambda(&self) -> f64 { self.lambda }
 }
 
-impl Distribution for Exponential {
+impl distribution::Distribution for Exponential {
     type Value = f64;
+
+    #[inline]
+    fn cdf(&self, x: f64) -> f64 {
+        if x <= 0.0 { 0.0 } else { -(-self.lambda * x).exp_m1() }
+    }
 
     #[inline]
     fn mean(&self) -> f64 {
@@ -39,52 +44,60 @@ impl Distribution for Exponential {
     fn sd(&self) -> f64 {
         self.lambda.recip()
     }
+}
 
-    #[inline]
-    fn skewness(&self) -> f64 { 2.0 }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 { 6.0 }
-
-    #[inline]
-    fn median(&self) -> f64 {
-        use std::f64::consts::LN_2;
-        self.lambda.recip() * LN_2
-    }
-
-    #[inline]
-    fn modes(&self) -> Vec<f64> {
-        vec![0.0]
-    }
-
-    #[inline]
-    fn entropy(&self) -> f64 {
-        1.0 - self.lambda.ln()
-    }
-
+impl distribution::Continuous for Exponential {
     #[inline]
     fn pdf(&self, x: f64) -> f64 {
         if x < 0.0 { 0.0 } else { self.lambda * (-self.lambda * x).exp() }
     }
+}
 
+impl distribution::Entropy for Exponential {
     #[inline]
-    fn cdf(&self, x: f64) -> f64 {
-        if x <= 0.0 { 0.0 } else { -(-self.lambda * x).exp_m1() }
+    fn entropy(&self) -> f64 {
+        1.0 - self.lambda.ln()
     }
+}
 
+impl distribution::Inverse for Exponential {
     #[inline]
     fn inv_cdf(&self, p: f64) -> f64 {
         should!(0.0 <= p && p <= 1.0);
         -(-p).ln_1p() / self.lambda
     }
+}
 
+impl distribution::Kurtosis for Exponential {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn kurtosis(&self) -> f64 { 6.0 }
+}
+
+impl distribution::Median for Exponential {
+    #[inline]
+    fn median(&self) -> f64 {
+        use std::f64::consts::LN_2;
+        self.lambda.recip() * LN_2
+    }
+}
+
+impl distribution::Modes for Exponential {
+    #[inline]
+    fn modes(&self) -> Vec<f64> {
+        vec![0.0]
+    }
+}
+
+impl distribution::Sample for Exponential {
+    #[inline]
+    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
         -source.read::<f64>().ln() / self.lambda
     }
 }
 
-impl Continuous for Exponential {
+impl distribution::Skewness for Exponential {
+    #[inline]
+    fn skewness(&self) -> f64 { 2.0 }
 }
 
 #[cfg(test)]
@@ -95,6 +108,21 @@ mod tests {
     macro_rules! new(
         ($lambda:expr) => (Exponential::new($lambda));
     );
+
+    #[test]
+    fn cdf() {
+        let d = new!(2.0);
+        let x = vec![-1.0, 0.0, 0.01, 0.05, 0.1, 0.15, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0];
+        let p = vec![
+            0.000000000000000e+00, 0.000000000000000e+00, 1.980132669324470e-02,
+            9.516258196404043e-02, 1.812692469220182e-01, 2.591817793182821e-01,
+            3.934693402873666e-01, 6.321205588285577e-01, 8.646647167633873e-01,
+            9.502129316321360e-01, 9.816843611112658e-01, 9.975212478233336e-01,
+            9.996645373720975e-01
+        ];
+
+        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-15);
+    }
 
     #[test]
     fn mean() {
@@ -112,33 +140,6 @@ mod tests {
     }
 
     #[test]
-    fn skewness() {
-        assert_eq!(new!(2.0).skewness(), 2.0);
-    }
-
-    #[test]
-    fn kurtosis() {
-        assert_eq!(new!(2.0).kurtosis(), 6.0);
-    }
-
-    #[test]
-    fn median() {
-        use std::f64::consts::LN_2;
-        assert_eq!(new!(LN_2).median(), 1.0);
-    }
-
-    #[test]
-    fn modes() {
-        assert_eq!(new!(2.0).modes(), vec![0.0]);
-    }
-
-    #[test]
-    fn entropy() {
-        use std::f64::consts::E;
-        assert_eq!(new!(E).entropy(), 0.0);
-    }
-
-    #[test]
     fn pdf() {
         let d = new!(2.0);
         let x = vec![-1.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 12.0];
@@ -153,18 +154,9 @@ mod tests {
     }
 
     #[test]
-    fn cdf() {
-        let d = new!(2.0);
-        let x = vec![-1.0, 0.0, 0.01, 0.05, 0.1, 0.15, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0];
-        let p = vec![
-            0.000000000000000e+00, 0.000000000000000e+00, 1.980132669324470e-02,
-            9.516258196404043e-02, 1.812692469220182e-01, 2.591817793182821e-01,
-            3.934693402873666e-01, 6.321205588285577e-01, 8.646647167633873e-01,
-            9.502129316321360e-01, 9.816843611112658e-01, 9.975212478233336e-01,
-            9.996645373720975e-01
-        ];
-
-        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-15);
+    fn entropy() {
+        use std::f64::consts::E;
+        assert_eq!(new!(E).entropy(), 0.0);
     }
 
     #[test]
@@ -184,5 +176,26 @@ mod tests {
         ];
 
         assert::close(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+    }
+
+    #[test]
+    fn kurtosis() {
+        assert_eq!(new!(2.0).kurtosis(), 6.0);
+    }
+
+    #[test]
+    fn median() {
+        use std::f64::consts::LN_2;
+        assert_eq!(new!(LN_2).median(), 1.0);
+    }
+
+    #[test]
+    fn modes() {
+        assert_eq!(new!(2.0).modes(), vec![0.0]);
+    }
+
+    #[test]
+    fn skewness() {
+        assert_eq!(new!(2.0).skewness(), 2.0);
     }
 }

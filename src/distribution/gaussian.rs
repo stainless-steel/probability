@@ -1,5 +1,5 @@
-use distribution::{Continuous, Distribution};
-use random::Source;
+use distribution;
+use random;
 
 /// A Gaussian distribution.
 #[derive(Clone, Copy)]
@@ -28,8 +28,15 @@ impl Gaussian {
     pub fn sigma(&self) -> f64 { self.sigma }
 }
 
-impl Distribution for Gaussian {
+impl distribution::Distribution for Gaussian {
     type Value = f64;
+
+    #[inline]
+    fn cdf(&self, x: f64) -> f64 {
+        use special::erf;
+        use std::f64::consts::SQRT_2;
+        (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
+    }
 
     #[inline]
     fn mean(&self) -> f64 { self.mu }
@@ -41,34 +48,27 @@ impl Distribution for Gaussian {
 
     #[inline]
     fn sd(&self) -> f64 { self.sigma }
+}
 
+impl distribution::Continuous for Gaussian {
     #[inline]
-    fn skewness(&self) -> f64 { 0.0 }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 { 0.0 }
-
-    #[inline]
-    fn median(&self) -> f64 { self.mu }
-
-    #[inline]
-    fn modes(&self) -> Vec<f64> {
-        vec![self.mu]
+    fn pdf(&self, x: f64) -> f64 {
+        use distribution::Distribution;
+        use std::f64::consts::PI;
+        (-(x - self.mu).powi(2) / (2.0 * self.var())).exp() / ((2.0 * PI).sqrt() * self.sigma)
     }
+}
 
+impl distribution::Entropy for Gaussian {
     #[inline]
     fn entropy(&self) -> f64 {
+        use distribution::Distribution;
         use std::f64::consts::{E, PI};
         0.5 * (2.0 * PI * E * self.var()).ln()
     }
+}
 
-    #[inline]
-    fn cdf(&self, x: f64) -> f64 {
-        use special::erf;
-        use std::f64::consts::SQRT_2;
-        (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
-    }
-
+impl distribution::Inverse for Gaussian {
     /// Compute the inverse of the cumulative distribution function.
     ///
     /// ## References
@@ -82,13 +82,26 @@ impl Distribution for Gaussian {
     fn inv_cdf(&self, p: f64) -> f64 {
         self.mu + self.sigma * inv_cdf(p)
     }
+}
 
+impl distribution::Kurtosis for Gaussian {
     #[inline]
-    fn pdf(&self, x: f64) -> f64 {
-        use std::f64::consts::PI;
-        (-(x - self.mu).powi(2) / (2.0 * self.var())).exp() / ((2.0 * PI).sqrt() * self.sigma)
-    }
+    fn kurtosis(&self) -> f64 { 0.0 }
+}
 
+impl distribution::Median for Gaussian {
+    #[inline]
+    fn median(&self) -> f64 { self.mu }
+}
+
+impl distribution::Modes for Gaussian {
+    #[inline]
+    fn modes(&self) -> Vec<f64> {
+        vec![self.mu]
+    }
+}
+
+impl distribution::Sample for Gaussian {
     /// Draw a sample.
     ///
     /// ## References
@@ -99,12 +112,14 @@ impl Distribution for Gaussian {
     ///
     /// 2. D. Eddelbuettel, “Ziggurat Revisited,” 2014.
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
         self.sigma * sample(source) + self.mu
     }
 }
 
-impl Continuous for Gaussian {
+impl distribution::Skewness for Gaussian {
+    #[inline]
+    fn skewness(&self) -> f64 { 0.0 }
 }
 
 /// Compute the inverse cumulative distribution function of the standard
@@ -185,7 +200,7 @@ pub fn inv_cdf(p: f64) -> f64 {
 }
 
 /// Draw a sample from the standard Gaussian distribution.
-pub fn sample<S: Source>(source: &mut S) -> f64 {
+pub fn sample<S: random::Source>(source: &mut S) -> f64 {
     loop {
         let u = source.read::<u64>();
 
@@ -332,6 +347,25 @@ mod tests {
     );
 
     #[test]
+    fn cdf() {
+        let d = new!(1.0, 2.0);
+        let x = vec![
+            -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5,
+            0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0,
+        ];
+        let p = vec![
+            6.209665325776139e-03, 1.222447265504470e-02, 2.275013194817922e-02,
+            4.005915686381709e-02, 6.680720126885809e-02, 1.056497736668553e-01,
+            1.586552539314571e-01, 2.266273523768682e-01, 3.085375387259869e-01,
+            4.012936743170763e-01, 5.000000000000000e-01, 5.987063256829237e-01,
+            6.914624612740131e-01, 7.733726476231317e-01, 8.413447460685429e-01,
+            8.943502263331446e-01, 9.331927987311419e-01,
+        ];
+
+        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
+
+    #[test]
     fn mean() {
         assert_eq!(new!(0.0, 1.0).mean(), 0.0);
     }
@@ -344,32 +378,6 @@ mod tests {
     #[test]
     fn sd() {
         assert_eq!(new!(0.0, 2.0).sd(), 2.0);
-    }
-
-    #[test]
-    fn skewness() {
-        assert_eq!(new!(0.0, 2.0).skewness(), 0.0);
-    }
-
-    #[test]
-    fn kurtosis() {
-        assert_eq!(new!(0.0, 2.0).kurtosis(), 0.0);
-    }
-
-    #[test]
-    fn median() {
-        assert_eq!(new!(0.0, 2.0).median(), 0.0);
-    }
-
-    #[test]
-    fn modes() {
-        assert_eq!(new!(2.0, 5.0).modes(), vec![2.0]);
-    }
-
-    #[test]
-    fn entropy() {
-        use std::f64::consts::PI;
-        assert_eq!(new!(0.0, 1.0).entropy(), ((2.0 * PI).ln() + 1.0) / 2.0);
     }
 
     #[test]
@@ -392,30 +400,17 @@ mod tests {
     }
 
     #[test]
-    fn cdf() {
-        let d = new!(1.0, 2.0);
-        let x = vec![
-            -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
-             4.0,
-        ];
-        let p = vec![
-            6.209665325776139e-03, 1.222447265504470e-02, 2.275013194817922e-02,
-            4.005915686381709e-02, 6.680720126885809e-02, 1.056497736668553e-01,
-            1.586552539314571e-01, 2.266273523768682e-01, 3.085375387259869e-01,
-            4.012936743170763e-01, 5.000000000000000e-01, 5.987063256829237e-01,
-            6.914624612740131e-01, 7.733726476231317e-01, 8.413447460685429e-01,
-            8.943502263331446e-01, 9.331927987311419e-01,
-        ];
-
-        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+    fn entropy() {
+        use std::f64::consts::PI;
+        assert_eq!(new!(0.0, 1.0).entropy(), ((2.0 * PI).ln() + 1.0) / 2.0);
     }
 
     #[test]
     fn inv_cdf() {
         let d = new!(-1.0, 0.25);
         let p = vec![
-            0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65,
-            0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00,
+            0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50,
+            0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00,
         ];
         let x = vec![
                       NEG_INFINITY, -1.411213406737868e+00, -1.320387891386150e+00,
@@ -424,9 +419,29 @@ mod tests {
             -1.031415336713768e+00, -1.000000000000000e+00, -9.685846632862315e-01,
             -9.366632242160501e-01, -9.036698833981082e-01, -8.688998718229899e-01,
             -8.313775624509796e-01, -7.895946916067714e-01, -7.408916526265525e-01,
-            -6.796121086138498e-01, -5.887865932621319e-01,               INFINITY,
+            -6.796121086138498e-01, -5.887865932621319e-01, INFINITY,
         ];
 
         assert::close(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+    }
+
+    #[test]
+    fn kurtosis() {
+        assert_eq!(new!(0.0, 2.0).kurtosis(), 0.0);
+    }
+
+    #[test]
+    fn median() {
+        assert_eq!(new!(0.0, 2.0).median(), 0.0);
+    }
+
+    #[test]
+    fn modes() {
+        assert_eq!(new!(2.0, 5.0).modes(), vec![2.0]);
+    }
+
+    #[test]
+    fn skewness() {
+        assert_eq!(new!(0.0, 2.0).skewness(), 0.0);
     }
 }

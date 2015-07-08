@@ -1,5 +1,5 @@
-use distribution::{Discrete, Distribution};
-use random::Source;
+use distribution;
+use random;
 
 /// A Bernoulli distribution.
 #[derive(Clone, Copy)]
@@ -38,51 +38,8 @@ impl Bernoulli {
     pub fn q(&self) -> f64 { self.q }
 }
 
-impl Distribution for Bernoulli {
+impl distribution::Distribution for Bernoulli {
     type Value = u8;
-
-    #[inline]
-    fn mean(&self) -> f64 { self.p }
-
-    #[inline]
-    fn var(&self) -> f64 { self.pq }
-
-    #[inline]
-    fn skewness(&self) -> f64 {
-        (1.0 - 2.0 * self.p) / (self.pq).sqrt()
-    }
-
-    #[inline]
-    fn kurtosis(&self) -> f64 {
-        (1.0 - 6.0 * self.pq) / (self.pq)
-    }
-
-    #[inline]
-    fn median(&self) -> f64 {
-        use std::cmp::Ordering::*;
-        match self.p.partial_cmp(&self.q) {
-            Some(Less) => 0.0,
-            Some(Equal) => 0.5,
-            Some(Greater) => 1.0,
-            None => unreachable!(),
-        }
-    }
-
-    #[inline]
-    fn modes(&self) -> Vec<u8> {
-        use std::cmp::Ordering::*;
-        match self.p.partial_cmp(&self.q) {
-            Some(Less) => vec![0],
-            Some(Equal) => vec![0, 1],
-            Some(Greater) => vec![1],
-            None => unreachable!(),
-        }
-    }
-
-    #[inline]
-    fn entropy(&self) -> f64 {
-        -self.q * self.q.ln() - self.p * self.p.ln()
-    }
 
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
@@ -96,23 +53,79 @@ impl Distribution for Bernoulli {
     }
 
     #[inline]
-    fn inv_cdf(&self, p: f64) -> u8 {
-        should!(0.0 <= p && p <= 1.0);
-        if p <= self.q { 0 } else { 1 }
-    }
+    fn mean(&self) -> f64 { self.p }
 
+    #[inline]
+    fn var(&self) -> f64 { self.pq }
+}
+
+impl distribution::Discrete for Bernoulli {
     #[inline]
     fn pmf(&self, x: u8) -> f64 {
         if x == 0 { self.q } else if x == 1 { self.p } else { 0.0 }
     }
+}
 
+impl distribution::Entropy for Bernoulli {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> u8 where S: Source {
+    fn entropy(&self) -> f64 {
+        -self.q * self.q.ln() - self.p * self.p.ln()
+    }
+}
+
+impl distribution::Inverse for Bernoulli {
+    #[inline]
+    fn inv_cdf(&self, p: f64) -> u8 {
+        should!(0.0 <= p && p <= 1.0);
+        if p <= self.q { 0 } else { 1 }
+    }
+}
+
+impl distribution::Kurtosis for Bernoulli {
+    #[inline]
+    fn kurtosis(&self) -> f64 {
+        (1.0 - 6.0 * self.pq) / (self.pq)
+    }
+}
+
+impl distribution::Median for Bernoulli {
+    #[inline]
+    fn median(&self) -> f64 {
+        use std::cmp::Ordering::*;
+        match self.p.partial_cmp(&self.q) {
+            Some(Less) => 0.0,
+            Some(Equal) => 0.5,
+            Some(Greater) => 1.0,
+            None => unreachable!(),
+        }
+    }
+}
+
+impl distribution::Modes for Bernoulli {
+    #[inline]
+    fn modes(&self) -> Vec<u8> {
+        use std::cmp::Ordering::*;
+        match self.p.partial_cmp(&self.q) {
+            Some(Less) => vec![0],
+            Some(Equal) => vec![0, 1],
+            Some(Greater) => vec![1],
+            None => unreachable!(),
+        }
+    }
+}
+
+impl distribution::Sample for Bernoulli {
+    #[inline]
+    fn sample<S>(&self, source: &mut S) -> u8 where S: random::Source {
         if source.read::<f64>() < self.q { 0 } else { 1 }
     }
 }
 
-impl Discrete for Bernoulli {
+impl distribution::Skewness for Bernoulli {
+    #[inline]
+    fn skewness(&self) -> f64 {
+        (1.0 - 2.0 * self.p) / (self.pq).sqrt()
+    }
 }
 
 #[cfg(test)]
@@ -126,6 +139,14 @@ mod tests {
     );
 
     #[test]
+    fn cdf() {
+        let d = new!(0.25);
+        let x = vec![-0.1, 0.0, 0.1, 0.25, 0.5, 1.0, 1.1];
+        let p = vec![0.0, 0.75, 0.75, 0.75, 0.75, 1.0, 1.0];
+        assert_eq!(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p);
+    }
+
+    #[test]
     fn mean() {
         assert_eq!(new!(0.5).mean(), 0.5);
     }
@@ -136,8 +157,24 @@ mod tests {
     }
 
     #[test]
-    fn skewness() {
-        assert_eq!(new!(0.5).skewness(), 0.0);
+    fn pmf() {
+        let d = new!(0.25);
+        assert_eq!(&(0..3).map(|x| d.pmf(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
+    }
+
+    #[test]
+    fn entropy() {
+        let ds = vec![new!(0.25), new!(0.5), new!(0.75)];
+        assert::close(&ds.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
+                      &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
+    }
+
+    #[test]
+    fn inv_cdf() {
+        let d = new!(0.25);
+        let p = vec![0.0, 0.25, 0.5, 0.75, 0.75000000001, 1.0];
+        let x = vec![0, 0, 0, 0, 1, 1];
+        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x);
     }
 
     #[test]
@@ -160,37 +197,13 @@ mod tests {
     }
 
     #[test]
-    fn entropy() {
-        let ds = vec![new!(0.25), new!(0.5), new!(0.75)];
-        assert::close(&ds.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
-                      &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
-    }
-
-    #[test]
-    fn pmf() {
-        let d = new!(0.25);
-        assert_eq!(&(0..3).map(|x| d.pmf(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
-    }
-
-    #[test]
-    fn cdf() {
-        let d = new!(0.25);
-        let x = vec![-0.1, 0.0, 0.1, 0.25, 0.5, 1.0, 1.1];
-        let p = vec![0.0, 0.75, 0.75, 0.75, 0.75, 1.0, 1.0];
-        assert_eq!(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p);
-    }
-
-    #[test]
-    fn inv_cdf() {
-        let d = new!(0.25);
-        let p = vec![0.0, 0.25, 0.5, 0.75, 0.75000000001, 1.0];
-        let x = vec![0, 0, 0, 0, 1, 1];
-        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x);
-    }
-
-    #[test]
     fn sample() {
         assert!(Independent(&new!(0.25), &mut random::default()).take(100)
                                                                 .fold(0, |a, b| a + b) <= 100);
+    }
+
+    #[test]
+    fn skewness() {
+        assert_eq!(new!(0.5).skewness(), 0.0);
     }
 }
