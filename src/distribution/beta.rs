@@ -127,8 +127,8 @@ impl distribution::Sample for Beta {
     #[inline]
     fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
         use distribution::gamma;
-        let x = gamma::sample(self.alpha, 1.0, source);
-        let y = gamma::sample(self.beta, 1.0, source);
+        let x = gamma::sample(self.alpha, source);
+        let y = gamma::sample(self.beta, source);
         self.a + (self.b - self.a) * x / (x + y)
     }
 }
