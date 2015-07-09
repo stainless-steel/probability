@@ -6,28 +6,27 @@ use random;
 pub struct Categorical {
     k: usize,
     p: Vec<f64>,
+    cumsum: Vec<f64>,
 }
 
 impl Categorical {
     /// Create a categorical distribution with success probability `p`.
     ///
     /// It should hold that `p[i] >= 0`, `p[i] <= 1`, and `sum(p) == 1`.
-    #[inline]
     pub fn new(p: &[f64]) -> Categorical {
         should!(is_probability_vector(p), {
             const EPSILON: f64 = 1e-12;
-            let mut in_unit = true;
-            let mut sum = 0.0;
-            for &p in p.iter() {
-                if p < 0.0 || p > 1.0 {
-                    in_unit = false;
-                    break;
-                }
-                sum += p;
-            }
-            in_unit && (sum - 1.0).abs() <= EPSILON
+            p.iter().all(|&p| p >= 0.0 && p <= 1.0) &&
+                (p.iter().fold(0.0, |sum, &p| sum + p) - 1.0).abs() < EPSILON
         });
-        Categorical { k: p.len(), p: p.to_vec() }
+
+        let k = p.len();
+        let mut cumsum = p.to_vec();
+        for i in 1..(k - 1) {
+            cumsum[i] += cumsum[i - 1];
+        }
+        cumsum[k - 1] = 1.0;
+        Categorical { k: k, p: p.to_vec(), cumsum: cumsum }
     }
 
     /// Return the number of categories.
@@ -47,11 +46,10 @@ impl distribution::Distribution for Categorical {
             return 0.0;
         }
         let x = x as usize;
-        if x >= self.k - 1 {
-            1.0
-        } else {
-            self.p.iter().take(x + 1).fold(0.0, |a, b| a + b)
+        if x >= self.k {
+            return 1.0;
         }
+        self.cumsum[x]
     }
 }
 
@@ -72,12 +70,8 @@ impl distribution::Entropy for Categorical {
 impl distribution::Inverse for Categorical {
     fn inv_cdf(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
-        let mut sum = 0.0;
-        self.p.iter().position(|&pi| {
-            sum += pi;
-            pi > 0.0 && sum >= p
-        }).unwrap_or_else(|| {
-            self.p.iter().rposition(|&pi| pi > 0.0).unwrap()
+        self.cumsum.iter().position(|&sum| sum > 0.0 && sum >= p).unwrap_or_else(|| {
+            self.p.iter().rposition(|&p| p > 0.0).unwrap()
         })
     }
 }
@@ -103,12 +97,11 @@ impl distribution::Median for Categorical {
     fn median(&self) -> f64 {
         if self.p[0] > 0.5 {
             return 0.0;
-        } else if self.p[0] == 0.5 {
+        }
+        if self.p[0] == 0.5 {
             return 0.5;
         }
-        let mut sum = 0.0;
-        for i in 0..self.k {
-            sum += self.p[i];
+        for (i, &sum) in self.cumsum.iter().enumerate() {
             if sum == 0.5 {
                 return (2 * i - 1) as f64 / 2.0;
             } else if sum > 0.5 {
