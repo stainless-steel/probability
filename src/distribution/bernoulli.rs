@@ -161,8 +161,8 @@ mod tests {
 
     #[test]
     fn entropy() {
-        let ds = vec![new!(0.25), new!(0.5), new!(0.75)];
-        assert::close(&ds.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
+        let d = vec![new!(0.25), new!(0.5), new!(0.75)];
+        assert::close(&d.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
                       &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
     }
 

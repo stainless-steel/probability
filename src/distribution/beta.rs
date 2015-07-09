@@ -199,11 +199,11 @@ mod tests {
     #[test]
     fn entropy() {
         use std::f64::consts::E;
-        let ds = vec![
+        let d = vec![
             new!(1.0, 1.0, 0.0, 1.0), new!(1.0, 1.0, 0.0, E),
             new!(2.0, 3.0, 0.0, 1.0), new!(2.0, 3.0, -1.0, 2.0),
         ];
-        assert::close(&ds.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
+        assert::close(&d.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
                       &vec![0.0, 1.0, -0.2349066497879999, 0.8637056388801096], 1e-15);
     }
 
@@ -248,7 +248,7 @@ mod tests {
 
     #[test]
     fn modes() {
-        let ds: [Beta; 9] = [
+        let d: [Beta; 9] = [
             new!(1.0, 1.0, -1.0, 2.0), new!(0.05, 0.05, -1.0, 2.0), new!(0.05, 5.0, -1.0, 2.0),
             new!(5.0, 0.05, -1.0, 2.0), new!(0.05, 3.0, -1.0, 2.0), new!(2.0, 0.05, -1.0, 2.0),
             new!(1.0, 3.0, -1.0, 2.0), new!(2.0, 1.0, -1.0, 2.0), new!(2.0, 3.0, -1.0, 2.0),
@@ -258,7 +258,7 @@ mod tests {
             vec![2.0], vec![-1.0], vec![2.0],
             vec![-1.0], vec![2.0], vec![0.0],
         ];
-        for (ref actual, expected) in ds.iter().map(|&d| d.modes()).zip(modes.iter()) {
+        for (ref actual, expected) in d.iter().map(|&d| d.modes()).zip(modes.iter()) {
             assert_eq!(actual, expected);
         }
     }
