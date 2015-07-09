@@ -249,8 +249,12 @@ mod tests {
     #[test]
     fn sample() {
         let mut source = random::default();
+
         let sum = Independent(&new!([0.0, 0.5, 0.5]), &mut source).take(100).fold(0, |a, b| a + b);
         assert!(100 <= sum && sum <= 200);
+
+        let p = (0..11).map(|i| if i % 2 != 0 { 0.2 } else { 0.0 }).collect::<Vec<_>>();
+        assert!(Independent(&new!(p), &mut source).take(1000).all(|x| x % 2 != 0));
     }
 
     #[test]
