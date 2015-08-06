@@ -1,6 +1,6 @@
 [package]
 name = "probability"
-version = "0.12.2"
+version = "0.12.3"
 authors = [
   "Ivan Ukhov <ivan.ukhov@gmail.com>",
   "Jon Lund Steffensen <jonlst@gmail.com>",
@@ -14,7 +14,7 @@ description = "The package provides a probability-theory toolbox."
 
 [dependencies]
 random = "0.9"
-special = "0.4"
+special = "0.5"
 
 [dev-dependencies]
 assert = "*"
