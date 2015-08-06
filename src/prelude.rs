@@ -1,4 +1,4 @@
-//! Reexports of the most common traits, types, and functions.
+//! Reexports of traits, types, and functions.
 
 pub use random::{self, Source};
 
