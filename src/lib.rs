@@ -17,12 +17,8 @@ extern crate random;
 extern crate special;
 
 macro_rules! should(
-    ($requirement:expr) => ({
-        debug_assert!($requirement);
-    });
-    ($requirement:expr, $code:expr) => ({
-        debug_assert!($code, stringify!($requirement))
-    });
+    ($requirement:expr) => (debug_assert!($requirement));
+    ($requirement:expr, $code:expr) => (debug_assert!($code, stringify!($requirement)));
 );
 
 pub mod distribution;
