@@ -20,7 +20,7 @@ let samples = Independent(&uniform, &mut source).take(10).collect::<Vec<_>>();
 2. Implement your idea.
 3. Open a pull request.
 
-[version-img]: http://stainless-steel.github.io/images/crates.svg
+[version-img]: https://img.shields.io/crates/v/probability.svg
 [version-url]: https://crates.io/crates/probability
 [status-img]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
 [status-url]: https://travis-ci.org/stainless-steel/probability
