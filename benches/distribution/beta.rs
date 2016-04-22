@@ -17,3 +17,11 @@ fn inv_cdf(bencher: &mut Bencher) {
 
     bencher.iter(|| black_box(p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>()));
 }
+
+#[bench]
+fn sample(bencher: &mut Bencher) {
+    let mut source = random::Xorshift128Plus::new([42, 69]);
+    let d = Beta::new(0.5, 1.5, 0.0, 1.0);
+
+    bencher.iter(|| black_box(d.sample(&mut source)));
+}
