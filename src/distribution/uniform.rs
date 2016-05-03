@@ -118,8 +118,8 @@ mod tests {
     #[test]
     fn cdf() {
         let d = new!(-1.0, 1.0);
-        let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
-        let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
+        let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
+        let p = vec![0.0, 0.0, 0.25, 0.5, 0.75, 1.0, 1.0];
 
         assert_eq!(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p);
     }
