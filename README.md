@@ -14,11 +14,11 @@ let uniform = Uniform::new(0.0, 1.0);
 let samples = Independent(&uniform, &mut source).take(10).collect::<Vec<_>>();
 ```
 
-## Contributing
+## Contribution
 
-1. Fork the project.
-2. Implement your idea.
-3. Open a pull request.
+Your contribution is highly appreciated. Do not hesitate to open an issue or a
+pull request. Note that any contribution submitted for inclusion in the project
+will be licensed according to the terms given in [LICENSE.md](LICENSE.md).
 
 [version-img]: https://img.shields.io/crates/v/probability.svg
 [version-url]: https://crates.io/crates/probability

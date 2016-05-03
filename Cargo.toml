@@ -1,16 +1,16 @@
 [package]
 name = "probability"
-version = "0.12.4"
+version = "0.12.5"
+license = "Apache-2.0/MIT"
 authors = [
   "Ivan Ukhov <ivan.ukhov@gmail.com>",
   "Jon Lund Steffensen <jonlst@gmail.com>",
   "Rúnar Berg Baugsson Sigríðarson <runarberg@zoho.com>",
 ]
-license = "MIT"
-repository = "https://github.com/stainless-steel/probability"
-homepage = "https://github.com/stainless-steel/probability"
-documentation = "https://stainless-steel.github.io/probability"
 description = "The package provides a probability-theory toolbox."
+documentation = "https://stainless-steel.github.io/probability"
+homepage = "https://github.com/stainless-steel/probability"
+repository = "https://github.com/stainless-steel/probability"
 
 [dependencies]
 random = "0.9"
