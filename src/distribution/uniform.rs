@@ -34,7 +34,7 @@ impl distribution::Distribution for Uniform {
     fn cdf(&self, x: f64) -> f64 {
         if x <= self.a {
             0.0
-        } else if self.b <= x {
+        } else if x >= self.b {
             1.0
         } else {
             (x - self.a) / (self.b - self.a)

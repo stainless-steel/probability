@@ -34,7 +34,7 @@ impl distribution::Distribution for Gamma {
     #[inline]
     fn cdf(&self, x: f64) -> f64 {
         use special::inc_gamma;
-        if x < 0.0 {
+        if x <= 0.0 {
             0.0
         } else {
             inc_gamma(x / self.theta, self.k)
