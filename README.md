@@ -20,8 +20,8 @@ Your contribution is highly appreciated. Do not hesitate to open an issue or a
 pull request. Note that any contribution submitted for inclusion in the project
 will be licensed according to the terms given in [LICENSE.md](LICENSE.md).
 
-[version-img]: https://img.shields.io/crates/v/probability.svg
-[version-url]: https://crates.io/crates/probability
+[docs]: https://stainless-steel.github.io/probability
 [status-img]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
 [status-url]: https://travis-ci.org/stainless-steel/probability
-[docs]: https://stainless-steel.github.io/probability
+[version-img]: https://img.shields.io/crates/v/probability.svg
+[version-url]: https://crates.io/crates/probability
