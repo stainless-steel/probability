@@ -13,7 +13,7 @@ homepage = "https://github.com/stainless-steel/probability"
 repository = "https://github.com/stainless-steel/probability"
 
 [dependencies]
-random = "0.9"
+random = "0.10"
 special = "0.5"
 
 [dev-dependencies]
