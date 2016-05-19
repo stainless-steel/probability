@@ -8,14 +8,14 @@ pub trait Distribution {
     type Value;
 
     /// Compute the cumulative distribution function.
-    fn cumulate(&self, f64) -> f64;
+    fn distribution(&self, f64) -> f64;
 
     /// Compute the cumulative distribution function.
     ///
-    /// The function is an alias for `cumulate`.
+    /// The function is an alias for `distribution`.
     #[inline(always)]
     fn cdf(&self, x: f64) -> f64 {
-        self.cumulate(x)
+        self.distribution(x)
     }
 }
 

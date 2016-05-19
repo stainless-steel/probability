@@ -26,7 +26,7 @@ impl distribution::Distribution for Exponential {
     type Value = f64;
 
     #[inline]
-    fn cumulate(&self, x: f64) -> f64 {
+    fn distribution(&self, x: f64) -> f64 {
         if x <= 0.0 {
             0.0
         } else {
@@ -122,7 +122,7 @@ mod tests {
     );
 
     #[test]
-    fn cumulate() {
+    fn distribution() {
         let d = new!(2.0);
         let x = vec![-1.0, 0.0, 0.01, 0.05, 0.1, 0.15, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0];
         let p = vec![
@@ -133,7 +133,7 @@ mod tests {
             9.996645373720975e-01
         ];
 
-        assert::close(&x.iter().map(|&x| d.cumulate(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-15);
     }
 
     #[test]
