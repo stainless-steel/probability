@@ -2,15 +2,6 @@
 
 use source::Source;
 
-/// A distribution.
-pub trait Distribution {
-    /// The type of outcomes.
-    type Value;
-
-    /// Compute the cumulative distribution function.
-    fn distribution(&self, f64) -> f64;
-}
-
 /// A continuous distribution.
 pub trait Continuous: Distribution {
     /// Compute the probability density function.
@@ -21,6 +12,15 @@ pub trait Continuous: Distribution {
 pub trait Discrete: Distribution {
     /// Compute the probability mass function.
     fn mass(&self, Self::Value) -> f64;
+}
+
+/// A distribution.
+pub trait Distribution {
+    /// The type of outcomes.
+    type Value;
+
+    /// Compute the cumulative distribution function.
+    fn distribution(&self, f64) -> f64;
 }
 
 /// A distribution capable of computing the differential entropy.

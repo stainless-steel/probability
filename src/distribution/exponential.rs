@@ -22,6 +22,17 @@ impl Exponential {
     pub fn lambda(&self) -> f64 { self.lambda }
 }
 
+impl distribution::Continuous for Exponential {
+    #[inline]
+    fn density(&self, x: f64) -> f64 {
+        if x < 0.0 {
+            0.0
+        } else {
+            self.lambda * (-self.lambda * x).exp()
+        }
+    }
+}
+
 impl distribution::Distribution for Exponential {
     type Value = f64;
 
@@ -31,17 +42,6 @@ impl distribution::Distribution for Exponential {
             0.0
         } else {
             -(-self.lambda * x).exp_m1()
-        }
-    }
-}
-
-impl distribution::Continuous for Exponential {
-    #[inline]
-    fn density(&self, x: f64) -> f64 {
-        if x < 0.0 {
-            0.0
-        } else {
-            self.lambda * (-self.lambda * x).exp()
         }
     }
 }
@@ -122,6 +122,20 @@ mod tests {
     );
 
     #[test]
+    fn density() {
+        let d = new!(2.0);
+        let x = vec![-1.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 12.0];
+        let p = vec![
+            0.000000000000000e+00, 2.000000000000000e+00, 7.357588823428847e-01,
+            2.706705664732254e-01, 9.957413673572789e-02, 3.663127777746836e-02,
+            1.347589399817093e-02, 4.957504353332717e-03, 6.709252558050237e-04,
+            1.228842470665642e-05, 7.550269088558195e-11,
+        ];
+
+        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
+    }
+
+    #[test]
     fn distribution() {
         let d = new!(2.0);
         let x = vec![-1.0, 0.0, 0.01, 0.05, 0.1, 0.15, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0];
@@ -134,20 +148,6 @@ mod tests {
         ];
 
         assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-15);
-    }
-
-    #[test]
-    fn density() {
-        let d = new!(2.0);
-        let x = vec![-1.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 12.0];
-        let p = vec![
-            0.000000000000000e+00, 2.000000000000000e+00, 7.357588823428847e-01,
-            2.706705664732254e-01, 9.957413673572789e-02, 3.663127777746836e-02,
-            1.347589399817093e-02, 4.957504353332717e-03, 6.709252558050237e-04,
-            1.228842470665642e-05, 7.550269088558195e-11,
-        ];
-
-        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
     }
 
     #[test]

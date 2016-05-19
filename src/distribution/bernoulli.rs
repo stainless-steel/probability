@@ -38,6 +38,19 @@ impl Bernoulli {
     pub fn q(&self) -> f64 { self.q }
 }
 
+impl distribution::Discrete for Bernoulli {
+    #[inline]
+    fn mass(&self, x: u8) -> f64 {
+        if x == 0 {
+            self.q
+        } else if x == 1 {
+            self.p
+        } else {
+            0.0
+        }
+    }
+}
+
 impl distribution::Distribution for Bernoulli {
     type Value = u8;
 
@@ -49,19 +62,6 @@ impl distribution::Distribution for Bernoulli {
             self.q
         } else {
             1.0
-        }
-    }
-}
-
-impl distribution::Discrete for Bernoulli {
-    #[inline]
-    fn mass(&self, x: u8) -> f64 {
-        if x == 0 {
-            self.q
-        } else if x == 1 {
-            self.p
-        } else {
-            0.0
         }
     }
 }
@@ -154,12 +154,6 @@ mod tests {
     }
 
     #[test]
-    fn mass() {
-        let d = new!(0.25);
-        assert_eq!(&(0..3).map(|x| d.mass(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
-    }
-
-    #[test]
     fn entropy() {
         let d = vec![new!(0.25), new!(0.5), new!(0.75)];
         assert::close(&d.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
@@ -177,6 +171,12 @@ mod tests {
     #[test]
     fn kurtosis() {
         assert_eq!(new!(0.5).kurtosis(), -2.0);
+    }
+
+    #[test]
+    fn mass() {
+        let d = new!(0.25);
+        assert_eq!(&(0..3).map(|x| d.mass(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
     }
 
     #[test]

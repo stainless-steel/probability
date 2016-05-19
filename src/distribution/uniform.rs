@@ -27,6 +27,17 @@ impl Uniform {
     pub fn b(&self) -> f64 { self.a }
 }
 
+impl distribution::Continuous for Uniform {
+    #[inline]
+    fn density(&self, x: f64) -> f64 {
+        if x < self.a || x > self.b {
+            0.0
+        } else {
+            1.0 / (self.b - self.a)
+        }
+    }
+}
+
 impl distribution::Distribution for Uniform {
     type Value = f64;
 
@@ -38,17 +49,6 @@ impl distribution::Distribution for Uniform {
             1.0
         } else {
             (x - self.a) / (self.b - self.a)
-        }
-    }
-}
-
-impl distribution::Continuous for Uniform {
-    #[inline]
-    fn density(&self, x: f64) -> f64 {
-        if x < self.a || x > self.b {
-            0.0
-        } else {
-            1.0 / (self.b - self.a)
         }
     }
 }

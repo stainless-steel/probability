@@ -51,30 +51,6 @@ impl Binomial {
     pub fn q(&self) -> f64 { self.q }
 }
 
-impl distribution::Distribution for Binomial {
-    type Value = usize;
-
-    /// Compute the cumulative distribution function.
-    ///
-    /// The implementation is based on the incomplete beta function.
-    fn distribution(&self, x: f64) -> f64 {
-        use special::{inc_beta, ln_beta};
-
-        if x < 0.0 {
-            return 0.0;
-        }
-        let x = x as usize;
-        if x == 0 {
-            return self.q.powi(self.n as i32);
-        }
-        if x >= self.n {
-            return 1.0;
-        }
-        let (p, q) = ((self.n - x) as f64, (x + 1) as f64);
-        inc_beta(self.q, p, q, ln_beta(p, q))
-    }
-}
-
 impl distribution::Discrete for Binomial {
     /// Compute the probability mass function.
     ///
@@ -107,6 +83,30 @@ impl distribution::Discrete for Binomial {
                 - ln_d0(x, self.np) - ln_d0(n_m_x, self.nq);
             ln_c.exp() * (n / (2.0 * PI * x * (n_m_x))).sqrt()
         }
+    }
+}
+
+impl distribution::Distribution for Binomial {
+    type Value = usize;
+
+    /// Compute the cumulative distribution function.
+    ///
+    /// The implementation is based on the incomplete beta function.
+    fn distribution(&self, x: f64) -> f64 {
+        use special::{inc_beta, ln_beta};
+
+        if x < 0.0 {
+            return 0.0;
+        }
+        let x = x as usize;
+        if x == 0 {
+            return self.q.powi(self.n as i32);
+        }
+        if x >= self.n {
+            return 1.0;
+        }
+        let (p, q) = ((self.n - x) as f64, (x + 1) as f64);
+        inc_beta(self.q, p, q, ln_beta(p, q))
     }
 }
 
@@ -396,18 +396,6 @@ mod tests {
     }
 
     #[test]
-    fn mass() {
-        let d = new!(16, 0.25);
-        let p = vec![
-            1.002259575761855e-02, 1.336346101015806e-01, 2.251990651711821e-01,
-            1.100973207503558e-01, 1.966023584827779e-02, 1.359226182103156e-03,
-            3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
-        ];
-
-        assert::close(&(0..9).map(|i| d.mass(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
-    }
-
-    #[test]
     fn entropy() {
         assert_eq!(new!(16, 0.25).entropy(), 1.9588018945068573);
         assert_eq!(new!(10_000_000, 0.5).entropy(), 8.784839178123887);
@@ -433,6 +421,18 @@ mod tests {
     #[test]
     fn kurtosis() {
         assert_eq!(new!(16, 0.25).kurtosis(), -0.041666666666666664);
+    }
+
+    #[test]
+    fn mass() {
+        let d = new!(16, 0.25);
+        let p = vec![
+            1.002259575761855e-02, 1.336346101015806e-01, 2.251990651711821e-01,
+            1.100973207503558e-01, 1.966023584827779e-02, 1.359226182103156e-03,
+            3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
+        ];
+
+        assert::close(&(0..9).map(|i| d.mass(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]

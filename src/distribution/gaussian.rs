@@ -28,6 +28,14 @@ impl Gaussian {
     pub fn sigma(&self) -> f64 { self.sigma }
 }
 
+impl distribution::Continuous for Gaussian {
+    fn density(&self, x: f64) -> f64 {
+        use distribution::Variance;
+        use std::f64::consts::PI;
+        (-(x - self.mu).powi(2) / (2.0 * self.variance())).exp() / ((2.0 * PI).sqrt() * self.sigma)
+    }
+}
+
 impl distribution::Distribution for Gaussian {
     type Value = f64;
 
@@ -35,14 +43,6 @@ impl distribution::Distribution for Gaussian {
         use special::erf;
         use std::f64::consts::SQRT_2;
         (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
-    }
-}
-
-impl distribution::Continuous for Gaussian {
-    fn density(&self, x: f64) -> f64 {
-        use distribution::Variance;
-        use std::f64::consts::PI;
-        (-(x - self.mu).powi(2) / (2.0 * self.variance())).exp() / ((2.0 * PI).sqrt() * self.sigma)
     }
 }
 
@@ -349,25 +349,6 @@ mod tests {
     );
 
     #[test]
-    fn distribution() {
-        let d = new!(1.0, 2.0);
-        let x = vec![
-            -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5,
-            0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0,
-        ];
-        let p = vec![
-            6.209665325776139e-03, 1.222447265504470e-02, 2.275013194817922e-02,
-            4.005915686381709e-02, 6.680720126885809e-02, 1.056497736668553e-01,
-            1.586552539314571e-01, 2.266273523768682e-01, 3.085375387259869e-01,
-            4.012936743170763e-01, 5.000000000000000e-01, 5.987063256829237e-01,
-            6.914624612740131e-01, 7.733726476231317e-01, 8.413447460685429e-01,
-            8.943502263331446e-01, 9.331927987311419e-01,
-        ];
-
-        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-14);
-    }
-
-    #[test]
     fn density() {
         let d = new!(1.0, 2.0);
         let x = vec![
@@ -384,6 +365,25 @@ mod tests {
         ];
 
         assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
+
+    #[test]
+    fn distribution() {
+        let d = new!(1.0, 2.0);
+        let x = vec![
+            -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5,
+            0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0,
+        ];
+        let p = vec![
+            6.209665325776139e-03, 1.222447265504470e-02, 2.275013194817922e-02,
+            4.005915686381709e-02, 6.680720126885809e-02, 1.056497736668553e-01,
+            1.586552539314571e-01, 2.266273523768682e-01, 3.085375387259869e-01,
+            4.012936743170763e-01, 5.000000000000000e-01, 5.987063256829237e-01,
+            6.914624612740131e-01, 7.733726476231317e-01, 8.413447460685429e-01,
+            8.943502263331446e-01, 9.331927987311419e-01,
+        ];
+
+        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
