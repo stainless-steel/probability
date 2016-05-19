@@ -136,7 +136,7 @@ impl distribution::Inverse for Binomial {
     /// 1. S. Moorhead, “Efficient evaluation of the inverse binomial cumulative
     ///    distribution function where the number of trials is large,” Oxford
     ///    University, 2013.
-    fn inv_cdf(&self, p: f64) -> usize {
+    fn inverse(&self, p: f64) -> usize {
         use distribution::{Distribution, Discrete, Modes};
 
         should!(0.0 <= p && p <= 1.0);
@@ -229,7 +229,7 @@ impl distribution::Median for Binomial {
             // Use a normal approximation.
             self.np.floor()
         } else {
-            self.inv_cdf(0.5) as f64
+            self.inverse(0.5) as f64
         }
     }
 }
@@ -253,7 +253,7 @@ impl distribution::Sample for Binomial {
     #[inline]
     fn sample<S>(&self, source: &mut S) -> usize where S: Source {
         use distribution::Inverse;
-        self.inv_cdf(source.read::<f64>())
+        self.inverse(source.read::<f64>())
     }
 }
 
@@ -273,7 +273,7 @@ impl distribution::Variance for Binomial {
 fn approximate_by_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
     use distribution::gaussian;
 
-    let w = gaussian::inv_cdf(u);
+    let w = gaussian::inverse(u);
     let w2 = w * w;
     let w3 = w2 * w;
     let w4 = w3 * w;
@@ -414,20 +414,20 @@ mod tests {
     }
 
     #[test]
-    fn inv_cdf() {
+    fn inverse() {
         let d = Binomial::new(250, 0.55);
-        assert_eq!(d.inv_cdf(0.1), 127);
-        assert_eq!(d.inv_cdf(0.025), 122);
+        assert_eq!(d.inverse(0.1), 127);
+        assert_eq!(d.inverse(0.025), 122);
 
         let x = 1298;
         let d = new!(2500, 0.55);
-        assert_eq!(d.inv_cdf(d.distribution(x as f64)), x);
+        assert_eq!(d.inverse(d.distribution(x as f64)), x);
 
-        assert_eq!(new!(1001, 0.25).inv_cdf(0.5), 250);
-        assert_eq!(new!(1500, 0.15).inv_cdf(0.2), 213);
+        assert_eq!(new!(1001, 0.25).inverse(0.5), 250);
+        assert_eq!(new!(1500, 0.15).inverse(0.2), 213);
 
-        assert_eq!(new!(1_000_000, 2.5e-5).inv_cdf(0.9995), 42);
-        assert_eq!(new!(1_000_000_000, 6.66e-9).inv_cdf(0.8), 8);
+        assert_eq!(new!(1_000_000, 2.5e-5).inverse(0.9995), 42);
+        assert_eq!(new!(1_000_000_000, 6.66e-9).inverse(0.8), 8);
     }
 
     #[test]

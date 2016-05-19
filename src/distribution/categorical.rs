@@ -68,7 +68,7 @@ impl distribution::Entropy for Categorical {
 }
 
 impl distribution::Inverse for Categorical {
-    fn inv_cdf(&self, p: f64) -> usize {
+    fn inverse(&self, p: f64) -> usize {
         should!(0.0 <= p && p <= 1.0);
         self.cumsum.iter().position(|&sum| sum > 0.0 && sum >= p).unwrap_or_else(|| {
             self.p.iter().rposition(|&p| p > 0.0).unwrap()
@@ -133,7 +133,7 @@ impl distribution::Sample for Categorical {
     #[inline]
     fn sample<S>(&self, source: &mut S) -> usize where S: Source {
         use distribution::Inverse;
-        self.inv_cdf(source.read::<f64>())
+        self.inverse(source.read::<f64>())
     }
 }
 
@@ -206,14 +206,14 @@ mod tests {
     }
 
     #[test]
-    fn inv_cdf() {
+    fn inverse() {
         let d = new!([0.0, 0.75, 0.25, 0.0]);
         let p = vec![0.0, 0.75, 0.7500001, 1.0];
-        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &vec![1, 1, 2, 2]);
+        assert_eq!(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &vec![1, 1, 2, 2]);
 
         let d = new!(equal 3);
         let p = vec![0.0, 0.5, 0.75, 1.0];
-        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &vec![0, 1, 2, 2]);
+        assert_eq!(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &vec![0, 1, 2, 2]);
     }
 
     #[test]

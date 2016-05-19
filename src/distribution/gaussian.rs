@@ -66,8 +66,8 @@ impl distribution::Inverse for Gaussian {
     ///
     /// 2. http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
     #[inline(always)]
-    fn inv_cdf(&self, p: f64) -> f64 {
-        self.mu + self.sigma * inv_cdf(p)
+    fn inverse(&self, p: f64) -> f64 {
+        self.mu + self.sigma * inverse(p)
     }
 }
 
@@ -126,7 +126,7 @@ impl distribution::Variance for Gaussian {
 
 /// Compute the inverse cumulative distribution function of the standard
 /// Gaussian distribution.
-pub fn inv_cdf(p: f64) -> f64 {
+pub fn inverse(p: f64) -> f64 {
     use std::f64::{INFINITY, NEG_INFINITY};
 
     should!(0.0 <= p && p <= 1.0);
@@ -393,7 +393,7 @@ mod tests {
     }
 
     #[test]
-    fn inv_cdf() {
+    fn inverse() {
         let d = new!(-1.0, 0.25);
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50,
@@ -409,7 +409,7 @@ mod tests {
             -6.796121086138498e-01, -5.887865932621319e-01, INFINITY,
         ];
 
-        assert::close(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 
     #[test]

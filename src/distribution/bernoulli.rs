@@ -74,7 +74,7 @@ impl distribution::Entropy for Bernoulli {
 
 impl distribution::Inverse for Bernoulli {
     #[inline]
-    fn inv_cdf(&self, p: f64) -> u8 {
+    fn inverse(&self, p: f64) -> u8 {
         should!(0.0 <= p && p <= 1.0);
         if p <= self.q { 0 } else { 1 }
     }
@@ -167,11 +167,11 @@ mod tests {
     }
 
     #[test]
-    fn inv_cdf() {
+    fn inverse() {
         let d = new!(0.25);
         let p = vec![0.0, 0.25, 0.5, 0.75, 0.75000000001, 1.0];
         let x = vec![0, 0, 0, 0, 1, 1];
-        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x);
+        assert_eq!(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x);
     }
 
     #[test]

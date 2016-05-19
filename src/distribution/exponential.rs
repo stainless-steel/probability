@@ -55,7 +55,7 @@ impl distribution::Entropy for Exponential {
 
 impl distribution::Inverse for Exponential {
     #[inline]
-    fn inv_cdf(&self, p: f64) -> f64 {
+    fn inverse(&self, p: f64) -> f64 {
         should!(0.0 <= p && p <= 1.0);
         -(-p).ln_1p() / self.lambda
     }
@@ -157,7 +157,7 @@ mod tests {
     }
 
     #[test]
-    fn inv_cdf() {
+    fn inverse() {
         use std::f64::INFINITY;
 
         let d = new!(2.0);
@@ -172,7 +172,7 @@ mod tests {
             1.000000000000000e-00,
         ];
 
-        assert::close(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 
     #[test]

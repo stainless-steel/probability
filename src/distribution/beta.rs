@@ -79,7 +79,7 @@ impl distribution::Entropy for Beta {
 
 impl distribution::Inverse for Beta {
     #[inline]
-    fn inv_cdf(&self, p: f64) -> f64 {
+    fn inverse(&self, p: f64) -> f64 {
         use special::inv_inc_beta;
         should!(0.0 <= p && p <= 1.0);
         self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta, self.ln_beta)
@@ -111,7 +111,7 @@ impl distribution::Median for Beta {
             (alpha, beta) if alpha > 1.0 && beta > 1.0 => {
                 self.a + (self.b - self.a) * (alpha - 1.0 / 3.0) / (alpha + beta - 2.0 / 3.0)
             },
-            _ => self.inv_cdf(0.5),
+            _ => self.inverse(0.5),
         }
     }
 }
@@ -221,7 +221,7 @@ mod tests {
     }
 
     #[test]
-    fn inv_cdf() {
+    fn inverse() {
         let d = new!(1.0, 2.0, 3.0, 4.0);
         let p = vec![
             0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
@@ -236,7 +236,7 @@ mod tests {
             3.500000000000000e+00, 3.552786404500042e+00, 3.612701665379257e+00,
             3.683772233983162e+00, 3.776393202250021e+00, 4.000000000000000e+00,
         ];
-        assert::close(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-14);
     }
 
     #[test]

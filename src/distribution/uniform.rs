@@ -62,7 +62,7 @@ impl distribution::Entropy for Uniform {
 
 impl distribution::Inverse for Uniform {
     #[inline]
-    fn inv_cdf(&self, p: f64) -> f64 {
+    fn inverse(&self, p: f64) -> f64 {
         should!(0.0 <= p && p <= 1.0);
         self.a + (self.b - self.a) * p
     }
@@ -140,12 +140,12 @@ mod tests {
     }
 
     #[test]
-    fn inv_cdf() {
+    fn inverse() {
         let d = new!(-1.0, 1.0);
         let x = vec![-1.0, -0.5, 0.0, 0.5, 1.0];
         let p = vec![0.0, 0.25, 0.5, 0.75, 1.0];
 
-        assert_eq!(&p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>(), &x);
+        assert_eq!(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x);
     }
 
     #[test]

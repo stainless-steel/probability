@@ -58,7 +58,15 @@ pub trait Entropy: Distribution {
 /// A distribution capable of inverting the distribution function.
 pub trait Inverse: Distribution {
     /// Compute the inverse of the distribution function.
-    fn inv_cdf(&self, f64) -> Self::Value;
+    fn inverse(&self, f64) -> Self::Value;
+
+    /// Compute the inverse of the distribution function.
+    ///
+    /// The function is an alias for `inverse`.
+    #[inline(always)]
+    fn inv_cdf(&self, p: f64) -> Self::Value {
+        self.inverse(p)
+    }
 }
 
 /// A distribution capable of computing the excess kurtosis.
