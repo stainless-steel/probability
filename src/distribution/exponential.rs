@@ -37,7 +37,7 @@ impl distribution::Distribution for Exponential {
 
 impl distribution::Continuous for Exponential {
     #[inline]
-    fn pdf(&self, x: f64) -> f64 {
+    fn density(&self, x: f64) -> f64 {
         if x < 0.0 {
             0.0
         } else {
@@ -137,7 +137,7 @@ mod tests {
     }
 
     #[test]
-    fn pdf() {
+    fn density() {
         let d = new!(2.0);
         let x = vec![-1.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 12.0];
         let p = vec![
@@ -147,7 +147,7 @@ mod tests {
             1.228842470665642e-05, 7.550269088558195e-11,
         ];
 
-        assert::close(&x.iter().map(|&x| d.pdf(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
     }
 
     #[test]

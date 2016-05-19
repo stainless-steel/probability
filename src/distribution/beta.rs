@@ -56,7 +56,7 @@ impl distribution::Distribution for Beta {
 }
 
 impl distribution::Continuous for Beta {
-    fn pdf(&self, x: f64) -> f64 {
+    fn density(&self, x: f64) -> f64 {
         if x < self.a || x > self.b {
             0.0
         } else {
@@ -189,7 +189,7 @@ mod tests {
     }
 
     #[test]
-    fn pdf() {
+    fn density() {
         let d = new!(2.0, 3.0, -1.0, 2.0);
         let x = vec![
             -1.15, -1.0, -0.85, -0.7, -0.55, -0.4, -0.25, -0.1, 0.05, 0.2, 0.35,
@@ -206,7 +206,7 @@ mod tests {
             3.600000000000000e-02, 9.499999999999982e-03, 0.000000000000000e+00,
             0.000000000000000e+00,
         ];
-        assert::close(&x.iter().map(|&x| d.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]

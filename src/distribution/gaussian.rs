@@ -39,7 +39,7 @@ impl distribution::Distribution for Gaussian {
 }
 
 impl distribution::Continuous for Gaussian {
-    fn pdf(&self, x: f64) -> f64 {
+    fn density(&self, x: f64) -> f64 {
         use distribution::Variance;
         use std::f64::consts::PI;
         (-(x - self.mu).powi(2) / (2.0 * self.variance())).exp() / ((2.0 * PI).sqrt() * self.sigma)
@@ -368,7 +368,7 @@ mod tests {
     }
 
     #[test]
-    fn pdf() {
+    fn density() {
         let d = new!(1.0, 2.0);
         let x = vec![
             -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
@@ -383,7 +383,7 @@ mod tests {
             9.132454269451096e-02, 6.475879783294587e-02
         ];
 
-        assert::close(&x.iter().map(|&x| d.pdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]

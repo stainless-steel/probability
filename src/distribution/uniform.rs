@@ -44,7 +44,7 @@ impl distribution::Distribution for Uniform {
 
 impl distribution::Continuous for Uniform {
     #[inline]
-    fn pdf(&self, x: f64) -> f64 {
+    fn density(&self, x: f64) -> f64 {
         if x < self.a || x > self.b {
             0.0
         } else {
@@ -125,12 +125,12 @@ mod tests {
     }
 
     #[test]
-    fn pdf() {
+    fn density() {
         let d = new!(-1.0, 1.0);
         let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
         let p = vec![0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0];
 
-        assert_eq!(&x.iter().map(|&x| d.pdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]

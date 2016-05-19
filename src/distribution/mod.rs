@@ -22,7 +22,15 @@ pub trait Distribution {
 /// A continuous distribution.
 pub trait Continuous: Distribution {
     /// Compute the probability density function.
-    fn pdf(&self, f64) -> f64;
+    fn density(&self, f64) -> f64;
+
+    /// Compute the probability density function.
+    ///
+    /// The function is an alias for `density`.
+    #[inline(always)]
+    fn pdf(&self, x: f64) -> f64 {
+        self.density(x)
+    }
 }
 
 /// A discrete distribution.
