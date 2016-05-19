@@ -9,42 +9,18 @@ pub trait Distribution {
 
     /// Compute the cumulative distribution function.
     fn distribution(&self, f64) -> f64;
-
-    /// Compute the cumulative distribution function.
-    ///
-    /// The function is an alias for `distribution`.
-    #[inline(always)]
-    fn cdf(&self, x: f64) -> f64 {
-        self.distribution(x)
-    }
 }
 
 /// A continuous distribution.
 pub trait Continuous: Distribution {
     /// Compute the probability density function.
     fn density(&self, f64) -> f64;
-
-    /// Compute the probability density function.
-    ///
-    /// The function is an alias for `density`.
-    #[inline(always)]
-    fn pdf(&self, x: f64) -> f64 {
-        self.density(x)
-    }
 }
 
 /// A discrete distribution.
 pub trait Discrete: Distribution {
     /// Compute the probability mass function.
     fn mass(&self, Self::Value) -> f64;
-
-    /// Compute the probability mass function.
-    ///
-    /// The function is an alias for `mass`.
-    #[inline(always)]
-    fn pmf(&self, x: Self::Value) -> f64 {
-        self.mass(x)
-    }
 }
 
 /// A distribution capable of computing the differential entropy.
@@ -57,16 +33,8 @@ pub trait Entropy: Distribution {
 
 /// A distribution capable of inverting the distribution function.
 pub trait Inverse: Distribution {
-    /// Compute the inverse of the distribution function.
+    /// Compute the inverse of the cumulative distribution function.
     fn inverse(&self, f64) -> Self::Value;
-
-    /// Compute the inverse of the distribution function.
-    ///
-    /// The function is an alias for `inverse`.
-    #[inline(always)]
-    fn inv_cdf(&self, p: f64) -> Self::Value {
-        self.inverse(p)
-    }
 }
 
 /// A distribution capable of computing the excess kurtosis.
@@ -122,22 +90,6 @@ pub trait Variance: Mean {
     #[inline(always)]
     fn deviation(&self) -> f64 {
         self.variance().sqrt()
-    }
-
-    /// Compute the standard deviation.
-    ///
-    /// The function is an alias for `deviation`.
-    #[inline(always)]
-    fn sd(&self) -> f64 {
-        self.deviation()
-    }
-
-    /// Compute the variance.
-    ///
-    /// The function is an alias for `variance`.
-    #[inline(always)]
-    fn var(&self) -> f64 {
-        self.variance()
     }
 }
 
