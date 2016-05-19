@@ -32,7 +32,7 @@ impl distribution::Distribution for Gamma {
     type Value = f64;
 
     #[inline]
-    fn cdf(&self, x: f64) -> f64 {
+    fn cumulate(&self, x: f64) -> f64 {
         use special::inc_gamma;
         if x <= 0.0 {
             0.0
@@ -101,7 +101,7 @@ mod tests {
     use prelude::*;
 
     #[test]
-    fn cdf() {
+    fn cumulate() {
         let d = Gamma::new(9.0, 0.5);
         let x = vec![
             -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
@@ -117,6 +117,6 @@ mod tests {
             9.999999017950048e-01, 9.999999793279283e-01, 9.999999957473356e-01,
         ];
 
-        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| d.cumulate(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 }

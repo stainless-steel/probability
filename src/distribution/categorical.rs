@@ -41,7 +41,7 @@ impl Categorical {
 impl distribution::Distribution for Categorical {
     type Value = usize;
 
-    fn cdf(&self, x: f64) -> f64 {
+    fn cumulate(&self, x: f64) -> f64 {
         if x < 0.0 {
             return 0.0;
         }
@@ -168,23 +168,23 @@ mod tests {
     );
 
     #[test]
-    fn cdf() {
+    fn cumulate() {
         let d = new!([0.0, 0.75, 0.25, 0.0]);
         let p = vec![0.0, 0.0, 0.75, 1.0, 1.0];
 
-        let x = (-1..4).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
+        let x = (-1..4).map(|x| d.cumulate(x as f64)).collect::<Vec<_>>();
         assert_eq!(&x, &p);
 
-        let x = (-1..4).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
+        let x = (-1..4).map(|x| d.cumulate(x as f64 + 0.5)).collect::<Vec<_>>();
         assert_eq!(&x, &p);
 
         let d = new!(equal 3);
         let p = vec![0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0];
 
-        let x = (-1..3).map(|x| d.cdf(x as f64)).collect::<Vec<_>>();
+        let x = (-1..3).map(|x| d.cumulate(x as f64)).collect::<Vec<_>>();
         assert_eq!(&x, &p);
 
-        let x = (-1..3).map(|x| d.cdf(x as f64 + 0.5)).collect::<Vec<_>>();
+        let x = (-1..3).map(|x| d.cumulate(x as f64 + 0.5)).collect::<Vec<_>>();
         assert_eq!(&x, &p);
     }
 

@@ -7,10 +7,16 @@ pub trait Distribution {
     /// The type of outcomes.
     type Value;
 
-    /// Compute the distribution function.
+    /// Compute the cumulative distribution function.
+    fn cumulate(&self, f64) -> f64;
+
+    /// Compute the cumulative distribution function.
     ///
-    /// The function is also known as the cumulative distribution function.
-    fn cdf(&self, f64) -> f64;
+    /// The function is an alias for `cumulate`.
+    #[inline(always)]
+    fn cdf(&self, x: f64) -> f64 {
+        self.cumulate(x)
+    }
 }
 
 /// A continuous distribution.
@@ -69,7 +75,7 @@ pub trait Modes: Distribution {
     fn modes(&self) -> Vec<Self::Value>;
 }
 
-/// A distribution capable of sampling.
+/// A distribution capable of drawing samples.
 pub trait Sample: Distribution {
     /// Draw a sample.
     fn sample<S>(&self, &mut S) -> Self::Value where S: Source;
@@ -94,20 +100,20 @@ pub trait Variance: Mean {
         self.variance().sqrt()
     }
 
-    /// Compute the variance.
-    ///
-    /// The function is an alias for `variance`.
-    #[inline(always)]
-    fn var(&self) -> f64 {
-        self.variance()
-    }
-
     /// Compute the standard deviation.
     ///
     /// The function is an alias for `deviation`.
     #[inline(always)]
     fn sd(&self) -> f64 {
         self.deviation()
+    }
+
+    /// Compute the variance.
+    ///
+    /// The function is an alias for `variance`.
+    #[inline(always)]
+    fn var(&self) -> f64 {
+        self.variance()
     }
 }
 

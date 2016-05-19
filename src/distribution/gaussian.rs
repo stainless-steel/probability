@@ -31,7 +31,7 @@ impl Gaussian {
 impl distribution::Distribution for Gaussian {
     type Value = f64;
 
-    fn cdf(&self, x: f64) -> f64 {
+    fn cumulate(&self, x: f64) -> f64 {
         use special::erf;
         use std::f64::consts::SQRT_2;
         (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
@@ -349,7 +349,7 @@ mod tests {
     );
 
     #[test]
-    fn cdf() {
+    fn cumulate() {
         let d = new!(1.0, 2.0);
         let x = vec![
             -4.0, -3.5, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5,
@@ -364,7 +364,7 @@ mod tests {
             8.943502263331446e-01, 9.331927987311419e-01,
         ];
 
-        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| d.cumulate(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]

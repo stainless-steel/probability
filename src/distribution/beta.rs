@@ -43,7 +43,7 @@ impl Beta {
 impl distribution::Distribution for Beta {
     type Value = f64;
 
-    fn cdf(&self, x: f64) -> f64 {
+    fn cumulate(&self, x: f64) -> f64 {
         use special::inc_beta;
         if x <= self.a {
             0.0
@@ -168,7 +168,7 @@ mod tests {
     );
 
     #[test]
-    fn cdf() {
+    fn cumulate() {
         let d = new!(2.0, 3.0, -1.0, 2.0);
         let x = vec![
             -1.15, -1.0, -0.85, -0.7, -0.55, -0.4, -0.25, -0.1, 0.05, 0.2, 0.35,
@@ -185,7 +185,7 @@ mod tests {
             9.963000000000000e-01, 9.995187500000000e-01, 1.000000000000000e+00,
             1.000000000000000e+00,
         ];
-        assert::close(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&x.iter().map(|&x| d.cumulate(x)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]

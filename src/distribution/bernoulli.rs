@@ -42,7 +42,7 @@ impl distribution::Distribution for Bernoulli {
     type Value = u8;
 
     #[inline]
-    fn cdf(&self, x: f64) -> f64 {
+    fn cumulate(&self, x: f64) -> f64 {
         if x < 0.0 {
             0.0
         } else if x < 1.0 {
@@ -146,11 +146,11 @@ mod tests {
     );
 
     #[test]
-    fn cdf() {
+    fn cumulate() {
         let d = new!(0.25);
         let x = vec![-0.1, 0.0, 0.1, 0.25, 0.5, 1.0, 1.1];
         let p = vec![0.0, 0.75, 0.75, 0.75, 0.75, 1.0, 1.0];
-        assert_eq!(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&x.iter().map(|&x| d.cumulate(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]

@@ -31,7 +31,7 @@ impl distribution::Distribution for Uniform {
     type Value = f64;
 
     #[inline]
-    fn cdf(&self, x: f64) -> f64 {
+    fn cumulate(&self, x: f64) -> f64 {
         if x <= self.a {
             0.0
         } else if x >= self.b {
@@ -116,12 +116,12 @@ mod tests {
     );
 
     #[test]
-    fn cdf() {
+    fn cumulate() {
         let d = new!(-1.0, 1.0);
         let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
         let p = vec![0.0, 0.0, 0.25, 0.5, 0.75, 1.0, 1.0];
 
-        assert_eq!(&x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(&x.iter().map(|&x| d.cumulate(x)).collect::<Vec<_>>(), &p);
     }
 
     #[test]

@@ -57,7 +57,7 @@ impl distribution::Distribution for Binomial {
     /// Compute the cumulative distribution function.
     ///
     /// The implementation is based on the incomplete beta function.
-    fn cdf(&self, x: f64) -> f64 {
+    fn cumulate(&self, x: f64) -> f64 {
         use special::{inc_beta, ln_beta};
 
         if x < 0.0 {
@@ -177,7 +177,7 @@ impl distribution::Inverse for Binomial {
             0
         } else if self.n < 1000 {
             // Find if top-down or bottom-up summation is better.
-            if u <= self.cdf((self.n / 2) as f64) {
+            if u <= self.cumulate((self.n / 2) as f64) {
                 buttom_up_sum!(|k| self.p / self.q * ((self.n - k + 1) as f64 / k as f64))
             } else {
                 top_down_sum!(|k| self.q / self.p * ((self.n - k + 1) as f64 / k as f64))
@@ -190,7 +190,7 @@ impl distribution::Inverse for Binomial {
             let modes = self.modes();
             let mut m = modes[0];
             loop {
-                let next = (u - self.cdf(m as f64)) / self.pmf(m);
+                let next = (u - self.cumulate(m as f64)) / self.pmf(m);
                 if -0.5 < next && next < 0.5 {
                     break;
                 }
@@ -379,7 +379,7 @@ mod tests {
     }
 
     #[test]
-    fn cdf() {
+    fn cumulate() {
         let d = new!(16, 0.75);
         let p = vec![
             0.000000000000000e+00, 2.328306436538699e-10, 2.628657966852194e-07,
@@ -388,10 +388,10 @@ mod tests {
             1.000000000000000e+00,
         ];
 
-        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64)).collect::<Vec<_>>();
+        let x = (-1..9).map(|i| d.cumulate(2.0 * i as f64)).collect::<Vec<_>>();
         assert::close(&x, &p, 1e-14);
 
-        let x = (-1..9).map(|i| d.cdf(2.0 * i as f64 + 0.5)).collect::<Vec<_>>();
+        let x = (-1..9).map(|i| d.cumulate(2.0 * i as f64 + 0.5)).collect::<Vec<_>>();
         assert::close(&x, &p, 1e-14);
     }
 
@@ -421,7 +421,7 @@ mod tests {
 
         let x = 1298;
         let d = new!(2500, 0.55);
-        assert_eq!(d.inv_cdf(d.cdf(x as f64)), x);
+        assert_eq!(d.inv_cdf(d.cumulate(x as f64)), x);
 
         assert_eq!(new!(1001, 0.25).inv_cdf(0.5), 250);
         assert_eq!(new!(1500, 0.15).inv_cdf(0.2), 213);
