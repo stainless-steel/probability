@@ -1,16 +1,18 @@
 language: rust
 sudo: false
+
 rust:
   - stable
   - beta
   - nightly
 
 after_success:
-  - curl https://stainless-steel.github.io/travis/after_success.sh | bash
+  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then
+      curl https://stainless-steel.github.io/travis/update_documentation.sh | bash;
+    fi
 
 env:
   global:
-    - RUSTDOC_VERSION=nightly
     - secure: aTlLEXkAba08/SWEOlURapA1/6Lj6PRTO2YEoz3tTaDbSqVcvwfzarAUlnQ72yfIkWyvyjJDjxShUjOT4mLopcOTnNmJB4B2D3DN9Czs/T+WEhc3vKmrUbwvzHXI45domaWjVQw4sgxSu2IK66+RvG47+xIrkHCfzvW/5YMH4W0=
 
 notifications:
