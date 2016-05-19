@@ -10,8 +10,9 @@ The package provides a probability-theory toolbox.
 use probability::prelude::*;
 
 let mut source = source::default();
-let uniform = Uniform::new(0.0, 1.0);
-let samples = Independent(&uniform, &mut source).take(10).collect::<Vec<_>>();
+let distribution = Uniform::new(0.0, 1.0);
+let mut sampler = Independent(&distribution, &mut source);
+let samples = sampler.take(10).collect::<Vec<_>>();
 ```
 
 ## Contribution
