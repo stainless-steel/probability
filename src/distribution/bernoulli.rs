@@ -1,5 +1,5 @@
 use distribution;
-use random;
+use source::Source;
 
 /// A Bernoulli distribution.
 #[derive(Clone, Copy)]
@@ -118,7 +118,7 @@ impl distribution::Modes for Bernoulli {
 
 impl distribution::Sample for Bernoulli {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> u8 where S: random::Source {
+    fn sample<S>(&self, source: &mut S) -> u8 where S: Source {
         if source.read::<f64>() < self.q { 0 } else { 1 }
     }
 }
@@ -200,7 +200,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        assert!(Independent(&new!(0.25), &mut random::default()).take(100)
+        assert!(Independent(&new!(0.25), &mut source::default()).take(100)
                                                                 .fold(0, |a, b| a + b) <= 100);
     }
 

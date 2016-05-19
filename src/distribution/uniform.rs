@@ -1,5 +1,5 @@
 use distribution;
-use random;
+use source::Source;
 
 /// A continuous uniform distribution.
 #[derive(Clone, Copy)]
@@ -90,7 +90,7 @@ impl distribution::Median for Uniform {
 
 impl distribution::Sample for Uniform {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         self.a + (self.b - self.a) * source.read::<f64>()
     }
 }
@@ -165,7 +165,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Independent(&new!(7.0, 42.0), &mut random::default()).take(100) {
+        for x in Independent(&new!(7.0, 42.0), &mut source::default()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

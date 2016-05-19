@@ -1,5 +1,5 @@
 use distribution;
-use random;
+use source::Source;
 
 /// A beta distribution.
 #[derive(Clone, Copy)]
@@ -134,7 +134,7 @@ impl distribution::Modes for Beta {
 
 impl distribution::Sample for Beta {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         use distribution::gamma;
         let x = gamma::sample(self.alpha, source);
         let y = gamma::sample(self.beta, source);
@@ -278,7 +278,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Independent(&new!(1.0, 2.0, 7.0, 42.0), &mut random::default()).take(100) {
+        for x in Independent(&new!(1.0, 2.0, 7.0, 42.0), &mut source::default()).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

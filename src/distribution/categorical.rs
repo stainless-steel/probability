@@ -1,5 +1,5 @@
 use distribution;
-use random;
+use source::Source;
 
 /// A categorical distribution.
 #[derive(Clone)]
@@ -131,7 +131,7 @@ impl distribution::Modes for Categorical {
 
 impl distribution::Sample for Categorical {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> usize where S: random::Source {
+    fn sample<S>(&self, source: &mut S) -> usize where S: Source {
         use distribution::Inverse;
         self.inv_cdf(source.read::<f64>())
     }
@@ -248,7 +248,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut source = random::default();
+        let mut source = source::default();
 
         let sum = Independent(&new!([0.0, 0.5, 0.5]), &mut source).take(100).fold(0, |a, b| a + b);
         assert!(100 <= sum && sum <= 200);

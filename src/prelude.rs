@@ -1,7 +1,5 @@
 //! Reexports of traits, types, and functions.
 
-pub use random::{self, Source};
-
 pub use distribution::Distribution;
 
 pub use distribution::Continuous;
@@ -27,3 +25,5 @@ pub use distribution::Gaussian;
 pub use distribution::Uniform;
 
 pub use sampler::Independent;
+
+pub use source;

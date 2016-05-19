@@ -4,7 +4,7 @@ use test::{Bencher, black_box};
 #[bench]
 fn cdf(bencher: &mut Bencher) {
     let d = Beta::new(0.5, 1.5, 0.0, 1.0);
-    let x = Independent(&d, &mut random::default()).take(1000).collect::<Vec<_>>();
+    let x = Independent(&d, &mut source::default()).take(1000).collect::<Vec<_>>();
 
     bencher.iter(|| black_box(x.iter().map(|&x| d.cdf(x)).collect::<Vec<_>>()));
 }
@@ -12,7 +12,7 @@ fn cdf(bencher: &mut Bencher) {
 #[bench]
 fn inv_cdf(bencher: &mut Bencher) {
     let d = Beta::new(0.5, 1.5, 0.0, 1.0);
-    let p = Independent(&Uniform::new(0.0, 1.0), &mut random::default()).take(1000)
+    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default()).take(1000)
                                                                         .collect::<Vec<_>>();
 
     bencher.iter(|| black_box(p.iter().map(|&p| d.inv_cdf(p)).collect::<Vec<_>>()));
@@ -20,7 +20,7 @@ fn inv_cdf(bencher: &mut Bencher) {
 
 #[bench]
 fn sample(bencher: &mut Bencher) {
-    let mut source = random::Xorshift128Plus::new([42, 69]);
+    let mut source = source::Xorshift128Plus::new([42, 69]);
     let d = Beta::new(0.5, 1.5, 0.0, 1.0);
 
     bencher.iter(|| black_box(d.sample(&mut source)));

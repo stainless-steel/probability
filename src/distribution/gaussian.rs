@@ -1,5 +1,5 @@
 use distribution;
-use random;
+use source::Source;
 
 /// A Gaussian distribution.
 #[derive(Clone, Copy)]
@@ -99,12 +99,12 @@ impl distribution::Sample for Gaussian {
     /// ## References
     ///
     /// 1. G. Marsaglia and W. W. Tsang, “The ziggurat method for generating
-    ///    random variables," Journal of Statistical Software, vol. 5, no. 8,
+    ///    random variables,” Journal of Statistical Software, vol. 5, no. 8,
     ///    pp. 1–7, 10 2000.
     ///
     /// 2. D. Eddelbuettel, “Ziggurat Revisited,” 2014.
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         self.sigma * sample(source) + self.mu
     }
 }
@@ -202,7 +202,7 @@ pub fn inv_cdf(p: f64) -> f64 {
 }
 
 /// Draw a sample from the standard Gaussian distribution.
-pub fn sample<S: random::Source>(source: &mut S) -> f64 {
+pub fn sample<S: Source>(source: &mut S) -> f64 {
     loop {
         let u = source.read::<u64>();
 

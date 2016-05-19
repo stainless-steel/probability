@@ -1,7 +1,7 @@
 //! Samplers of random numbers.
 
 use distribution::Sample;
-use random::Source;
+use source::Source;
 
 /// A means of drawing a sequence of independent samples.
 pub struct Independent<D, S>(pub D, pub S);

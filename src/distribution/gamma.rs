@@ -1,5 +1,5 @@
 use distribution;
-use random;
+use source::Source;
 
 /// A gamma distribution.
 #[derive(Clone, Copy)]
@@ -51,13 +51,13 @@ impl distribution::Sample for Gamma {
     ///    variables,” ACM Transactions on Mathematical Software, vol. 26,
     ///    no. 3, pp. 363–372, September 2000.
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         self.theta * sample(self.k, source)
     }
 }
 
 /// Draw a sample from the standard Gamma distribution.
-pub fn sample<S: random::Source>(k: f64, source: &mut S) -> f64 {
+pub fn sample<S: Source>(k: f64, source: &mut S) -> f64 {
     use distribution::gaussian;
 
     if k < 1.0 {

@@ -1,5 +1,5 @@
+use source::Source;
 use distribution;
-use random;
 
 /// An exponential distribution.
 #[derive(Clone, Copy)]
@@ -90,7 +90,7 @@ impl distribution::Modes for Exponential {
 
 impl distribution::Sample for Exponential {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: random::Source {
+    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         -source.read::<f64>().ln() / self.lambda
     }
 }
