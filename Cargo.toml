@@ -1,6 +1,6 @@
 [package]
 name = "probability"
-version = "0.14.0"
+version = "0.14.1"
 license = "Apache-2.0/MIT"
 authors = [
   "Ivan Ukhov <ivan.ukhov@gmail.com>",
@@ -17,4 +17,4 @@ random = "0.10"
 special = "0.5"
 
 [dev-dependencies]
-assert = "0.6"
+assert = "0.7"
