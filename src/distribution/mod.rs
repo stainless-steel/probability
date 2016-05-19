@@ -2,7 +2,7 @@
 
 use source::Source;
 
-/// A probability distribution.
+/// A distribution.
 pub trait Distribution {
     /// The type of outcomes.
     type Value;
