@@ -55,7 +55,7 @@ impl distribution::Distribution for Bernoulli {
 
 impl distribution::Discrete for Bernoulli {
     #[inline]
-    fn pmf(&self, x: u8) -> f64 {
+    fn mass(&self, x: u8) -> f64 {
         if x == 0 {
             self.q
         } else if x == 1 {
@@ -154,9 +154,9 @@ mod tests {
     }
 
     #[test]
-    fn pmf() {
+    fn mass() {
         let d = new!(0.25);
-        assert_eq!(&(0..3).map(|x| d.pmf(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
+        assert_eq!(&(0..3).map(|x| d.mass(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
     }
 
     #[test]

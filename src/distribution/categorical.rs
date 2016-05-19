@@ -55,7 +55,7 @@ impl distribution::Distribution for Categorical {
 
 impl distribution::Discrete for Categorical {
     #[inline]
-    fn pmf(&self, x: usize) -> f64 {
+    fn mass(&self, x: usize) -> f64 {
         should!(x < self.k);
         self.p[x]
     }
@@ -189,13 +189,13 @@ mod tests {
     }
 
     #[test]
-    fn pmf() {
+    fn mass() {
         let p = [0.0, 0.75, 0.25, 0.0];
         let d = new!(p);
-        assert_eq!(&(0..4).map(|x| d.pmf(x)).collect::<Vec<_>>(), &p.to_vec());
+        assert_eq!(&(0..4).map(|x| d.mass(x)).collect::<Vec<_>>(), &p.to_vec());
 
         let d = new!(equal 3);
-        assert_eq!(&(0..3).map(|x| d.pmf(x)).collect::<Vec<_>>(), &vec![1.0 / 3.0; 3])
+        assert_eq!(&(0..3).map(|x| d.mass(x)).collect::<Vec<_>>(), &vec![1.0 / 3.0; 3])
     }
 
     #[test]

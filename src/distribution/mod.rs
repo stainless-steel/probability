@@ -36,7 +36,15 @@ pub trait Continuous: Distribution {
 /// A discrete distribution.
 pub trait Discrete: Distribution {
     /// Compute the probability mass function.
-    fn pmf(&self, Self::Value) -> f64;
+    fn mass(&self, Self::Value) -> f64;
+
+    /// Compute the probability mass function.
+    ///
+    /// The function is an alias for `mass`.
+    #[inline(always)]
+    fn pmf(&self, x: Self::Value) -> f64 {
+        self.mass(x)
+    }
 }
 
 /// A distribution capable of computing the differential entropy.

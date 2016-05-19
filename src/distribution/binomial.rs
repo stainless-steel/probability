@@ -85,7 +85,7 @@ impl distribution::Discrete for Binomial {
     ///
     /// 1. C. Loader, “Fast and Accurate Computation of Binomial Probabilities,”
     ///    2000.
-    fn pmf(&self, x: usize) -> f64 {
+    fn mass(&self, x: usize) -> f64 {
         use std::f64::consts::PI;
 
         if self.p == 0.0 {
@@ -119,7 +119,7 @@ impl distribution::Entropy for Binomial {
             // Use a normal approximation.
             0.5 * ((2.0 * PI * self.npq).ln() + 1.0)
         } else {
-            -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.pmf(i) * self.pmf(i).ln())
+            -(0..(self.n + 1)).fold(0.0, |sum, i| sum + self.mass(i) * self.mass(i).ln())
         }
     }
 }
@@ -190,7 +190,7 @@ impl distribution::Inverse for Binomial {
             let modes = self.modes();
             let mut m = modes[0];
             loop {
-                let next = (u - self.cumulate(m as f64)) / self.pmf(m);
+                let next = (u - self.cumulate(m as f64)) / self.mass(m);
                 if -0.5 < next && next < 0.5 {
                     break;
                 }
@@ -396,7 +396,7 @@ mod tests {
     }
 
     #[test]
-    fn pmf() {
+    fn mass() {
         let d = new!(16, 0.25);
         let p = vec![
             1.002259575761855e-02, 1.336346101015806e-01, 2.251990651711821e-01,
@@ -404,7 +404,7 @@ mod tests {
             3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
         ];
 
-        assert::close(&(0..9).map(|i| d.pmf(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(&(0..9).map(|i| d.mass(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
     }
 
     #[test]
