@@ -93,8 +93,7 @@ impl distribution::Distribution for Binomial {
     ///
     /// The implementation is based on the incomplete beta function.
     fn distribution(&self, x: f64) -> f64 {
-        use special::{inc_beta, ln_beta};
-
+        use special::Beta;
         if x < 0.0 {
             return 0.0;
         }
@@ -106,7 +105,7 @@ impl distribution::Distribution for Binomial {
             return 1.0;
         }
         let (p, q) = ((self.n - x) as f64, (x + 1) as f64);
-        inc_beta(self.q, p, q, ln_beta(p, q))
+        self.q.inc_beta(p, q, p.ln_beta(q))
     }
 }
 

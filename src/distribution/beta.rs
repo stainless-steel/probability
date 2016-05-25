@@ -18,9 +18,9 @@ impl Beta {
     /// It should hold that `alpha > 0`, `beta > 0`, and `a < b`.
     #[inline]
     pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
-        use special::ln_beta;
+        use special::Beta as SpecialBeta;
         should!(alpha > 0.0 && beta > 0.0 && a < b);
-        Beta { alpha: alpha, beta: beta, a: a, b: b, ln_beta: ln_beta(alpha, beta) }
+        Beta { alpha: alpha, beta: beta, a: a, b: b, ln_beta: alpha.ln_beta(beta) }
     }
 
     /// Return the first shape parameter.
@@ -57,32 +57,32 @@ impl distribution::Distribution for Beta {
     type Value = f64;
 
     fn distribution(&self, x: f64) -> f64 {
-        use special::inc_beta;
+        use special::Beta;
         if x <= self.a {
             0.0
         } else if x >= self.b {
             1.0
         } else {
-            inc_beta((x - self.a) / (self.b - self.a), self.alpha, self.beta, self.ln_beta)
+            ((x - self.a) / (self.b - self.a)).inc_beta(self.alpha, self.beta, self.ln_beta)
         }
     }
 }
 
 impl distribution::Entropy for Beta {
     fn entropy(&self) -> f64 {
-        use special::digamma;
+        use special::Gamma;
         let sum = self.alpha + self.beta;
-        (self.b - self.a).ln() + self.ln_beta - (self.alpha - 1.0) * digamma(self.alpha) -
-            (self.beta - 1.0) * digamma(self.beta) + (sum - 2.0) * digamma(sum)
+        (self.b - self.a).ln() + self.ln_beta - (self.alpha - 1.0) * self.alpha.digamma() -
+            (self.beta - 1.0) * self.beta.digamma() + (sum - 2.0) * sum.digamma()
     }
 }
 
 impl distribution::Inverse for Beta {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
-        use special::inv_inc_beta;
+        use special::Beta;
         should!(0.0 <= p && p <= 1.0);
-        self.a + (self.b - self.a) * inv_inc_beta(p, self.alpha, self.beta, self.ln_beta)
+        self.a + (self.b - self.a) * p.inv_inc_beta(self.alpha, self.beta, self.ln_beta)
     }
 }
 

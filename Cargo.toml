@@ -14,7 +14,7 @@ repository = "https://github.com/stainless-steel/probability"
 
 [dependencies]
 random = "0.10"
-special = "0.5"
+special = "0.6"
 
 [dev-dependencies]
 assert = "0.7"

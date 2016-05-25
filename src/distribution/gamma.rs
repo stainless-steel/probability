@@ -33,11 +33,11 @@ impl distribution::Distribution for Gamma {
 
     #[inline]
     fn distribution(&self, x: f64) -> f64 {
-        use special::inc_gamma;
+        use special::Gamma;
         if x <= 0.0 {
             0.0
         } else {
-            inc_gamma(x / self.theta, self.k)
+            (x / self.theta).inc_gamma(self.k)
         }
     }
 }

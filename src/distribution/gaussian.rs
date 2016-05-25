@@ -40,9 +40,9 @@ impl distribution::Distribution for Gaussian {
     type Value = f64;
 
     fn distribution(&self, x: f64) -> f64 {
-        use special::erf;
+        use special::Error;
         use std::f64::consts::SQRT_2;
-        (1.0 + erf((x - self.mu) / (self.sigma * SQRT_2))) / 2.0
+        (1.0 + ((x - self.mu) / (self.sigma * SQRT_2)).erf()) / 2.0
     }
 }
 
