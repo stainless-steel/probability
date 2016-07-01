@@ -6,6 +6,7 @@ use source::Source;
 pub struct Gamma {
     k: f64,
     theta: f64,
+    norm: f64,
 }
 
 impl Gamma {
@@ -15,8 +16,9 @@ impl Gamma {
     /// It should hold that `k > 0` and `theta > 0`.
     #[inline]
     pub fn new(k: f64, theta: f64) -> Gamma {
+        use special::Gamma as SpecialGamma;
         should!(k > 0.0 && theta > 0.0);
-        Gamma { k: k, theta: theta }
+        Gamma { k: k, theta: theta, norm: k.gamma() * theta.powf(k) }
     }
 
     /// Return the shape parameter.
@@ -28,10 +30,19 @@ impl Gamma {
     pub fn theta(&self) -> f64 { self.theta }
 }
 
+impl distribution::Continuous for Gamma {
+    fn density(&self, x: f64) -> f64 {
+        if x <= 0.0 {
+            0.0
+        } else {
+            x.powf(self.k - 1.0) * (-x / self.theta).exp() / self.norm
+        }
+    }
+}
+
 impl distribution::Distribution for Gamma {
     type Value = f64;
 
-    #[inline]
     fn distribution(&self, x: f64) -> f64 {
         use special::Gamma;
         if x <= 0.0 {
@@ -100,9 +111,33 @@ mod tests {
     use assert;
     use prelude::*;
 
+    macro_rules! new(
+        ($k:expr, $theta:expr) => (Gamma::new($k, $theta));
+    );
+
+    #[test]
+    fn density() {
+        let d = new!(9.0, 0.5);
+        let x = vec![
+            -1.0, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0,
+             4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0,
+        ];
+        let p = vec![
+            0.0000000000000000e+00, 0.0000000000000000e+00, 1.8247988153345374e-05,
+            1.7185432791950819e-03, 1.6203023589362864e-02, 5.9540362609726317e-02,
+            1.3055607869631736e-01, 2.0651546706168886e-01, 2.6075486443009133e-01,
+            2.7917306390119390e-01, 2.6351128001904534e-01, 2.2519806429803990e-01,
+            1.7758719703342618e-01, 1.3104656985457416e-01, 9.1459332185226061e-02,
+            6.0871080525929738e-02, 3.8888600663684249e-02, 2.3974945191907938e-02,
+            1.4325000668200492e-02, 8.3250881130958170e-03,
+        ];
+
+        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
+
     #[test]
     fn distribution() {
-        let d = Gamma::new(9.0, 0.5);
+        let d = new!(9.0, 0.5);
         let x = vec![
             -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
             10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0
