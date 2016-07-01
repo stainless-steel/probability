@@ -53,6 +53,20 @@ impl distribution::Distribution for Gamma {
     }
 }
 
+impl distribution::Mean for Gamma {
+    #[inline]
+    fn mean(&self) -> f64 {
+        self.k * self.theta
+    }
+}
+
+impl distribution::Variance for Gamma {
+    #[inline]
+    fn variance(&self) -> f64 {
+        self.k * self.theta * self.theta
+    }
+}
+
 impl distribution::Sample for Gamma {
     /// Draw a sample.
     ///
@@ -153,5 +167,15 @@ mod tests {
         ];
 
         assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
+
+    #[test]
+    fn mean() {
+        assert_eq!(new!(9.0, 0.5).mean(), 4.5);
+    }
+
+    #[test]
+    fn variance() {
+        assert_eq!(new!(9.0, 0.5).variance(), 2.25);
     }
 }
