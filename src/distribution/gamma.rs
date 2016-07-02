@@ -53,6 +53,13 @@ impl distribution::Distribution for Gamma {
     }
 }
 
+impl distribution::Entropy for Gamma {
+    fn entropy(&self) -> f64 {
+        use special::Gamma;
+        self.k + self.theta.ln() + self.k.ln_gamma().0 + (1.0 - self.k) * self.k.digamma()
+    }
+}
+
 impl distribution::Kurtosis for Gamma {
     #[inline]
     fn kurtosis(&self) -> f64 {
@@ -191,6 +198,12 @@ mod tests {
         ];
 
         assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
+
+    #[test]
+    fn entropy() {
+        use distribution::Exponential;
+        assert_eq!(new!(1.0, 1.0 / 5.0).entropy(), Exponential::new(5.0).entropy());
     }
 
     #[test]
