@@ -220,7 +220,7 @@ pub fn sample<S: Source>(source: &mut S) -> f64 {
             let y = Y[i + 1] + (Y[i] - Y[i + 1]) * source.read::<f64>();
             (x, y)
         } else {
-            let x = R - (1.0 - source.read::<f64>()).ln() / R;
+            let x = R - (-source.read::<f64>()).ln_1p() / R;
             let y = (-R * (x - 0.5 * R)).exp() * source.read::<f64>();
             (x, y)
         };

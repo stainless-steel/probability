@@ -47,7 +47,7 @@ impl distribution::Continuous for Beta {
         } else {
             let scale = self.b - self.a;
             let x = (x - self.a) / scale;
-            ((self.alpha - 1.0) * x.ln() + (self.beta - 1.0) * (1.0 - x).ln() -
+            ((self.alpha - 1.0) * x.ln() + (self.beta - 1.0) * (-x).ln_1p() -
                 self.ln_beta).exp() / scale
         }
     }
