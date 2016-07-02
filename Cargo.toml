@@ -1,6 +1,6 @@
 [package]
 name = "probability"
-version = "0.14.5"
+version = "0.15.0"
 license = "Apache-2.0/MIT"
 authors = [
   "Ivan Ukhov <ivan.ukhov@gmail.com>",
@@ -13,7 +13,7 @@ homepage = "https://github.com/stainless-steel/probability"
 repository = "https://github.com/stainless-steel/probability"
 
 [dependencies]
-random = "0.10"
+random = "0.11"
 special = "0.7"
 
 [dev-dependencies]
