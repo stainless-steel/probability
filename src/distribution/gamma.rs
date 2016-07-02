@@ -70,13 +70,6 @@ impl distribution::Modes for Gamma {
     }
 }
 
-impl distribution::Variance for Gamma {
-    #[inline]
-    fn variance(&self) -> f64 {
-        self.k * self.theta * self.theta
-    }
-}
-
 impl distribution::Sample for Gamma {
     /// Draw a sample.
     ///
@@ -88,6 +81,20 @@ impl distribution::Sample for Gamma {
     #[inline]
     fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
         self.theta * sample(self.k, source)
+    }
+}
+
+impl distribution::Skewness for Gamma {
+    #[inline]
+    fn skewness(&self) -> f64 {
+        2.0 / self.k.sqrt()
+    }
+}
+
+impl distribution::Variance for Gamma {
+    #[inline]
+    fn variance(&self) -> f64 {
+        self.k * self.theta * self.theta
     }
 }
 
@@ -187,6 +194,11 @@ mod tests {
     #[test]
     fn modes() {
         assert_eq!(new!(5.5, 1.5).modes(), vec![6.75]);
+    }
+
+    #[test]
+    fn skewness() {
+        assert_eq!(new!(4.0, 1.5).skewness(), 1.0);
     }
 
     #[test]
