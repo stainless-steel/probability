@@ -53,6 +53,13 @@ impl distribution::Distribution for Gamma {
     }
 }
 
+impl distribution::Kurtosis for Gamma {
+    #[inline]
+    fn kurtosis(&self) -> f64 {
+        6.0 / self.k
+    }
+}
+
 impl distribution::Mean for Gamma {
     #[inline]
     fn mean(&self) -> f64 {
@@ -184,6 +191,11 @@ mod tests {
         ];
 
         assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-14);
+    }
+
+    #[test]
+    fn kurtosis() {
+        assert_eq!(new!(3.0, 1.5).kurtosis(), 2.0);
     }
 
     #[test]
