@@ -1,4 +1,4 @@
-//! Reexports of traits, types, and functions.
+//! Reexports of commonly used entities.
 
 pub use distribution::Distribution;
 
