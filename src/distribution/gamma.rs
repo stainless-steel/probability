@@ -60,6 +60,16 @@ impl distribution::Mean for Gamma {
     }
 }
 
+impl distribution::Modes for Gamma {
+    fn modes(&self) -> Vec<f64> {
+        if self.k >= 1.0 {
+            vec![(self.k - 1.0) * self.theta]
+        } else {
+            vec![]
+        }
+    }
+}
+
 impl distribution::Variance for Gamma {
     #[inline]
     fn variance(&self) -> f64 {
@@ -172,6 +182,11 @@ mod tests {
     #[test]
     fn mean() {
         assert_eq!(new!(9.0, 0.5).mean(), 4.5);
+    }
+
+    #[test]
+    fn modes() {
+        assert_eq!(new!(5.5, 1.5).modes(), vec![6.75]);
     }
 
     #[test]
