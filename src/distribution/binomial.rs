@@ -17,7 +17,7 @@ impl Binomial {
     /// `p`.
     ///
     /// It should hold that `p >= 0` and `p <= 1`.
-    pub fn new(n: usize, p: f64) -> Binomial {
+    pub fn new(n: usize, p: f64) -> Self {
         should!(0.0 < p && p < 1.0);
         let q = 1.0 - p;
         let np = n as f64 * p;
@@ -30,7 +30,7 @@ impl Binomial {
     ///
     /// It should hold that if `q >= 0` or `q <= 1`. This constructor is
     /// preferable when `q` is very small.
-    pub fn with_failure(n: usize, q: f64) -> Binomial {
+    pub fn with_failure(n: usize, q: f64) -> Self {
         should!(0.0 < q && q < 1.0);
         let p = 1.0 - q;
         let np = n as f64 * p;

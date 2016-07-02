@@ -12,7 +12,7 @@ impl Exponential {
     ///
     /// It should hold that `lambda > 0`.
     #[inline]
-    pub fn new(lambda: f64) -> Exponential {
+    pub fn new(lambda: f64) -> Self {
         should!(lambda > 0.0);
         Exponential { lambda: lambda }
     }

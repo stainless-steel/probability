@@ -14,7 +14,7 @@ impl Bernoulli {
     ///
     /// It should hold that `p > 0` and `p < 1`.
     #[inline]
-    pub fn new(p: f64) -> Bernoulli {
+    pub fn new(p: f64) -> Self {
         should!(p > 0.0 && p < 1.0);
         Bernoulli { p: p, q: 1.0 - p, pq: p * (1.0 - p) }
     }
@@ -24,7 +24,7 @@ impl Bernoulli {
     /// It should hold that `q > 0` and `q < 1`. This constructor is preferable
     /// when `q` is very small.
     #[inline]
-    pub fn with_failure(q: f64) -> Bernoulli {
+    pub fn with_failure(q: f64) -> Self {
         should!(q > 0.0 && q < 1.0);
         Bernoulli { p: 1.0 - q, q: q, pq: (1.0 - q) * q }
     }

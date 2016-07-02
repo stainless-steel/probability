@@ -13,7 +13,7 @@ impl Categorical {
     /// Create a categorical distribution with success probability `p`.
     ///
     /// It should hold that `p[i] >= 0`, `p[i] <= 1`, and `sum(p) == 1`.
-    pub fn new(p: &[f64]) -> Categorical {
+    pub fn new(p: &[f64]) -> Self {
         should!(is_probability_vector(p), {
             const EPSILON: f64 = 1e-12;
             p.iter().all(|&p| p >= 0.0 && p <= 1.0) &&

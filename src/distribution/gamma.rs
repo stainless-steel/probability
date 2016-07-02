@@ -15,7 +15,7 @@ impl Gamma {
     ///
     /// It should hold that `k > 0` and `theta > 0`.
     #[inline]
-    pub fn new(k: f64, theta: f64) -> Gamma {
+    pub fn new(k: f64, theta: f64) -> Self {
         use special::Gamma as SpecialGamma;
         should!(k > 0.0 && theta > 0.0);
         Gamma { k: k, theta: theta, norm: k.gamma() * theta.powf(k) }

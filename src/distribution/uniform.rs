@@ -13,7 +13,7 @@ impl Uniform {
     ///
     /// It should hold that `a < b`.
     #[inline]
-    pub fn new(a: f64, b: f64) -> Uniform {
+    pub fn new(a: f64, b: f64) -> Self {
         should!(a < b);
         Uniform { a: a, b: b }
     }

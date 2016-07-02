@@ -17,7 +17,7 @@ impl Beta {
     ///
     /// It should hold that `alpha > 0`, `beta > 0`, and `a < b`.
     #[inline]
-    pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Beta {
+    pub fn new(alpha: f64, beta: f64, a: f64, b: f64) -> Self {
         use special::Beta as SpecialBeta;
         should!(alpha > 0.0 && beta > 0.0 && a < b);
         Beta { alpha: alpha, beta: beta, a: a, b: b, ln_beta: alpha.ln_beta(beta) }

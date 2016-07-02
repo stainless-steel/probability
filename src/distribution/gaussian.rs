@@ -14,7 +14,7 @@ impl Gaussian {
     ///
     /// It should hold that `sigma > 0`.
     #[inline]
-    pub fn new(mu: f64, sigma: f64) -> Gaussian {
+    pub fn new(mu: f64, sigma: f64) -> Self {
         should!(sigma > 0.0);
         Gaussian { mu: mu, sigma: sigma }
     }
