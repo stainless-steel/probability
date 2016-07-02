@@ -27,6 +27,13 @@ impl Uniform {
     pub fn b(&self) -> f64 { self.a }
 }
 
+impl Default for Uniform {
+    #[inline]
+    fn default() -> Self {
+        Uniform::new(0.0, 1.0)
+    }
+}
+
 impl distribution::Continuous for Uniform {
     #[inline]
     fn density(&self, x: f64) -> f64 {

@@ -28,6 +28,13 @@ impl Gaussian {
     pub fn sigma(&self) -> f64 { self.sigma }
 }
 
+impl Default for Gaussian {
+    #[inline]
+    fn default() -> Self {
+        Gaussian::new(0.0, 1.0)
+    }
+}
+
 impl distribution::Continuous for Gaussian {
     fn density(&self, x: f64) -> f64 {
         use distribution::Variance;
