@@ -23,6 +23,7 @@ pub use distribution::Exponential;
 pub use distribution::Gamma;
 pub use distribution::Gaussian;
 pub use distribution::Uniform;
+pub use distribution::Triangular;
 
 pub use sampler::Independent;
 
