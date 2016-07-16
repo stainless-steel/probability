@@ -22,8 +22,8 @@ pub use distribution::Categorical;
 pub use distribution::Exponential;
 pub use distribution::Gamma;
 pub use distribution::Gaussian;
-pub use distribution::Uniform;
 pub use distribution::Triangular;
+pub use distribution::Uniform;
 
 pub use sampler::Independent;
 

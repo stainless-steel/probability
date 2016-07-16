@@ -13,11 +13,7 @@ impl Triangular {
     #[inline]
     pub fn new(a: f64, b: f64, c: f64) -> Self {
         should!(a < b && a <= c && c <= b);
-        Triangular {
-            a: a,
-            b: b,
-            c: c,
-        }
+        Triangular { a: a, b: b, c: c }
     }
 
     /// Return the left endpoint of the support.
@@ -28,7 +24,7 @@ impl Triangular {
     #[inline(always)]
     pub fn b(&self) -> f64 { self.b }
 
-    /// Return the mode of the distribution.
+    /// Return the mode parameter.
     #[inline(always)]
     pub fn c(&self) -> f64 { self.c }
 }
@@ -63,9 +59,9 @@ impl distribution::Distribution for Triangular {
         } else {
             let mut factor = 2.0 / (b - a);
             if x < c {
-                factor *= (x - a) / (c - a)
+                factor *= (x - a) / (c - a);
             } else if x > c {
-                factor *= (b - x) / (b - c)
+                factor *= (b - x) / (b - c);
             }
             factor
         }
