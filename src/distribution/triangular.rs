@@ -142,7 +142,7 @@ impl distribution::Skewness for Triangular {
     fn skewness(&self) -> f64 {
         let &Triangular { a, b, c } = self;
         let npart = (a + b - 2.0 * c) * (2.0 * a - b - c) * (a - 2.0 * b + c);
-        let dpart = a.powi(2) + b.powi(2) + c.powi(2) - a * b - a * c - b * c;
+        let dpart = a * a + b * b + c * c - a * b - a * c - b * c;
         (2.0_f64.sqrt() * npart) / (5.0 * dpart.powf(3.0 / 2.0))
     }
 }
@@ -150,7 +150,7 @@ impl distribution::Skewness for Triangular {
 impl distribution::Variance for Triangular {
     fn variance(&self) -> f64 {
         let &Triangular { a, b, c } = self;
-        (a.powi(2) + b.powi(2) + c.powi(2) - a * b - a * c - b * c) / 18.0
+        (a * a + b * b + c * c - a * b - a * c - b * c) / 18.0
     }
 }
 
