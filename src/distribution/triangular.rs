@@ -183,7 +183,7 @@ mod tests {
 
     #[test]
     fn entropy() {
-        let c = 0.5_f64.exp();
+        let c = 0.5f64.exp();
         assert_eq!(new!(0.0, 2.0 * c, c).entropy(), 1.0);
     }
 
