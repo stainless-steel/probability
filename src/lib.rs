@@ -17,6 +17,10 @@ extern crate assert;
 extern crate random;
 extern crate special;
 
+macro_rules! nonnan(
+    ($argument:ident) => (if $argument.is_nan() { return ::std::f64::NAN; });
+);
+
 macro_rules! should(
     ($requirement:expr) => (debug_assert!($requirement));
     ($requirement:expr, $code:expr) => (debug_assert!($code, stringify!($requirement)));

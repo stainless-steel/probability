@@ -35,18 +35,18 @@ impl Triangular {
 
 impl distribution::Continuous for Triangular {
     fn density(&self, x: f64) -> f64 {
-        use std::f64;
-        use std::cmp::Ordering::*;
-        if x <= self.a {
+        nonnan!(x);
+        let &Triangular { a, b, c } = self;
+        if x <= a {
             0.0
-        } else if self.b <= x {
+        } else if b <= x {
             1.0
         } else {
-            let diff = self.b - self.a;
-            match x.partial_cmp(&self.c) {
-                Some(Less) | Some(Equal) => (x - self.a).powi(2) / diff / (self.c - self.a),
-                Some(Greater) => 1.0 - (self.b - x).powi(2) / diff / (self.b - self.c),
-                None => f64::NAN,
+            let diff = b - a;
+            if x <= c {
+                (x - a).powi(2) / diff / (c - a)
+            } else {
+                1.0 - (b - x).powi(2) / diff / (b - c)
             }
         }
     }
@@ -56,19 +56,18 @@ impl distribution::Distribution for Triangular {
     type Value = f64;
 
     fn distribution(&self, x: f64) -> f64 {
-        use std::f64;
-        use std::cmp::Ordering::*;
+        nonnan!(x);
         let &Triangular { a, b, c } = self;
         if x < a || b < x {
             0.0
         } else {
-            let factor = 2.0 / (b - a);
-            match x.partial_cmp(&c) {
-                Some(Less) => factor * (x - a) / (c - a),
-                Some(Greater) => factor * (b - x) / (b - c),
-                Some(Equal) => factor,
-                None => f64::NAN,
+            let mut factor = 2.0 / (b - a);
+            if x < c {
+                factor *= (x - a) / (c - a)
+            } else if x > c {
+                factor *= (b - x) / (b - c)
             }
+            factor
         }
     }
 }
@@ -82,9 +81,8 @@ impl distribution::Entropy for Triangular {
 
 impl distribution::Inverse for Triangular {
     fn inverse(&self, p: f64) -> f64 {
-        use std::f64;
-        use std::cmp::Ordering::*;
         should!(0.0 <= p && p <= 1.0);
+        nonnan!(p);
         let &Triangular { a, b, c } = self;
         if p == 0.0 {
             a
@@ -92,11 +90,12 @@ impl distribution::Inverse for Triangular {
             b
         } else {
             let p0 = (c - a) / (b - a);
-            match p.partial_cmp(&p0) {
-                Some(Less) => ((b - a) * (c - a) * p).sqrt() + a,
-                Some(Greater) => b - ((b - a) * (b - c) * (1.0 - p)).sqrt(),
-                Some(Equal) => c,
-                None => f64::NAN,
+            if p < p0 {
+                ((b - a) * (c - a) * p).sqrt() + a
+            } else if p > p0 {
+                b - ((b - a) * (b - c) * (1.0 - p)).sqrt()
+            } else {
+                c
             }
         }
     }
