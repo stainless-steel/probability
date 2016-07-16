@@ -3,6 +3,7 @@ name = "probability"
 version = "0.15.0"
 license = "Apache-2.0/MIT"
 authors = [
+  "Denis Kolodin <deniskolodin@gmail.com>",
   "Ivan Ukhov <ivan.ukhov@gmail.com>",
   "Jon Lund Steffensen <jonlst@gmail.com>",
   "Rúnar Berg Baugsson Sigríðarson <runarberg@zoho.com>",
