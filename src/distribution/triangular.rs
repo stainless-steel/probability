@@ -10,6 +10,9 @@ pub struct Triangular {
 }
 
 impl Triangular {
+    /// Create a triangular distribution with mode `c` on interval `[a, b]`.
+    ///
+    /// It should hold that `a < b`, `a <= c`, and `c <= b`.
     #[inline]
     pub fn new(a: f64, b: f64, c: f64) -> Self {
         should!(a < b && a <= c && c <= b);
