@@ -143,7 +143,7 @@ impl distribution::Skewness for Triangular {
         let &Triangular { a, b, c } = self;
         let npart = (a + b - 2.0 * c) * (2.0 * a - b - c) * (a - 2.0 * b + c);
         let dpart = a * a + b * b + c * c - a * b - a * c - b * c;
-        (2.0_f64.sqrt() * npart) / (5.0 * dpart.powf(3.0 / 2.0))
+        (2f64.sqrt() * npart) / (5.0 * dpart.powf(3.0 / 2.0))
     }
 }
 
@@ -228,6 +228,6 @@ mod tests {
 
     #[test]
     fn deviation() {
-        assert_eq!(new!(1.0, 5.0, 3.0).deviation(), f64::sqrt(12.0 / 18.0));
+        assert_eq!(new!(1.0, 5.0, 3.0).deviation(), (12f64 / 18.0).sqrt());
     }
 }

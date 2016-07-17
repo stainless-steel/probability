@@ -126,7 +126,7 @@ impl distribution::Sample for Bernoulli {
 impl distribution::Skewness for Bernoulli {
     #[inline]
     fn skewness(&self) -> f64 {
-        (1.0 - 2.0 * self.p) / (self.pq).sqrt()
+        (1.0 - 2.0 * self.p) / self.pq.sqrt()
     }
 }
 

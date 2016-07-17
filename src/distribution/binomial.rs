@@ -259,7 +259,7 @@ impl distribution::Sample for Binomial {
 impl distribution::Skewness for Binomial {
     #[inline]
     fn skewness(&self) -> f64 {
-        (1.0 - 2.0 * self.p) / (self.npq).sqrt()
+        (1.0 - 2.0 * self.p) / self.npq.sqrt()
     }
 }
 

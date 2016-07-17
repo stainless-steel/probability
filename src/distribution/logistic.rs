@@ -200,6 +200,6 @@ mod tests {
     #[test]
     fn deviation() {
         use std::f64::consts::PI;
-        assert_eq!(new!(1.0, 3.0 / PI).deviation(), f64::sqrt(3.0));
+        assert_eq!(new!(1.0, 3.0 / PI).deviation(), 3f64.sqrt());
     }
 }
