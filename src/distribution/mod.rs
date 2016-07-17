@@ -100,6 +100,7 @@ mod categorical;
 mod exponential;
 mod gamma;
 mod gaussian;
+mod logistic;
 mod triangular;
 mod uniform;
 
@@ -110,5 +111,6 @@ pub use self::categorical::Categorical;
 pub use self::exponential::Exponential;
 pub use self::gamma::Gamma;
 pub use self::gaussian::Gaussian;
+pub use self::logistic::Logistic;
 pub use self::triangular::Triangular;
 pub use self::uniform::Uniform;
