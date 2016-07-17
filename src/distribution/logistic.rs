@@ -11,7 +11,7 @@ pub struct Logistic {
 impl Logistic {
     /// Create a logistic distribution with location `mu` and scale `s`.
     ///
-    /// It should hold `s > 0`.
+    /// It should hold that `s > 0`.
     #[inline]
     pub fn new(mu: f64, s: f64) -> Self {
         should!(s > 0.0);
@@ -33,7 +33,6 @@ impl Default for Logistic {
         Logistic::new(0.0, 1.0)
     }
 }
-
 
 impl distribution::Continuous for Logistic {
     #[inline]
@@ -128,7 +127,7 @@ mod tests {
             2.6894142136999510e-01, 3.1002551887238755e-01, 3.5434369377420455e-01,
             4.0131233988754800e-01, 4.5016600268752216e-01, 5.0000000000000000e-01,
             5.4983399731247795e-01, 5.9868766011245200e-01, 6.4565630622579540e-01,
-            6.8997448112761250e-01, 7.3105857863000490e-01
+            6.8997448112761250e-01, 7.3105857863000490e-01,
         ];
 
         assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
@@ -142,7 +141,7 @@ mod tests {
             3.9322386648296369e-02, 4.2781939304058887e-02, 4.5756848091331452e-02,
             4.8052149148305828e-02, 4.9503314542371987e-02, 5.0000000000000003e-02,
             4.9503314542371987e-02, 4.8052149148305828e-02, 4.5756848091331452e-02,
-            4.2781939304058887e-02, 3.9322386648296369e-02
+            4.2781939304058887e-02, 3.9322386648296369e-02,
         ];
 
         assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-7);
@@ -150,7 +149,7 @@ mod tests {
 
     #[test]
     fn entropy() {
-        assert_eq!(new!(0.0, (-2.0f64).exp()).entropy(), 0.0);
+        assert_eq!(new!(0.0, (-2f64).exp()).entropy(), 0.0);
     }
 
     #[test]
@@ -161,7 +160,7 @@ mod tests {
                       NEG_INFINITY, -5.9861228866810947e+00, -1.9314718055994531e+00,
             7.6351069806398275e-01,  2.9726744594591787e+00,  5.0000000000000000e+00,
             7.0273255405408239e+00,  9.2364893019360199e+00,  1.1931471805599454e+01,
-            1.5986122886681098e+01,  INFINITY
+            1.5986122886681098e+01,  INFINITY,
         ];
 
         assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-14);
