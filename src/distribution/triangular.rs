@@ -36,6 +36,26 @@ impl distribution::Continuous for Triangular {
     fn density(&self, x: f64) -> f64 {
         nonnan!(x);
         let &Triangular { a, b, c } = self;
+        if x < a || b < x {
+            0.0
+        } else {
+            let mut factor = 2.0 / (b - a);
+            if x < c {
+                factor *= (x - a) / (c - a);
+            } else if x > c {
+                factor *= (b - x) / (b - c);
+            }
+            factor
+        }
+    }
+}
+
+impl distribution::Distribution for Triangular {
+    type Value = f64;
+
+    fn distribution(&self, x: f64) -> f64 {
+        nonnan!(x);
+        let &Triangular { a, b, c } = self;
         if x <= a {
             0.0
         } else if b <= x {
@@ -47,26 +67,6 @@ impl distribution::Continuous for Triangular {
             } else {
                 1.0 - (b - x).powi(2) / diff / (b - c)
             }
-        }
-    }
-}
-
-impl distribution::Distribution for Triangular {
-    type Value = f64;
-
-    fn distribution(&self, x: f64) -> f64 {
-        nonnan!(x);
-        let &Triangular { a, b, c } = self;
-        if x < a || b < x {
-            0.0
-        } else {
-            let mut factor = 2.0 / (b - a);
-            if x < c {
-                factor *= (x - a) / (c - a);
-            } else if x > c {
-                factor *= (b - x) / (b - c);
-            }
-            factor
         }
     }
 }
@@ -167,7 +167,7 @@ mod tests {
     fn density() {
         let d = new!(1.0, 5.0, 3.0);
         let x = vec![0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5];
-        let p = vec![0.0, 0.0, 0.03125, 0.125, 0.28125, 0.5, 0.71875, 0.875, 0.96875, 1.0, 1.0];
+        let p = vec![0.0, 0.0, 0.125, 0.25, 0.375, 0.5, 0.375, 0.25, 0.125, 0.0, 0.0];
 
         assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
     }
@@ -176,7 +176,7 @@ mod tests {
     fn distribution() {
         let d = new!(1.0, 5.0, 3.0);
         let x = vec![0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5];
-        let p = vec![0.0, 0.0, 0.125, 0.25, 0.375, 0.5, 0.375, 0.25, 0.125, 0.0, 0.0];
+        let p = vec![0.0, 0.0, 0.03125, 0.125, 0.28125, 0.5, 0.71875, 0.875, 0.96875, 1.0, 1.0];
 
         assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-15);
     }
