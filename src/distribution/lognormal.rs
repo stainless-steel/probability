@@ -99,8 +99,7 @@ impl distribution::Median for Lognormal {
 impl distribution::Modes for Lognormal {
     #[inline]
     fn modes(&self) -> Vec<f64> {
-        let mode = (self.mu - self.sigma * self.sigma).exp();
-        vec![mode]
+        vec![(self.mu - self.sigma * self.sigma).exp()]
     }
 }
 
@@ -159,7 +158,6 @@ mod tests {
             3.8313116661630492e-01, 4.3903100974768944e-01, 4.8330729072740009e-01,
             5.1966233849751675e-01, 5.5028502097208276e-01, 5.7657814823924480e-01,
             5.9949442394950303e-01, 6.1970989457732906e-01,
-
         ];
 
         assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-15);
@@ -194,7 +192,7 @@ mod tests {
 
     #[test]
     fn kurtosis() {
-        assert_eq!(new!(0.0, 1.0).kurtosis(), 1.1093639217631153e+02);
+        assert::close(new!(0.0, 1.0).kurtosis(), 1.1093639217631153e+02, 1e-15);
     }
 
     #[test]
