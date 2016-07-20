@@ -36,12 +36,15 @@ impl Default for Lognormal {
 }
 
 impl distribution::Continuous for Lognormal {
-    #[inline]
     fn density(&self, x: f64) -> f64 {
         use std::f64::consts::PI;
-        should!(x > 0.0);
-        let &Lognormal { mu, sigma, .. } = self;
-        (-(x.ln() - mu).powi(2) / (2.0 * sigma * sigma)).exp() / (x * sigma * (2.0 * PI).sqrt())
+        if x <= 0.0 {
+            0.0
+        } else {
+            let &Lognormal { mu, sigma, .. } = self;
+            (-(x.ln() - mu).powi(2) / (2.0 * sigma * sigma)).exp() /
+                (x * sigma * (2.0 * PI).sqrt())
+        }
     }
 }
 
@@ -49,8 +52,11 @@ impl distribution::Distribution for Lognormal {
     type Value = f64;
 
     fn distribution(&self, x: f64) -> f64 {
-        should!(x > 0.0);
-        self.gaussian.distribution(x.ln())
+        if x <= 0.0 {
+            0.0
+        } else {
+            self.gaussian.distribution(x.ln())
+        }
     }
 }
 
@@ -64,7 +70,6 @@ impl distribution::Entropy for Lognormal {
 
 impl distribution::Inverse for Lognormal {
     fn inverse(&self, p: f64) -> f64 {
-        should!(0.0 <= p && p <= 1.0);
         self.gaussian.inverse(p).exp()
     }
 }
@@ -134,7 +139,7 @@ mod tests {
     #[test]
     fn density() {
         let d = new!(1.0, 2.0);
-        let x = vec![1.0e-20, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
+        let x = vec![0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
         let p = vec![
             0.0000000000000000e+00, 2.7879404629273086e-01, 1.7603266338214976e-01,
             1.2723305581441105e-01, 9.8568580344013113e-02, 7.9718599555316239e-02,
@@ -148,7 +153,7 @@ mod tests {
     #[test]
     fn distribution() {
         let d = new!(1.0, 2.0);
-        let x = vec![1.0e-20, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
+        let x = vec![0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
         let p = vec![
             0.0000000000000000e+00, 1.9861641975736130e-01, 3.0853753872598694e-01,
             3.8313116661630492e-01, 4.3903100974768944e-01, 4.8330729072740009e-01,
