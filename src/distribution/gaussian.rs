@@ -6,6 +6,7 @@ use source::Source;
 pub struct Gaussian {
     mu: f64,
     sigma: f64,
+    norm: f64,
 }
 
 impl Gaussian {
@@ -15,8 +16,9 @@ impl Gaussian {
     /// It should hold that `sigma > 0`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Self {
+        use std::f64::consts::PI;
         should!(sigma > 0.0);
-        Gaussian { mu: mu, sigma: sigma }
+        Gaussian { mu: mu, sigma: sigma, norm: (2.0 * PI).sqrt() * sigma }
     }
 
     /// Return the mean.
@@ -37,9 +39,7 @@ impl Default for Gaussian {
 
 impl distribution::Continuous for Gaussian {
     fn density(&self, x: f64) -> f64 {
-        use distribution::Variance;
-        use std::f64::consts::PI;
-        (-(x - self.mu).powi(2) / (2.0 * self.variance())).exp() / ((2.0 * PI).sqrt() * self.sigma)
+        (-(x - self.mu).powi(2) / (2.0 * self.sigma * self.sigma)).exp() / self.norm
     }
 }
 
@@ -56,9 +56,8 @@ impl distribution::Distribution for Gaussian {
 impl distribution::Entropy for Gaussian {
     #[inline]
     fn entropy(&self) -> f64 {
-        use distribution::Variance;
         use std::f64::consts::{E, PI};
-        0.5 * (2.0 * PI * E * self.variance()).ln()
+        0.5 * (2.0 * PI * E * self.sigma * self.sigma).ln()
     }
 }
 
@@ -349,7 +348,6 @@ const W: [f64; 128] = [
 mod tests {
     use assert;
     use prelude::*;
-    use std::f64::{INFINITY, NEG_INFINITY};
 
     macro_rules! new(
         ($mu:expr, $sigma:expr) => (Gaussian::new($mu, $sigma));
@@ -401,6 +399,8 @@ mod tests {
 
     #[test]
     fn inverse() {
+        use std::f64::{INFINITY, NEG_INFINITY};
+
         let d = new!(-1.0, 0.25);
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50,
