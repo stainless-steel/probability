@@ -2,7 +2,7 @@
 
 The package provides a probability-theory toolbox.
 
-## [Documentation][doc]
+## [Documentation][documentation]
 
 ## Example
 
@@ -21,7 +21,7 @@ Your contribution is highly appreciated. Do not hesitate to open an issue or a
 pull request. Note that any contribution submitted for inclusion in the project
 will be licensed according to the terms given in [LICENSE.md](LICENSE.md).
 
-[doc]: https://stainless-steel.github.io/probability
+[documentation]: https://docs.rs/probability
 [status-img]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
 [status-url]: https://travis-ci.org/stainless-steel/probability
 [version-img]: https://img.shields.io/crates/v/probability.svg
