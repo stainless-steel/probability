@@ -1,6 +1,6 @@
 [package]
 name = "probability"
-version = "0.15.6"
+version = "0.15.7"
 license = "Apache-2.0/MIT"
 authors = [
     "Denis Kolodin <deniskolodin@gmail.com>",
@@ -12,6 +12,8 @@ description = "The package provides a probability-theory toolbox."
 documentation = "https://docs.rs/probability"
 homepage = "https://github.com/stainless-steel/probability"
 repository = "https://github.com/stainless-steel/probability"
+categories = ["algorithms", "science"]
+keywords = ["distribution", "probability", "sampling", "statistics", "random"]
 
 [dependencies]
 random = "0.12"
