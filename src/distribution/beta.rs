@@ -106,28 +106,33 @@ impl distribution::Mean for Beta {
 impl distribution::Median for Beta {
     fn median(&self) -> f64 {
         use distribution::Inverse;
-        match (self.alpha, self.beta) {
-            (alpha, beta) if alpha == beta => 0.5 * (self.b - self.a),
-            (alpha, beta) if alpha > 1.0 && beta > 1.0 => {
-                self.a + (self.b - self.a) * (alpha - 1.0 / 3.0) / (alpha + beta - 2.0 / 3.0)
-            },
-            _ => self.inverse(0.5),
+        if self.alpha == self.beta {
+            0.5 * (self.b - self.a)
+        } else if self.alpha > 1.0 && self.beta > 1.0 {
+            self.a + (self.b - self.a) * (self.alpha - 1.0 / 3.0) /
+                (self.alpha + self.beta - 2.0 / 3.0)
+        } else {
+            self.inverse(0.5)
         }
     }
 }
 
 impl distribution::Modes for Beta {
     fn modes(&self) -> Vec<f64> {
-        match (self.alpha, self.beta) {
-            (1.0, 1.0) => vec![],
-            (1.0, beta) if beta > 1.0 => vec![self.a],
-            (alpha, 1.0) if alpha > 1.0 => vec![self.b],
-            (alpha, beta) if alpha < 1.0 && beta < 1.0 => vec![self.a, self.b],
-            (alpha, beta) if alpha < 1.0 && beta >= 1.0 => vec![self.a],
-            (alpha, beta) if alpha >= 1.0 && beta < 1.0 => vec![self.b],
-            (alpha, beta) => {
-                vec![self.a + (self.b - self.a) * (alpha - 1.0) / (alpha + beta - 2.0)]
-            },
+        if self.alpha == 1.0 && self.beta == 1.0 {
+            vec![]
+        } else if self.alpha == 1.0 && self.beta > 1.0 {
+            vec![self.a]
+        } else if self.alpha > 1.0 && self.beta == 1.0 {
+            vec![self.b]
+        } else if self.alpha < 1.0 && self.beta < 1.0 {
+            vec![self.a, self.b]
+        } else if self.alpha < 1.0 && self.beta >= 1.0 {
+            vec![self.a]
+        } else if self.alpha >= 1.0 && self.beta < 1.0 {
+            vec![self.b]
+        } else {
+            vec![self.a + (self.b - self.a) * (self.alpha - 1.0) / (self.alpha + self.beta - 2.0)]
         }
     }
 }
