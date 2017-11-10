@@ -16,7 +16,11 @@ impl Bernoulli {
     #[inline]
     pub fn new(p: f64) -> Self {
         should!(p > 0.0 && p < 1.0);
-        Bernoulli { p: p, q: 1.0 - p, pq: p * (1.0 - p) }
+        Bernoulli {
+            p: p,
+            q: 1.0 - p,
+            pq: p * (1.0 - p),
+        }
     }
 
     /// Create a Bernoulli distribution with failure probability `q`.
@@ -26,16 +30,24 @@ impl Bernoulli {
     #[inline]
     pub fn with_failure(q: f64) -> Self {
         should!(q > 0.0 && q < 1.0);
-        Bernoulli { p: 1.0 - q, q: q, pq: (1.0 - q) * q }
+        Bernoulli {
+            p: 1.0 - q,
+            q: q,
+            pq: (1.0 - q) * q,
+        }
     }
 
     /// Return the success probability.
     #[inline(always)]
-    pub fn p(&self) -> f64 { self.p }
+    pub fn p(&self) -> f64 {
+        self.p
+    }
 
     /// Return the failure probability.
     #[inline(always)]
-    pub fn q(&self) -> f64 { self.q }
+    pub fn q(&self) -> f64 {
+        self.q
+    }
 }
 
 impl distribution::Discrete for Bernoulli {
@@ -76,7 +88,11 @@ impl distribution::Inverse for Bernoulli {
     #[inline]
     fn inverse(&self, p: f64) -> u8 {
         should!(0.0 <= p && p <= 1.0);
-        if p <= self.q { 0 } else { 1 }
+        if p <= self.q {
+            0
+        } else {
+            1
+        }
     }
 }
 
@@ -89,7 +105,9 @@ impl distribution::Kurtosis for Bernoulli {
 
 impl distribution::Mean for Bernoulli {
     #[inline]
-    fn mean(&self) -> f64 { self.p }
+    fn mean(&self) -> f64 {
+        self.p
+    }
 }
 
 impl distribution::Median for Bernoulli {
@@ -118,8 +136,15 @@ impl distribution::Modes for Bernoulli {
 
 impl distribution::Sample for Bernoulli {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> u8 where S: Source {
-        if source.read::<f64>() < self.q { 0 } else { 1 }
+    fn sample<S>(&self, source: &mut S) -> u8
+    where
+        S: Source,
+    {
+        if source.read::<f64>() < self.q {
+            0
+        } else {
+            1
+        }
     }
 }
 
@@ -132,7 +157,9 @@ impl distribution::Skewness for Bernoulli {
 
 impl distribution::Variance for Bernoulli {
     #[inline]
-    fn variance(&self) -> f64 { self.pq }
+    fn variance(&self) -> f64 {
+        self.pq
+    }
 }
 
 #[cfg(test)]
@@ -150,14 +177,20 @@ mod tests {
         let d = new!(0.25);
         let x = vec![-0.1, 0.0, 0.1, 0.25, 0.5, 1.0, 1.1];
         let p = vec![0.0, 0.75, 0.75, 0.75, 0.75, 1.0, 1.0];
-        assert_eq!(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(
+            &x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(),
+            &p
+        );
     }
 
     #[test]
     fn entropy() {
         let d = vec![new!(0.25), new!(0.5), new!(0.75)];
-        assert::close(&d.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
-                      &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083], 1e-16);
+        assert::close(
+            &d.iter().map(|d| d.entropy()).collect::<Vec<_>>(),
+            &vec![0.5623351446188083, 0.6931471805599453, 0.5623351446188083],
+            1e-16,
+        );
     }
 
     #[test]
@@ -176,7 +209,10 @@ mod tests {
     #[test]
     fn mass() {
         let d = new!(0.25);
-        assert_eq!(&(0..3).map(|x| d.mass(x)).collect::<Vec<_>>(), &[0.75, 0.25, 0.0]);
+        assert_eq!(
+            &(0..3).map(|x| d.mass(x)).collect::<Vec<_>>(),
+            &[0.75, 0.25, 0.0]
+        );
     }
 
     #[test]
@@ -200,8 +236,11 @@ mod tests {
 
     #[test]
     fn sample() {
-        assert!(Independent(&new!(0.25), &mut source::default()).take(100)
-                                                                .fold(0, |a, b| a + b) <= 100);
+        assert!(
+            Independent(&new!(0.25), &mut source::default())
+                .take(100)
+                .fold(0, |a, b| a + b) <= 100
+        );
     }
 
     #[test]
