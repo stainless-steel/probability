@@ -18,16 +18,24 @@ impl Gamma {
     pub fn new(k: f64, theta: f64) -> Self {
         use special::Gamma as SpecialGamma;
         should!(k > 0.0 && theta > 0.0);
-        Gamma { k: k, theta: theta, norm: k.gamma() * theta.powf(k) }
+        Gamma {
+            k: k,
+            theta: theta,
+            norm: k.gamma() * theta.powf(k),
+        }
     }
 
     /// Return the shape parameter.
     #[inline(always)]
-    pub fn k(&self) -> f64 { self.k }
+    pub fn k(&self) -> f64 {
+        self.k
+    }
 
     /// Return the scale parameter.
     #[inline(always)]
-    pub fn theta(&self) -> f64 { self.theta }
+    pub fn theta(&self) -> f64 {
+        self.theta
+    }
 }
 
 impl distribution::Continuous for Gamma {
@@ -93,7 +101,10 @@ impl distribution::Sample for Gamma {
     ///    variables,” ACM Transactions on Mathematical Software, vol. 26,
     ///    no. 3, pp. 363–372, September 2000.
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64
+    where
+        S: Source,
+    {
         self.theta * sample(self.k, source)
     }
 }
@@ -177,7 +188,11 @@ mod tests {
             1.4325000668200492e-02, 8.3250881130958170e-03,
         ];
 
-        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(
+            &x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(),
+            &p,
+            1e-14,
+        );
     }
 
     #[test]
@@ -197,13 +212,20 @@ mod tests {
             9.999999017950048e-01, 9.999999793279283e-01, 9.999999957473356e-01,
         ];
 
-        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(
+            &x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(),
+            &p,
+            1e-14,
+        );
     }
 
     #[test]
     fn entropy() {
         use distribution::Exponential;
-        assert_eq!(new!(1.0, 1.0 / 5.0).entropy(), Exponential::new(5.0).entropy());
+        assert_eq!(
+            new!(1.0, 1.0 / 5.0).entropy(),
+            Exponential::new(5.0).entropy()
+        );
     }
 
     #[test]
