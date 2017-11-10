@@ -70,7 +70,9 @@ pub trait Modes: Distribution {
 /// A distribution capable of drawing samples.
 pub trait Sample: Distribution {
     /// Draw a sample.
-    fn sample<S>(&self, &mut S) -> Self::Value where S: Source;
+    fn sample<S>(&self, &mut S) -> Self::Value
+    where
+        S: Source;
 }
 
 /// A distribution capable of computing the skewness.
