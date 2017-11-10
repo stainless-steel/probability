@@ -19,7 +19,9 @@ impl Exponential {
 
     /// Return the rate parameter.
     #[inline(always)]
-    pub fn lambda(&self) -> f64 { self.lambda }
+    pub fn lambda(&self) -> f64 {
+        self.lambda
+    }
 }
 
 impl distribution::Continuous for Exponential {
@@ -63,7 +65,9 @@ impl distribution::Inverse for Exponential {
 
 impl distribution::Kurtosis for Exponential {
     #[inline]
-    fn kurtosis(&self) -> f64 { 6.0 }
+    fn kurtosis(&self) -> f64 {
+        6.0
+    }
 }
 
 impl distribution::Mean for Exponential {
@@ -90,14 +94,19 @@ impl distribution::Modes for Exponential {
 
 impl distribution::Sample for Exponential {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64
+    where
+        S: Source,
+    {
         -source.read::<f64>().ln() / self.lambda
     }
 }
 
 impl distribution::Skewness for Exponential {
     #[inline]
-    fn skewness(&self) -> f64 { 2.0 }
+    fn skewness(&self) -> f64 {
+        2.0
+    }
 }
 
 impl distribution::Variance for Exponential {
@@ -132,7 +141,11 @@ mod tests {
             1.228842470665642e-05, 7.550269088558195e-11,
         ];
 
-        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(
+            &x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(),
+            &p,
+            1e-15,
+        );
     }
 
     #[test]
@@ -147,7 +160,11 @@ mod tests {
             9.996645373720975e-01
         ];
 
-        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(
+            &x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(),
+            &p,
+            1e-15,
+        );
     }
 
     #[test]
@@ -172,7 +189,11 @@ mod tests {
             1.000000000000000e-00,
         ];
 
-        assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(
+            &p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(),
+            &x,
+            1e-14,
+        );
     }
 
     #[test]
