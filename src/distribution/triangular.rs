@@ -21,15 +21,21 @@ impl Triangular {
 
     /// Return the left endpoint of the support.
     #[inline(always)]
-    pub fn a(&self) -> f64 { self.a }
+    pub fn a(&self) -> f64 {
+        self.a
+    }
 
     /// Return the right endpoint of the support.
     #[inline(always)]
-    pub fn b(&self) -> f64 { self.b }
+    pub fn b(&self) -> f64 {
+        self.b
+    }
 
     /// Return the mode parameter.
     #[inline(always)]
-    pub fn c(&self) -> f64 { self.c }
+    pub fn c(&self) -> f64 {
+        self.c
+    }
 }
 
 impl distribution::Continuous for Triangular {
@@ -102,7 +108,9 @@ impl distribution::Inverse for Triangular {
 
 impl distribution::Kurtosis for Triangular {
     #[inline]
-    fn kurtosis(&self) -> f64 { -(3.0 / 5.0) }
+    fn kurtosis(&self) -> f64 {
+        -(3.0 / 5.0)
+    }
 }
 
 impl distribution::Mean for Triangular {
@@ -132,7 +140,10 @@ impl distribution::Modes for Triangular {
 
 impl distribution::Sample for Triangular {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64
+    where
+        S: Source,
+    {
         use distribution::Inverse;
         self.inverse(source.read::<f64>())
     }
@@ -169,7 +180,11 @@ mod tests {
         let x = vec![0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5];
         let p = vec![0.0, 0.0, 0.125, 0.25, 0.375, 0.5, 0.375, 0.25, 0.125, 0.0, 0.0];
 
-        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(
+            &x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(),
+            &p,
+            1e-15,
+        );
     }
 
     #[test]
@@ -178,7 +193,11 @@ mod tests {
         let x = vec![0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5];
         let p = vec![0.0, 0.0, 0.03125, 0.125, 0.28125, 0.5, 0.71875, 0.875, 0.96875, 1.0, 1.0];
 
-        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(
+            &x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(),
+            &p,
+            1e-15,
+        );
     }
 
     #[test]
@@ -193,7 +212,11 @@ mod tests {
         let p = vec![0.0, 0.03125, 0.125, 0.28125, 0.5, 0.71875, 0.875, 0.96875, 1.0];
         let x = vec![1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
 
-        assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(
+            &p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(),
+            &x,
+            1e-14,
+        );
     }
 
     #[test]
