@@ -16,16 +16,24 @@ impl Lognormal {
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Self {
         should!(sigma > 0.0);
-        Lognormal { mu: mu, sigma: sigma, gaussian: Gaussian::new(mu, sigma) }
+        Lognormal {
+            mu: mu,
+            sigma: sigma,
+            gaussian: Gaussian::new(mu, sigma),
+        }
     }
 
     /// Return the location parameter.
     #[inline(always)]
-    pub fn mu(&self) -> f64 { self.mu }
+    pub fn mu(&self) -> f64 {
+        self.mu
+    }
 
     /// Return the scale parameter.
     #[inline(always)]
-    pub fn sigma(&self) -> f64 { self.sigma }
+    pub fn sigma(&self) -> f64 {
+        self.sigma
+    }
 }
 
 impl Default for Lognormal {
@@ -42,8 +50,7 @@ impl distribution::Continuous for Lognormal {
             0.0
         } else {
             let &Lognormal { mu, sigma, .. } = self;
-            (-(x.ln() - mu).powi(2) / (2.0 * sigma * sigma)).exp() /
-                (x * sigma * (2.0 * PI).sqrt())
+            (-(x.ln() - mu).powi(2) / (2.0 * sigma * sigma)).exp() / (x * sigma * (2.0 * PI).sqrt())
         }
     }
 }
@@ -105,7 +112,10 @@ impl distribution::Modes for Lognormal {
 
 impl distribution::Sample for Lognormal {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64
+    where
+        S: Source,
+    {
         self.gaussian.sample(source).exp()
     }
 }
@@ -146,7 +156,11 @@ mod tests {
             4.2941143217487855e-02, 3.8084403129689012e-02,
         ];
 
-        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(
+            &x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(),
+            &p,
+            1e-15,
+        );
     }
 
     #[test]
@@ -160,7 +174,11 @@ mod tests {
             5.9949442394950303e-01, 6.1970989457732906e-01,
         ];
 
-        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(
+            &x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(),
+            &p,
+            1e-15,
+        );
     }
 
     #[test]
@@ -187,7 +205,11 @@ mod tests {
             3.5272482631261830e+01, 7.2945110977081981e+01, INFINITY,
         ];
 
-        assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-12);
+        assert::close(
+            &p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(),
+            &x,
+            1e-12,
+        );
     }
 
     #[test]
