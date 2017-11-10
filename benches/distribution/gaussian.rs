@@ -1,21 +1,28 @@
 use probability::prelude::*;
-use test::{Bencher, black_box};
+use test::{black_box, Bencher};
 
 #[bench]
 fn distribution(bencher: &mut Bencher) {
     let d = Gaussian::new(0.0, 1.0);
-    let x = Independent(&d, &mut source::default()).take(1000).collect::<Vec<_>>();
+    let x = Independent(&d, &mut source::default())
+        .take(1000)
+        .collect::<Vec<_>>();
 
-    bencher.iter(|| black_box(x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>()));
+    bencher.iter(|| {
+        black_box(x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>())
+    });
 }
 
 #[bench]
 fn inverse(bencher: &mut Bencher) {
     let d = Gaussian::new(0.0, 1.0);
-    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default()).take(1000)
-                                                                        .collect::<Vec<_>>();
+    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default())
+        .take(1000)
+        .collect::<Vec<_>>();
 
-    bencher.iter(|| black_box(p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>()));
+    bencher.iter(|| {
+        black_box(p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>())
+    });
 }
 
 #[bench]
