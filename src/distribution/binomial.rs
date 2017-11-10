@@ -22,7 +22,14 @@ impl Binomial {
         let q = 1.0 - p;
         let np = n as f64 * p;
         let nq = n as f64 * q;
-        Binomial { n: n, p: p, q: q, np: np, nq: nq, npq: np * q }
+        Binomial {
+            n: n,
+            p: p,
+            q: q,
+            np: np,
+            nq: nq,
+            npq: np * q,
+        }
     }
 
     /// Create a binomial distribution with `n` trails and failure probability
@@ -35,20 +42,33 @@ impl Binomial {
         let p = 1.0 - q;
         let np = n as f64 * p;
         let nq = n as f64 * q;
-        Binomial { n: n, p: p, q: q, np: np, nq: nq, npq: np * q }
+        Binomial {
+            n: n,
+            p: p,
+            q: q,
+            np: np,
+            nq: nq,
+            npq: np * q,
+        }
     }
 
     /// Return the number of trials.
     #[inline(always)]
-    pub fn n(&self) -> usize { self.n }
+    pub fn n(&self) -> usize {
+        self.n
+    }
 
     /// Return the success probability.
     #[inline(always)]
-    pub fn p(&self) -> f64 { self.p }
+    pub fn p(&self) -> f64 {
+        self.p
+    }
 
     /// Return the failure probability.
     #[inline(always)]
-    pub fn q(&self) -> f64 { self.q }
+    pub fn q(&self) -> f64 {
+        self.q
+    }
 }
 
 impl distribution::Discrete for Binomial {
@@ -79,8 +99,8 @@ impl distribution::Discrete for Binomial {
         } else {
             let x = x as f64;
             let n_m_x = n - x;
-            let ln_c = stirlerr(n) - stirlerr(x) - stirlerr(n_m_x)
-                - ln_d0(x, self.np) - ln_d0(n_m_x, self.nq);
+            let ln_c = stirlerr(n) - stirlerr(x) - stirlerr(n_m_x) - ln_d0(x, self.np)
+                - ln_d0(n_m_x, self.nq);
             ln_c.exp() * (n / (2.0 * PI * x * (n_m_x))).sqrt()
         }
     }
@@ -136,7 +156,7 @@ impl distribution::Inverse for Binomial {
     ///    distribution function where the number of trials is large,” Oxford
     ///    University, 2013.
     fn inverse(&self, p: f64) -> usize {
-        use distribution::{Distribution, Discrete, Modes};
+        use distribution::{Discrete, Distribution, Modes};
 
         should!(0.0 <= p && p <= 1.0);
 
@@ -209,7 +229,9 @@ impl distribution::Kurtosis for Binomial {
 
 impl distribution::Mean for Binomial {
     #[inline]
-    fn mean(&self) -> f64 { self.np }
+    fn mean(&self) -> f64 {
+        self.np
+    }
 }
 
 impl distribution::Median for Binomial {
@@ -221,8 +243,9 @@ impl distribution::Median for Binomial {
             self.np
         } else if self.p == 0.5 && self.n % 2 != 0 {
             self.np
-        } else if self.p <= 1.0 - LN_2 || self.p >= LN_2 ||
-                  (self.np.round() - self.np).abs() <= self.p.min(self.q) {
+        } else if self.p <= 1.0 - LN_2 || self.p >= LN_2
+            || (self.np.round() - self.np).abs() <= self.p.min(self.q)
+        {
             self.np.round()
         } else if self.n > 1000 && self.npq > 80.0 {
             // Use a normal approximation.
@@ -250,7 +273,10 @@ impl distribution::Modes for Binomial {
 
 impl distribution::Sample for Binomial {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> usize where S: Source {
+    fn sample<S>(&self, source: &mut S) -> usize
+    where
+        S: Source,
+    {
         use distribution::Inverse;
         self.inverse(source.read::<f64>())
     }
@@ -265,7 +291,9 @@ impl distribution::Skewness for Binomial {
 
 impl distribution::Variance for Binomial {
     #[inline]
-    fn variance(&self) -> f64 { self.npq }
+    fn variance(&self) -> f64 {
+        self.npq
+    }
 }
 
 // See [Moorhead, 2013, pp. 7].
@@ -387,10 +415,14 @@ mod tests {
             1.000000000000000e+00,
         ];
 
-        let x = (-1..9).map(|i| d.distribution(2.0 * i as f64)).collect::<Vec<_>>();
+        let x = (-1..9)
+            .map(|i| d.distribution(2.0 * i as f64))
+            .collect::<Vec<_>>();
         assert::close(&x, &p, 1e-14);
 
-        let x = (-1..9).map(|i| d.distribution(2.0 * i as f64 + 0.5)).collect::<Vec<_>>();
+        let x = (-1..9)
+            .map(|i| d.distribution(2.0 * i as f64 + 0.5))
+            .collect::<Vec<_>>();
         assert::close(&x, &p, 1e-14);
     }
 
@@ -431,7 +463,11 @@ mod tests {
             3.432389348745344e-05, 2.514570951461788e-07, 2.328306436538698e-10,
         ];
 
-        assert::close(&(0..9).map(|i| d.mass(2 * i)).collect::<Vec<_>>(), &p, 1e-14);
+        assert::close(
+            &(0..9).map(|i| d.mass(2 * i)).collect::<Vec<_>>(),
+            &p,
+            1e-14,
+        );
     }
 
     #[test]
