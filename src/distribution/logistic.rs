@@ -20,11 +20,15 @@ impl Logistic {
 
     /// Return the location parameter.
     #[inline(always)]
-    pub fn mu(&self) -> f64 { self.mu }
+    pub fn mu(&self) -> f64 {
+        self.mu
+    }
 
     /// Return the scale parameter.
     #[inline(always)]
-    pub fn s(&self) -> f64 { self.s }
+    pub fn s(&self) -> f64 {
+        self.s
+    }
 }
 
 impl Default for Logistic {
@@ -68,17 +72,23 @@ impl distribution::Inverse for Logistic {
 
 impl distribution::Kurtosis for Logistic {
     #[inline]
-    fn kurtosis(&self) -> f64 { 1.2 }
+    fn kurtosis(&self) -> f64 {
+        1.2
+    }
 }
 
 impl distribution::Mean for Logistic {
     #[inline]
-    fn mean(&self) -> f64 { self.mu }
+    fn mean(&self) -> f64 {
+        self.mu
+    }
 }
 
 impl distribution::Median for Logistic {
     #[inline]
-    fn median(&self) -> f64 { self.mu }
+    fn median(&self) -> f64 {
+        self.mu
+    }
 }
 
 impl distribution::Modes for Logistic {
@@ -90,7 +100,10 @@ impl distribution::Modes for Logistic {
 
 impl distribution::Sample for Logistic {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64
+    where
+        S: Source,
+    {
         use distribution::Inverse;
         self.inverse(source.read::<f64>())
     }
@@ -98,7 +111,9 @@ impl distribution::Sample for Logistic {
 
 impl distribution::Skewness for Logistic {
     #[inline]
-    fn skewness(&self) -> f64 { 0.0 }
+    fn skewness(&self) -> f64 {
+        0.0
+    }
 }
 
 impl distribution::Variance for Logistic {
@@ -130,7 +145,11 @@ mod tests {
             4.2781939304058887e-02, 3.9322386648296369e-02,
         ];
 
-        assert::close(&x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(), &p, 1e-15);
+        assert::close(
+            &x.iter().map(|&x| d.density(x)).collect::<Vec<_>>(),
+            &p,
+            1e-15,
+        );
     }
 
     #[test]
@@ -144,7 +163,11 @@ mod tests {
             6.8997448112761250e-01, 7.3105857863000490e-01,
         ];
 
-        assert::close(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p, 1e-7);
+        assert::close(
+            &x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(),
+            &p,
+            1e-7,
+        );
     }
 
     #[test]
@@ -163,7 +186,11 @@ mod tests {
             1.5986122886681098e+01,  INFINITY,
         ];
 
-        assert::close(&p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(), &x, 1e-14);
+        assert::close(
+            &p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(),
+            &x,
+            1e-14,
+        );
     }
 
     #[test]
