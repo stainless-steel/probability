@@ -1,8 +1,6 @@
-# Probability [![Version][version-img]][version-url] [![Status][status-img]][status-url]
+# Probability [![Package][package-img]][package-url] [![Documentation][documentation-img]][documentation-url] [![Build][build-img]][build-url]
 
 The package provides a probability-theory toolbox.
-
-## [Documentation][documentation]
 
 ## Example
 
@@ -21,8 +19,9 @@ Your contribution is highly appreciated. Do not hesitate to open an issue or a
 pull request. Note that any contribution submitted for inclusion in the project
 will be licensed according to the terms given in [LICENSE.md](LICENSE.md).
 
-[documentation]: https://docs.rs/probability
-[status-img]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
-[status-url]: https://travis-ci.org/stainless-steel/probability
-[version-img]: https://img.shields.io/crates/v/probability.svg
-[version-url]: https://crates.io/crates/probability
+[build-img]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
+[build-url]: https://travis-ci.org/stainless-steel/probability
+[documentation-img]: https://docs.rs/probability/badge.svg
+[documentation-url]: https://docs.rs/probability
+[package-img]: https://img.shields.io/crates/v/probability.svg
+[package-url]: https://crates.io/crates/probability
