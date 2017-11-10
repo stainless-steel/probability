@@ -20,11 +20,15 @@ impl Uniform {
 
     /// Return the left endpoint of the support.
     #[inline(always)]
-    pub fn a(&self) -> f64 { self.a }
+    pub fn a(&self) -> f64 {
+        self.a
+    }
 
     /// Return the right endpoint of the support.
     #[inline(always)]
-    pub fn b(&self) -> f64 { self.a }
+    pub fn b(&self) -> f64 {
+        self.a
+    }
 }
 
 impl Default for Uniform {
@@ -77,7 +81,9 @@ impl distribution::Inverse for Uniform {
 
 impl distribution::Kurtosis for Uniform {
     #[inline]
-    fn kurtosis(&self) -> f64 { -1.2 }
+    fn kurtosis(&self) -> f64 {
+        -1.2
+    }
 }
 
 impl distribution::Mean for Uniform {
@@ -97,14 +103,19 @@ impl distribution::Median for Uniform {
 
 impl distribution::Sample for Uniform {
     #[inline]
-    fn sample<S>(&self, source: &mut S) -> f64 where S: Source {
+    fn sample<S>(&self, source: &mut S) -> f64
+    where
+        S: Source,
+    {
         self.a + (self.b - self.a) * source.read::<f64>()
     }
 }
 
 impl distribution::Skewness for Uniform {
     #[inline]
-    fn skewness(&self) -> f64 { 0.0 }
+    fn skewness(&self) -> f64 {
+        0.0
+    }
 }
 
 impl distribution::Variance for Uniform {
@@ -128,7 +139,10 @@ mod tests {
         let x = vec![-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5];
         let p = vec![0.0, 0.0, 0.25, 0.5, 0.75, 1.0, 1.0];
 
-        assert_eq!(&x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(), &p);
+        assert_eq!(
+            &x.iter().map(|&x| d.distribution(x)).collect::<Vec<_>>(),
+            &p
+        );
     }
 
     #[test]
