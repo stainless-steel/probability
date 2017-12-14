@@ -27,7 +27,7 @@ impl Uniform {
     /// Return the right endpoint of the support.
     #[inline(always)]
     pub fn b(&self) -> f64 {
-        self.a
+        self.b
     }
 }
 
