@@ -7,6 +7,7 @@ authors = [
     "Ivan Ukhov <ivan.ukhov@gmail.com>",
     "Jon Lund Steffensen <jonlst@gmail.com>",
     "Rúnar Berg Baugsson Sigríðarson <runarberg@zoho.com>",
+    "Yuki Nagae <y-nagae@aptpod.co.jp>",
 ]
 description = "The package provides a probability-theory toolbox."
 documentation = "https://docs.rs/probability"
