@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A Bernoulli distribution.
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Bernoulli {
     p: f64,
     q: f64,

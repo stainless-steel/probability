@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A triangular distribution.
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Triangular {
     a: f64,
     b: f64,

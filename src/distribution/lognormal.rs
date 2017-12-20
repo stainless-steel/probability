@@ -2,7 +2,7 @@ use distribution::{self, Gaussian};
 use source::Source;
 
 /// A lognormal distribution.
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Lognormal {
     mu: f64,
     sigma: f64,

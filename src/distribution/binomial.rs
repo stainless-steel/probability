@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A binomial distribution.
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Binomial {
     n: usize,
     p: f64,
