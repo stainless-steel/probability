@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A Gaussian distribution.
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct Gaussian {
     mu: f64,
     sigma: f64,
