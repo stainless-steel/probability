@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A continuous uniform distribution.
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Uniform {
     a: f64,
     b: f64,

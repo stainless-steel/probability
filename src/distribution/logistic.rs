@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A logistic distribution.
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Logistic {
     mu: f64,
     s: f64,

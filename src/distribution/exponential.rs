@@ -2,7 +2,7 @@ use source::Source;
 use distribution;
 
 /// An exponential distribution.
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Exponential {
     lambda: f64,
 }

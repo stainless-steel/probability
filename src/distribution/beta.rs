@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A beta distribution.
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Beta {
     alpha: f64,
     beta: f64,

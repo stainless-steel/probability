@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A gamma distribution.
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Gamma {
     k: f64,
     theta: f64,

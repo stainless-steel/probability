@@ -2,7 +2,7 @@ use distribution;
 use source::Source;
 
 /// A categorical distribution.
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 pub struct Categorical {
     k: usize,
     p: Vec<f64>,
