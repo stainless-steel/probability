@@ -57,7 +57,7 @@ impl distribution::Distribution for Gaussian {
     fn distribution(&self, x: f64) -> f64 {
         use special::Error;
         use std::f64::consts::SQRT_2;
-        (1.0 + ((x - self.mu) / (self.sigma * SQRT_2)).erf()) / 2.0
+        (1.0 + ((x - self.mu) / (self.sigma * SQRT_2)).error()) / 2.0
     }
 }
 
