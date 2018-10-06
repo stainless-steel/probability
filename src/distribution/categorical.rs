@@ -89,7 +89,8 @@ impl distribution::Kurtosis for Categorical {
     fn kurtosis(&self) -> f64 {
         use distribution::{Mean, Variance};
         let (mean, variance) = (self.mean(), self.variance());
-        let kurt = self.p
+        let kurt = self
+            .p
             .iter()
             .enumerate()
             .fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(4) * p);
@@ -157,7 +158,8 @@ impl distribution::Skewness for Categorical {
     fn skewness(&self) -> f64 {
         use distribution::{Mean, Variance};
         let (mean, variance) = (self.mean(), self.variance());
-        let skew = self.p
+        let skew = self
+            .p
             .iter()
             .enumerate()
             .fold(0.0, |sum, (i, p)| sum + (i as f64 - mean).powi(3) * p);

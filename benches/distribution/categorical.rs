@@ -8,7 +8,5 @@ fn inverse(bencher: &mut Bencher) {
         .take(1000)
         .collect::<Vec<_>>();
 
-    bencher.iter(|| {
-        black_box(p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>())
-    });
+    bencher.iter(|| black_box(p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>()));
 }

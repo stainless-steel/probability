@@ -24,9 +24,7 @@ fn inverse(bencher: &mut Bencher) {
         .take(1000)
         .collect::<Vec<_>>();
 
-    bencher.iter(|| {
-        black_box(p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>())
-    });
+    bencher.iter(|| black_box(p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>()));
 }
 
 #[bench]
@@ -36,7 +34,5 @@ fn mass(bencher: &mut Bencher) {
         .take(1000)
         .collect::<Vec<_>>();
 
-    bencher.iter(|| {
-        black_box(x.iter().map(|&x| d.mass(x)).collect::<Vec<_>>())
-    });
+    bencher.iter(|| black_box(x.iter().map(|&x| d.mass(x)).collect::<Vec<_>>()));
 }

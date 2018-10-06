@@ -239,7 +239,8 @@ mod tests {
         assert!(
             Independent(&new!(0.25), &mut source::default())
                 .take(100)
-                .fold(0, |a, b| a + b) <= 100
+                .fold(0, |a, b| a + b)
+                <= 100
         );
     }
 
