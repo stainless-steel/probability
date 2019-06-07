@@ -22,6 +22,7 @@ pub use distribution::Categorical;
 pub use distribution::Exponential;
 pub use distribution::Gamma;
 pub use distribution::Gaussian;
+pub use distribution::Laplace;
 pub use distribution::Logistic;
 pub use distribution::Lognormal;
 pub use distribution::Triangular;
