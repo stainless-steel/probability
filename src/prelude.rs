@@ -24,7 +24,7 @@ pub use distribution::Gamma;
 pub use distribution::Gaussian;
 pub use distribution::Logistic;
 pub use distribution::Lognormal;
-pub use distribution::PERT;
+pub use distribution::Pert;
 pub use distribution::Triangular;
 pub use distribution::Uniform;
 

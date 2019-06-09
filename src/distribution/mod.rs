@@ -117,6 +117,6 @@ pub use self::gamma::Gamma;
 pub use self::gaussian::Gaussian;
 pub use self::logistic::Logistic;
 pub use self::lognormal::Lognormal;
-pub use self::pert::PERT;
+pub use self::pert::Pert;
 pub use self::triangular::Triangular;
 pub use self::uniform::Uniform;

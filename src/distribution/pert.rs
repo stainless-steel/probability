@@ -3,7 +3,7 @@ use source::Source;
 
 /// A PERT distribution.
 #[derive(Clone, Copy, Debug)]
-pub struct PERT {
+pub struct Pert {
     a: f64,
     b: f64,
     c: f64,
@@ -12,7 +12,7 @@ pub struct PERT {
     ln_beta: f64,
 }
 
-impl PERT {
+impl Pert {
     /// Create a PERT distribution with parameters `a`, `b`, and `c`.
     ///
     /// It should hold that `a < b < c`.
@@ -22,7 +22,7 @@ impl PERT {
         should!(a < b && b < c);
         let alpha = (4.0 * b + c - 5.0 * a) / (c - a);
         let beta = (5.0 * c - a - 4.0 * b) / (c - a);
-        PERT {
+        Pert {
             a: a,
             b: b,
             c: c,
@@ -63,7 +63,7 @@ impl PERT {
     }
 }
 
-impl distribution::Continuous for PERT {
+impl distribution::Continuous for Pert {
     fn density(&self, x: f64) -> f64 {
         if x < self.a || x > self.c {
             0.0
@@ -76,7 +76,7 @@ impl distribution::Continuous for PERT {
     }
 }
 
-impl distribution::Distribution for PERT {
+impl distribution::Distribution for Pert {
     type Value = f64;
 
     fn distribution(&self, x: f64) -> f64 {
@@ -91,7 +91,7 @@ impl distribution::Distribution for PERT {
     }
 }
 
-impl distribution::Entropy for PERT {
+impl distribution::Entropy for Pert {
     fn entropy(&self) -> f64 {
         use special::Gamma;
         let sum = self.alpha + self.beta;
@@ -102,7 +102,7 @@ impl distribution::Entropy for PERT {
     }
 }
 
-impl distribution::Inverse for PERT {
+impl distribution::Inverse for Pert {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
         use special::Beta;
@@ -111,7 +111,7 @@ impl distribution::Inverse for PERT {
     }
 }
 
-impl distribution::Kurtosis for PERT {
+impl distribution::Kurtosis for Pert {
     fn kurtosis(&self) -> f64 {
         let sum = self.alpha + self.beta;
         let delta = self.alpha - self.beta;
@@ -121,27 +121,27 @@ impl distribution::Kurtosis for PERT {
     }
 }
 
-impl distribution::Mean for PERT {
+impl distribution::Mean for Pert {
     #[inline]
     fn mean(&self) -> f64 {
         (self.a + self.b * 4.0 + self.c) / 6.0
     }
 }
 
-impl distribution::Median for PERT {
+impl distribution::Median for Pert {
     fn median(&self) -> f64 {
         use distribution::Inverse;
         self.inverse(0.5)
     }
 }
 
-impl distribution::Modes for PERT {
+impl distribution::Modes for Pert {
     fn modes(&self) -> Vec<f64> {
         vec![self.b]
     }
 }
 
-impl distribution::Sample for PERT {
+impl distribution::Sample for Pert {
     #[inline]
     fn sample<S>(&self, source: &mut S) -> f64
     where
@@ -154,7 +154,7 @@ impl distribution::Sample for PERT {
     }
 }
 
-impl distribution::Skewness for PERT {
+impl distribution::Skewness for Pert {
     fn skewness(&self) -> f64 {
         let sum = self.alpha + self.beta;
         2.0 * (self.beta - self.alpha) * (sum + 1.0).sqrt()
@@ -162,7 +162,7 @@ impl distribution::Skewness for PERT {
     }
 }
 
-impl distribution::Variance for PERT {
+impl distribution::Variance for Pert {
     fn variance(&self) -> f64 {
         use distribution::Mean;
         (self.mean() - self.a) * (self.c - self.mean()) / 7.0
@@ -175,7 +175,7 @@ mod tests {
     use prelude::*;
 
     macro_rules! new(
-        ($a:expr, $b:expr, $c:expr) => (PERT::new($a, $b, $c));
+        ($a:expr, $b:expr, $c:expr) => (Pert::new($a, $b, $c));
     );
 
     #[test]
