@@ -24,3 +24,4 @@ special = "0.8"
 
 [dev-dependencies]
 assert = "0.7"
+rand = "0.5"
