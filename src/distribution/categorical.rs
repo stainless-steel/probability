@@ -304,11 +304,9 @@ mod tests {
         let p = (0..11)
             .map(|i| if i % 2 != 0 { 0.2 } else { 0.0 })
             .collect::<Vec<_>>();
-        assert!(
-            Independent(&new!(p), &mut source)
-                .take(1000)
-                .all(|x| x % 2 != 0)
-        );
+        assert!(Independent(&new!(p), &mut source)
+            .take(1000)
+            .all(|x| x % 2 != 0));
     }
 
     #[test]
