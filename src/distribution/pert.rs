@@ -282,11 +282,16 @@ mod tests {
     #[test]
     fn mean() {
         assert::close(new!(0.0, 0.5, 1.0).mean(), 0.5, 1e-14);
-        assert::close(new!(-1.0, 1.5, 2.0).mean(), (1.5 * 4.0 - 1.0 + 2.0) / 6.0, 1e-14);
+        assert::close(
+            new!(-1.0, 1.5, 2.0).mean(),
+            (1.5 * 4.0 - 1.0 + 2.0) / 6.0,
+            1e-14,
+        );
         assert::close(
             Beta::new(3.0, 3.0, -1.0, 2.0).mean(),
             (0.5 * 4.0 - 1.0 + 2.0) / 6.0,
-            1e-14);
+            1e-14,
+        );
     }
 
     #[test]
