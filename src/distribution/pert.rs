@@ -4,17 +4,16 @@ use source::Source;
 /// A PERT distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct PERT {
-    alpha: f64,
-    beta: f64,
     a: f64,
     b: f64,
     c: f64,
+    alpha: f64,
+    beta: f64,
     ln_beta: f64,
 }
 
 impl PERT {
-    /// Create a PERT distribution with shape parameters `a`, `b` and `c`
-    /// on interval `[a, c]`.
+    /// Create a PERT distribution with parameters `a`, `b`, and `c`.
     ///
     /// It should hold that `a < b < c`.
     #[inline]
@@ -33,34 +32,34 @@ impl PERT {
         }
     }
 
-    /// Return the first shape parameter.
-    #[inline(always)]
-    pub fn alpha(&self) -> f64 {
-        self.alpha
-    }
-
-    /// Return the second shape parameter.
-    #[inline(always)]
-    pub fn beta(&self) -> f64 {
-        self.beta
-    }
-
-    /// Return the left endpoint of the support.
+    /// Return the first parameter.
     #[inline(always)]
     pub fn a(&self) -> f64 {
         self.a
     }
 
-    /// Return the middle point of the support.
+    /// Return the second parameter.
     #[inline(always)]
     pub fn b(&self) -> f64 {
         self.b
     }
 
-    /// Return the right endpoint of the support.
+    /// Return the third parameter.
     #[inline(always)]
     pub fn c(&self) -> f64 {
         self.c
+    }
+
+    /// Return the first shape parameter of the corresponding Beta distribution.
+    #[inline(always)]
+    pub fn alpha(&self) -> f64 {
+        self.alpha
+    }
+
+    /// Return the second shape parameter of the corresponding Beta distribution.
+    #[inline(always)]
+    pub fn beta(&self) -> f64 {
+        self.beta
     }
 }
 
