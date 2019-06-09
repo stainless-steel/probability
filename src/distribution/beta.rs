@@ -122,7 +122,15 @@ impl distribution::Mean for Beta {
 impl distribution::Median for Beta {
     fn median(&self) -> f64 {
         use distribution::Inverse;
-        self.inverse(0.5)
+        if self.alpha == self.beta {
+            0.5 * (self.b - self.a)
+        } else if self.alpha > 1.0 && self.beta > 1.0 {
+            self.a
+                + (self.b - self.a) * (self.alpha - 1.0 / 3.0)
+                    / (self.alpha + self.beta - 2.0 / 3.0)
+        } else {
+            self.inverse(0.5)
+        }
     }
 }
 
@@ -330,10 +338,9 @@ mod tests {
 
     #[test]
     fn median() {
-        assert::close(new!(2.0, 2.0, 0.0, 1.0).median(), 0.5, 1e-14);
-        assert::close(new!(2.0, 3.0, 0.0, 1.0).median(), 0.3857275681323896, 1e-14);  // ~5.0/13.0 to three places
-        assert::close(new!(2.0, 3.0, -1.0, 2.0).median(), 3.0 * 0.3857275681323896 - 1.0, 1e-14);
-        assert::close(new!(2.2, 3.8, 0.0, 1.0).median(), 0.3509994849491181, 1e-14);
+        assert_eq!(new!(2.0, 2.0, 0.0, 1.0).median(), 0.5);
+        assert_eq!(new!(2.0, 3.0, 0.0, 1.0).median(), 5.0 / 13.0);
+        assert_eq!(new!(2.0, 3.0, -1.0, 2.0).median(), 3.0 * (5.0 / 13.0) - 1.0);
     }
 
     #[test]
