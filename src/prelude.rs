@@ -1,4 +1,4 @@
-//! Reexports of commonly used entities.
+//! Re-exports of commonly used entities.
 
 pub use distribution::Distribution;
 
