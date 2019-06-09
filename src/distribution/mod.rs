@@ -104,6 +104,7 @@ mod gamma;
 mod gaussian;
 mod logistic;
 mod lognormal;
+mod pert;
 mod triangular;
 mod uniform;
 
@@ -116,5 +117,6 @@ pub use self::gamma::Gamma;
 pub use self::gaussian::Gaussian;
 pub use self::logistic::Logistic;
 pub use self::lognormal::Lognormal;
+pub use self::pert::PERT;
 pub use self::triangular::Triangular;
 pub use self::uniform::Uniform;
