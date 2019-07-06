@@ -16,7 +16,7 @@ impl Laplace {
     #[inline]
     pub fn new(mu: f64, b: f64) -> Self {
         should!(b > 0.0);
-        Laplace { mu, b }
+        Laplace { mu: mu, b: b }
     }
 
     // Return the location parameter
@@ -256,6 +256,6 @@ mod tests {
 
     #[test]
     fn deviation() {
-        assert::close(new!(2.0, 3.0).deviation(), 4.242640687119286, 0.0000001);
+        assert::close(new!(2.0, 3.0).deviation(), 4.242640687119286, 1e-7);
     }
 }
