@@ -14,7 +14,7 @@ impl Exponential {
     #[inline]
     pub fn new(lambda: f64) -> Self {
         should!(lambda > 0.0);
-        Exponential { lambda: lambda }
+        Exponential { lambda }
     }
 
     /// Return the rate parameter.
@@ -58,7 +58,7 @@ impl distribution::Entropy for Exponential {
 impl distribution::Inverse for Exponential {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         -(-p).ln_1p() / self.lambda
     }
 }

@@ -15,7 +15,7 @@ impl Uniform {
     #[inline]
     pub fn new(a: f64, b: f64) -> Self {
         should!(a < b);
-        Uniform { a: a, b: b }
+        Uniform { a, b }
     }
 
     /// Return the left endpoint of the support.
@@ -74,7 +74,7 @@ impl distribution::Entropy for Uniform {
 impl distribution::Inverse for Uniform {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         self.a + (self.b - self.a) * p
     }
 }

@@ -15,7 +15,7 @@ impl Logistic {
     #[inline]
     pub fn new(mu: f64, s: f64) -> Self {
         should!(s > 0.0);
-        Logistic { mu: mu, s: s }
+        Logistic { mu, s }
     }
 
     /// Return the location parameter.
@@ -65,7 +65,7 @@ impl distribution::Entropy for Logistic {
 impl distribution::Inverse for Logistic {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         self.mu - self.s * (1.0 / p - 1.0).ln()
     }
 }

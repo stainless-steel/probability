@@ -16,7 +16,7 @@ impl Categorical {
     pub fn new(p: &[f64]) -> Self {
         should!(is_probability_vector(p), {
             const EPSILON: f64 = 1e-12;
-            p.iter().all(|&p| p >= 0.0 && p <= 1.0)
+            p.iter().all(|&p| (0.0..=1.0).contains(&p))
                 && (p.iter().fold(0.0, |sum, &p| sum + p) - 1.0).abs() < EPSILON
         });
 
@@ -27,9 +27,9 @@ impl Categorical {
         }
         cumsum[k - 1] = 1.0;
         Categorical {
-            k: k,
+            k,
             p: p.to_vec(),
-            cumsum: cumsum,
+            cumsum,
         }
     }
 
@@ -77,7 +77,7 @@ impl distribution::Entropy for Categorical {
 
 impl distribution::Inverse for Categorical {
     fn inverse(&self, p: f64) -> usize {
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         self.cumsum
             .iter()
             .position(|&sum| sum > 0.0 && sum >= p)

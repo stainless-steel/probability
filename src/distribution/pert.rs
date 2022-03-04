@@ -23,11 +23,11 @@ impl Pert {
         let alpha = (4.0 * b + c - 5.0 * a) / (c - a);
         let beta = (5.0 * c - a - 4.0 * b) / (c - a);
         Pert {
-            a: a,
-            b: b,
-            c: c,
-            alpha: alpha,
-            beta: beta,
+            a,
+            b,
+            c,
+            alpha,
+            beta,
             ln_beta: alpha.ln_beta(beta),
         }
     }
@@ -106,7 +106,7 @@ impl distribution::Inverse for Pert {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
         use special::Beta;
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         self.a + (self.c - self.a) * p.inv_inc_beta(self.alpha, self.beta, self.ln_beta)
     }
 }

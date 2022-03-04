@@ -21,10 +21,10 @@ impl Beta {
         use special::Beta as SpecialBeta;
         should!(alpha > 0.0 && beta > 0.0 && a < b);
         Beta {
-            alpha: alpha,
-            beta: beta,
-            a: a,
-            b: b,
+            alpha,
+            beta,
+            a,
+            b,
             ln_beta: alpha.ln_beta(beta),
         }
     }
@@ -97,7 +97,7 @@ impl distribution::Inverse for Beta {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
         use special::Beta;
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         self.a + (self.b - self.a) * p.inv_inc_beta(self.alpha, self.beta, self.ln_beta)
     }
 }

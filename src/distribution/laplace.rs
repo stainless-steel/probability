@@ -16,7 +16,7 @@ impl Laplace {
     #[inline]
     pub fn new(mu: f64, b: f64) -> Self {
         should!(b > 0.0);
-        Laplace { mu: mu, b: b }
+        Laplace { mu, b }
     }
 
     // Return the location parameter
@@ -62,7 +62,7 @@ impl distribution::Entropy for Laplace {
 impl distribution::Inverse for Laplace {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         if p > 0.5 {
             if p == 1.0 {
                 return std::f64::INFINITY;

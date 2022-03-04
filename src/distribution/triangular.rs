@@ -16,7 +16,7 @@ impl Triangular {
     #[inline]
     pub fn new(a: f64, b: f64, c: f64) -> Self {
         should!(a < b && a <= c && c <= b);
-        Triangular { a: a, b: b, c: c }
+        Triangular { a, b, c }
     }
 
     /// Return the left endpoint of the support.
@@ -86,7 +86,7 @@ impl distribution::Entropy for Triangular {
 
 impl distribution::Inverse for Triangular {
     fn inverse(&self, p: f64) -> f64 {
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         nonnan!(p);
         let &Triangular { a, b, c } = self;
         if p == 0.0 {
