@@ -184,7 +184,7 @@ mod tests {
 
     macro_rules! new(
         (equal $k:expr) => { Categorical::new(&[1.0 / $k as f64; $k]) };
-        ($p:expr) => { Categorical::new(&$p); }
+        ($p:expr) => { Categorical::new(&$p) };
     );
 
     #[test]
