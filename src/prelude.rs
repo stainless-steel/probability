@@ -19,6 +19,7 @@ pub use distribution::Bernoulli;
 pub use distribution::Beta;
 pub use distribution::Binomial;
 pub use distribution::Categorical;
+pub use distribution::Cauchy;
 pub use distribution::Exponential;
 pub use distribution::Gamma;
 pub use distribution::Gaussian;
