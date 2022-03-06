@@ -110,7 +110,7 @@ impl distribution::Sample for Cauchy {
         let gaussian = distribution::Gaussian::new(0.0, 1.0);
         let a = gaussian.sample(source);
         let b = gaussian.sample(source);
-        self.x_0() + self.gamma() * a / (b.abs() + f64::EPSILON)
+        self.x_0() + self.gamma() * a / (b.abs() + f64::MIN_POSITIVE)
     }
 }
 
@@ -186,15 +186,19 @@ mod tests {
 
     #[test]
     fn inverse() {
+        use std::f64::{INFINITY, NEG_INFINITY};
+
         let d = new!(2.0, 3.0);
         let x = vec![
+            NEG_INFINITY,
             -7.2330506115257585,
             -0.9999999999999996,
             2.0,
             5.0,
             11.233050611525758,
+            INFINITY,
         ];
-        let p = vec![0.1, 0.25, 0.5, 0.75, 0.9];
+        let p = vec![0.0, 0.1, 0.25, 0.5, 0.75, 0.9, 1.0];
 
         assert::close(
             &p.iter().map(|&p| d.inverse(p)).collect::<Vec<_>>(),
