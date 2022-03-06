@@ -4,40 +4,40 @@ use source::Source;
 /// A Cauchy distribution.
 ///
 /// A Cauchy distribution (aka Lorentz or Cauchy–Lorentz distribution) is a continuous
-/// probability distribution with a location parameter `loc`, a scale parameter `gamma > 0`,
+/// probability distribution with a location parameter `x_0`, a scale parameter `gamma > 0`,
 /// and the following probability density function:
 ///
-/// `p(x) = const / (1 + ((x - loc) / gamma)^2)`.
+/// `p(x) = const / (1 + ((x - x_0) / gamma)^2)`.
 ///
 /// A Cauchy distribution is long tailed and has no well-defined mean or variance. It is
-/// unimodal with its mode at `loc`, around which it is symmetric. The ratio of two
+/// unimodal with its mode at `x_0`, around which it is symmetric. The ratio of two
 /// independent Gaussian distributed random variables is Cauchy distributed.
 ///
 /// See [Wikipedia article on Cauchy
 /// distribution](https://en.wikipedia.org/wiki/Cauchy_distribution).
 #[derive(Clone, Copy, Debug)]
 pub struct Cauchy {
-    loc: f64,
+    x_0: f64,
     gamma: f64,
 }
 
 impl Cauchy {
-    /// Create a Cauchy distribution with location `loc` and scale `gamma`.
+    /// Create a Cauchy distribution with location `x_0` and scale `gamma`.
     ///
     /// It should hold that `gamma > 0`.
     #[inline]
-    pub fn new(loc: f64, gamma: f64) -> Self {
+    pub fn new(x_0: f64, gamma: f64) -> Self {
         should!(gamma > 0.0);
-        Cauchy { loc, gamma }
+        Cauchy { x_0, gamma }
     }
 
-    // Return the location parameter
+    /// Return the location parameter.
     #[inline(always)]
-    pub fn loc(&self) -> f64 {
-        self.loc
+    pub fn x_0(&self) -> f64 {
+        self.x_0
     }
 
-    // Return the scale parameter
+    /// Return the scale parameter.
     #[inline(always)]
     pub fn gamma(&self) -> f64 {
         self.gamma
@@ -47,9 +47,8 @@ impl Cauchy {
 impl distribution::Continuous for Cauchy {
     #[inline]
     fn density(&self, x: f64) -> f64 {
-        // Divisions are expensive, so we implement the PDF with only a single division.
         use std::f64::consts::PI;
-        let deviation = x - self.loc;
+        let deviation = x - self.x_0;
         self.gamma / (PI * (self.gamma * self.gamma + deviation * deviation))
     }
 }
@@ -60,7 +59,7 @@ impl distribution::Distribution for Cauchy {
     #[inline]
     fn distribution(&self, x: f64) -> f64 {
         use std::f64::consts::FRAC_1_PI;
-        FRAC_1_PI * ((x - self.loc) / self.gamma).atan() + 0.5
+        FRAC_1_PI * ((x - self.x_0) / self.gamma).atan() + 0.5
     }
 }
 
@@ -72,29 +71,33 @@ impl distribution::Entropy for Cauchy {
 }
 
 impl distribution::Inverse for Cauchy {
-    /// Due to finite precision of arithmetic operations, the current implementation of
-    /// `Inverse::inverse` for `Cauchy` does *not* return negative or positive infinity for
-    /// `p = 0.0` or `p = 1.0`, respectively. It instead returns very large (in magnitude)
-    /// values (`> 1e16`).
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
+        use std::f64::{consts::PI, INFINITY, NEG_INFINITY};
+
         should!((0.0..=1.0).contains(&p));
-        use std::f64::consts::PI;
-        self.loc + self.gamma * (PI * (p - 0.5)).tan()
+
+        if p <= 0.0 {
+            NEG_INFINITY
+        } else if 1.0 <= p {
+            INFINITY
+        } else {
+            self.x_0 + self.gamma * (PI * (p - 0.5)).tan()
+        }
     }
 }
 
 impl distribution::Median for Cauchy {
     #[inline]
     fn median(&self) -> f64 {
-        self.loc
+        self.x_0
     }
 }
 
 impl distribution::Modes for Cauchy {
     #[inline]
     fn modes(&self) -> Vec<f64> {
-        vec![self.loc]
+        vec![self.x_0]
     }
 }
 
@@ -104,16 +107,10 @@ impl distribution::Sample for Cauchy {
     where
         S: Source,
     {
-        // We use the fact that the ratio of two standard normal random variables is
-        // standard Cauchy distributed. This way of drawing a sample from a Cauchy
-        // distribution turned out to be more efficient in the benchmarks than the naive way
-        // of applying the quantile function to a uniformly distributed random variable.
-        // However, the employed method requires reading more random numbers from the
-        // source, so it might be slower for slow random sources.
         let gaussian = distribution::Gaussian::new(0.0, 1.0);
         let a = gaussian.sample(source);
         let b = gaussian.sample(source);
-        self.loc() + self.gamma() * a / (b.abs() + f64::EPSILON)
+        self.x_0() + self.gamma() * a / (b.abs() + f64::EPSILON)
     }
 }
 
@@ -123,7 +120,7 @@ mod tests {
     use prelude::*;
 
     macro_rules! new(
-        ($loc:expr, $gamma:expr) => (Cauchy::new($loc, $gamma));
+        ($x_0:expr, $gamma:expr) => (Cauchy::new($x_0, $gamma));
     );
 
     #[test]
@@ -225,14 +222,11 @@ mod tests {
         let d = Cauchy::new(35.4, 12.3);
         let mut source = source::Xorshift128Plus::new([42, 69]);
 
-        // Estimate the Kullback-Leibler divergence `KL(samples || d)` based on
-        // `n` samples and assert that the estimate is close to zero.
-        // This test is reproducible because we use a fixed random seed.
-        let cross_entropy_estimate = -(0..n)
+        let cross_entropy = -(0..n)
             .map(|_| d.density(d.sample(&mut source)).ln())
             .sum::<f64>()
             / n as f64;
-        let kl_divergence_estimate = cross_entropy_estimate - d.entropy();
-        assert!(kl_divergence_estimate.abs() < 0.01);
+        let diff = cross_entropy - d.entropy();
+        assert!(diff.abs() < 0.01); // Standard deviation of `diff` is `Pi / sqrt(3 * n) =~ 0.0057`.
     }
 }

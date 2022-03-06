@@ -54,7 +54,7 @@ fn sample_indirectly(bencher: &mut Bencher) {
         let gaussian = Gaussian::new(0.0, 1.0);
         let a = gaussian.sample(source);
         let b = gaussian.sample(source);
-        d.loc() + d.gamma() * a / (b.abs() + f64::EPSILON)
+        d.x_0() + d.gamma() * a / (b.abs() + f64::EPSILON)
     }
 
     let mut source = source::Xorshift128Plus::new([42, 69]);
