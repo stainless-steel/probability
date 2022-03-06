@@ -5,13 +5,13 @@ use source::Source;
 /// A continuous distribution.
 pub trait Continuous: Distribution {
     /// Compute the probability density function.
-    fn density(&self, f64) -> f64;
+    fn density(&self, x: f64) -> f64;
 }
 
 /// A discrete distribution.
 pub trait Discrete: Distribution {
     /// Compute the probability mass function.
-    fn mass(&self, Self::Value) -> f64;
+    fn mass(&self, x: Self::Value) -> f64;
 }
 
 /// A distribution.
@@ -20,7 +20,7 @@ pub trait Distribution {
     type Value;
 
     /// Compute the cumulative distribution function.
-    fn distribution(&self, f64) -> f64;
+    fn distribution(&self, x: f64) -> f64;
 }
 
 /// A distribution capable of computing the differential entropy.
@@ -34,7 +34,7 @@ pub trait Entropy: Distribution {
 /// A distribution capable of inverting the distribution function.
 pub trait Inverse: Distribution {
     /// Compute the inverse of the cumulative distribution function.
-    fn inverse(&self, f64) -> Self::Value;
+    fn inverse(&self, p: f64) -> Self::Value;
 }
 
 /// A distribution capable of computing the excess kurtosis.
@@ -70,7 +70,7 @@ pub trait Modes: Distribution {
 /// A distribution capable of drawing samples.
 pub trait Sample: Distribution {
     /// Draw a sample.
-    fn sample<S>(&self, &mut S) -> Self::Value
+    fn sample<S>(&self, source: &mut S) -> Self::Value
     where
         S: Source;
 }

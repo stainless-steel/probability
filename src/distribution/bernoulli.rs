@@ -17,7 +17,7 @@ impl Bernoulli {
     pub fn new(p: f64) -> Self {
         should!(p > 0.0 && p < 1.0);
         Bernoulli {
-            p: p,
+            p,
             q: 1.0 - p,
             pq: p * (1.0 - p),
         }
@@ -32,7 +32,7 @@ impl Bernoulli {
         should!(q > 0.0 && q < 1.0);
         Bernoulli {
             p: 1.0 - q,
-            q: q,
+            q,
             pq: (1.0 - q) * q,
         }
     }
@@ -87,7 +87,7 @@ impl distribution::Entropy for Bernoulli {
 impl distribution::Inverse for Bernoulli {
     #[inline]
     fn inverse(&self, p: f64) -> u8 {
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
         if p <= self.q {
             0
         } else {

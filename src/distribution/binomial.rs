@@ -23,11 +23,11 @@ impl Binomial {
         let np = n as f64 * p;
         let nq = n as f64 * q;
         Binomial {
-            n: n,
-            p: p,
-            q: q,
-            np: np,
-            nq: nq,
+            n,
+            p,
+            q,
+            np,
+            nq,
             npq: np * q,
         }
     }
@@ -43,11 +43,11 @@ impl Binomial {
         let np = n as f64 * p;
         let nq = n as f64 * q;
         Binomial {
-            n: n,
-            p: p,
-            q: q,
-            np: np,
-            nq: nq,
+            n,
+            p,
+            q,
+            np,
+            nq,
             npq: np * q,
         }
     }
@@ -161,7 +161,7 @@ impl distribution::Inverse for Binomial {
     fn inverse(&self, p: f64) -> usize {
         use distribution::{Discrete, Distribution, Modes};
 
-        should!(0.0 <= p && p <= 1.0);
+        should!((0.0..=1.0).contains(&p));
 
         // Rename p as to not be confused with self.p.
         let u = p;
@@ -242,9 +242,7 @@ impl distribution::Median for Binomial {
         use distribution::Inverse;
         use std::f64::consts::LN_2;
 
-        if self.np.fract() == 0.0 {
-            self.np
-        } else if self.p == 0.5 && self.n % 2 != 0 {
+        if self.np.fract() == 0.0 || (self.p == 0.5 && self.n % 2 != 0) {
             self.np
         } else if self.p <= 1.0 - LN_2
             || self.p >= LN_2
@@ -301,6 +299,7 @@ impl distribution::Variance for Binomial {
 }
 
 // See [Moorhead, 2013, pp. 7].
+#[rustfmt::skip]
 fn approximate_by_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
     use distribution::gaussian;
 
@@ -351,6 +350,7 @@ fn stirlerr(n: f64) -> f64 {
     const S4: f64 = 1.0 / 1188.0;
 
     // See [Loader, 2000, pp. 7].
+    #[allow(clippy::excessive_precision)]
     const SFE: [f64; 16] = [
         0.000000000000000000e+00,
         8.106146679532725822e-02,

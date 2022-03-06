@@ -17,8 +17,8 @@ impl Lognormal {
     pub fn new(mu: f64, sigma: f64) -> Self {
         should!(sigma > 0.0);
         Lognormal {
-            mu: mu,
-            sigma: sigma,
+            mu,
+            sigma,
             gaussian: Gaussian::new(mu, sigma),
         }
     }

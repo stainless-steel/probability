@@ -19,8 +19,8 @@ impl Gamma {
         use special::Gamma as SpecialGamma;
         should!(k > 0.0 && theta > 0.0);
         Gamma {
-            k: k,
-            theta: theta,
+            k,
+            theta,
             norm: k.gamma() * theta.powf(k),
         }
     }

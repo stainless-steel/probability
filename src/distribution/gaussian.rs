@@ -19,8 +19,8 @@ impl Gaussian {
         use std::f64::consts::PI;
         should!(sigma > 0.0);
         Gaussian {
-            mu: mu,
-            sigma: sigma,
+            mu,
+            sigma,
             norm: (2.0 * PI).sqrt() * sigma,
         }
     }
@@ -153,10 +153,11 @@ impl distribution::Variance for Gaussian {
 
 /// Compute the inverse cumulative distribution function of the standard
 /// Gaussian distribution.
+#[allow(clippy::excessive_precision)]
 pub fn inverse(p: f64) -> f64 {
     use std::f64::{INFINITY, NEG_INFINITY};
 
-    should!(0.0 <= p && p <= 1.0);
+    should!((0.0..=1.0).contains(&p));
 
     const CONST1: f64 = 0.180625;
     const CONST2: f64 = 1.6;
@@ -224,6 +225,7 @@ pub fn inverse(p: f64) -> f64 {
     ];
 
     #[inline(always)]
+    #[rustfmt::skip]
     fn poly(c: &[f64], x: f64) -> f64 {
         c[0] + x * (c[1] + x * (c[2] + x * (c[3] + x * (
         c[4] + x * (c[5] + x * (c[6] + x * (c[7])))))))
@@ -294,6 +296,7 @@ pub fn sample<S: Source>(source: &mut S) -> f64 {
 
 const R: f64 = 3.44428647676;
 
+#[rustfmt::skip]
 const K: [u32; 128] = [
     00000000, 12590644, 14272653, 14988939,
     15384584, 15635009, 15807561, 15933577,
@@ -329,6 +332,7 @@ const K: [u32; 128] = [
     16207738, 16047994, 15704248, 15472926
 ];
 
+#[rustfmt::skip]
 const Y: [f64; 128] = [
     1.0000000000000, 0.96359862301100, 0.93628081335300, 0.91304110425300,
     0.8922785066960, 0.87323935691900, 0.85549640763400, 0.83877892834900,
@@ -364,6 +368,7 @@ const Y: [f64; 128] = [
     0.0118216532614, 0.00860719483079, 0.00553245272614, 0.00265435214565,
 ];
 
+#[rustfmt::skip]
 const W: [f64; 128] = [
     1.62318314817e-08, 2.16291505214e-08, 2.54246305087e-08, 2.84579525938e-08,
     3.10340022482e-08, 3.33011726243e-08, 3.53439060345e-08, 3.72152672658e-08,
