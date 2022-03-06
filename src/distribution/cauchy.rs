@@ -3,18 +3,15 @@ use source::Source;
 
 /// A Cauchy distribution.
 ///
-/// A Cauchy distribution (aka Lorentz or Cauchy–Lorentz distribution) is a continuous
-/// probability distribution with a location parameter `x_0`, a scale parameter `gamma > 0`,
-/// and the following probability density function:
+/// The Cauchy distribution (also known as Lorentz or Cauchy–Lorentz
+/// distribution) is a continuous probability distribution with a location
+/// parameter `x_0`, a scale parameter `gamma > 0`, and the following
+/// probability density function:
 ///
-/// `p(x) = const / (1 + ((x - x_0) / gamma)^2)`.
+/// `p(x) = 1 / (pi * gamma * (1 + ((x - x_0) / gamma)^2))`.
 ///
-/// A Cauchy distribution is long tailed and has no well-defined mean or variance. It is
-/// unimodal with its mode at `x_0`, around which it is symmetric. The ratio of two
-/// independent Gaussian distributed random variables is Cauchy distributed.
-///
-/// See [Wikipedia article on Cauchy
-/// distribution](https://en.wikipedia.org/wiki/Cauchy_distribution).
+/// The distribution is long tailed and has no mean or variance. It is unimodal
+/// with the mode at `x_0`, around which it is symmetric.
 #[derive(Clone, Copy, Debug)]
 pub struct Cauchy {
     x_0: f64,
@@ -230,7 +227,6 @@ mod tests {
             .map(|_| d.density(d.sample(&mut source)).ln())
             .sum::<f64>()
             / n as f64;
-        let diff = cross_entropy - d.entropy();
-        assert!(diff.abs() < 0.01); // Standard deviation of `diff` is `Pi / sqrt(3 * n) =~ 0.0057`.
+        assert!((cross_entropy - d.entropy()).abs() < 0.01);
     }
 }
