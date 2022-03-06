@@ -43,8 +43,8 @@ will be licensed according to the terms given in [LICENSE.md](LICENSE.md).
 [rand]: https://crates.io/crates/rand
 [random]: https://crates.io/crates/random
 
-[build-img]: https://travis-ci.org/stainless-steel/probability.svg?branch=master
-[build-url]: https://travis-ci.org/stainless-steel/probability
+[build-img]: https://github.com/stainless-steel/probability/workflows/build/badge.svg
+[build-url]: https://github.com/stainless-steel/probability/actions/workflows/build.yml
 [documentation-img]: https://docs.rs/probability/badge.svg
 [documentation-url]: https://docs.rs/probability
 [package-img]: https://img.shields.io/crates/v/probability.svg
