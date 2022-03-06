@@ -225,9 +225,10 @@ pub fn inverse(p: f64) -> f64 {
     ];
 
     #[inline(always)]
+    #[rustfmt::skip]
     fn poly(c: &[f64], x: f64) -> f64 {
-        c[0] + x
-            * (c[1] + x * (c[2] + x * (c[3] + x * (c[4] + x * (c[5] + x * (c[6] + x * (c[7])))))))
+        c[0] + x * (c[1] + x * (c[2] + x * (c[3] + x * (
+        c[4] + x * (c[5] + x * (c[6] + x * (c[7])))))))
     }
 
     if p <= 0.0 {
