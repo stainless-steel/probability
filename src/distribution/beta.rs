@@ -193,6 +193,7 @@ mod tests {
     );
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn density() {
         let d = new!(2.0, 3.0, -1.0, 2.0);
         let x = vec![
@@ -287,6 +288,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn inverse() {
         let d = new!(1.0, 2.0, 3.0, 4.0);
         let p = vec![
@@ -373,6 +375,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn sample() {
         for x in Independent(&new!(1.0, 2.0, 7.0, 42.0), &mut source::default()).take(100) {
             assert!(7.0 <= x && x <= 42.0);

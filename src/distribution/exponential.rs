@@ -156,6 +156,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn distribution() {
         let d = new!(2.0);
         let x = vec![
@@ -191,6 +192,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)]
     fn inverse() {
         use std::f64::INFINITY;
 
