@@ -1,6 +1,11 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use distribution::Inverse;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A Laplace distribution.
 #[derive(Clone, Copy, Debug)]
@@ -55,7 +60,7 @@ impl distribution::Distribution for Laplace {
 impl distribution::Entropy for Laplace {
     #[inline]
     fn entropy(&self) -> f64 {
-        (std::f64::consts::E * 2.0 * self.b).ln()
+        (core::f64::consts::E * 2.0 * self.b).ln()
     }
 }
 
@@ -65,12 +70,12 @@ impl distribution::Inverse for Laplace {
         should!((0.0..=1.0).contains(&p));
         if p > 0.5 {
             if p == 1.0 {
-                return std::f64::INFINITY;
+                return core::f64::INFINITY;
             }
             self.mu - self.b * (2.0 - 2.0 * p).ln()
         } else {
             if p == 0.0 {
-                return std::f64::NEG_INFINITY;
+                return core::f64::NEG_INFINITY;
             }
             self.mu + self.b * (2.0 * p).ln()
         }
@@ -136,6 +141,7 @@ impl distribution::Variance for Laplace {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 
@@ -199,7 +205,7 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::E;
+        use core::f64::consts::E;
         assert_eq!(new!(2.0, 1.0).entropy(), (2.0 * 1.0 * E).ln());
     }
 
@@ -207,13 +213,13 @@ mod tests {
     fn inverse() {
         let d = new!(2.0, 3.0);
         let x = vec![
-            std::f64::NEG_INFINITY,
+            core::f64::NEG_INFINITY,
             -2.8283137373023006,
             -0.07944154167983575,
             2.0,
             4.079441541679836,
             6.8283137373023015,
-            std::f64::INFINITY,
+            core::f64::INFINITY,
         ];
         let p = vec![0.0, 0.1, 0.25, 0.5, 0.75, 0.9, 1.00];
 

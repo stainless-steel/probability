@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A triangular distribution.
 #[derive(Clone, Copy, Debug)]
@@ -167,6 +172,7 @@ impl distribution::Variance for Triangular {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 

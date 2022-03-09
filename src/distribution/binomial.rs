@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A binomial distribution.
 #[derive(Clone, Copy, Debug)]
@@ -82,7 +87,7 @@ impl distribution::Discrete for Binomial {
     /// 1. C. Loader, “Fast and Accurate Computation of Binomial Probabilities,”
     ///    2000.
     fn mass(&self, x: usize) -> f64 {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
 
         if self.p == 0.0 {
             return if x == 0 { 1.0 } else { 0.0 };
@@ -134,8 +139,8 @@ impl distribution::Distribution for Binomial {
 
 impl distribution::Entropy for Binomial {
     fn entropy(&self) -> f64 {
+        use core::f64::consts::PI;
         use distribution::Discrete;
-        use std::f64::consts::PI;
 
         if self.n > 10000 && self.npq > 80.0 {
             // Use a normal approximation.
@@ -239,8 +244,8 @@ impl distribution::Mean for Binomial {
 
 impl distribution::Median for Binomial {
     fn median(&self) -> f64 {
+        use core::f64::consts::LN_2;
         use distribution::Inverse;
-        use std::f64::consts::LN_2;
 
         if self.np.fract() == 0.0 || (self.p == 0.5 && self.n % 2 != 0) {
             self.np
@@ -410,6 +415,7 @@ fn ln_d0(x: f64, np: f64) -> f64 {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 

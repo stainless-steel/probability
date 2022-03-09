@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A PERT distribution.
 #[derive(Clone, Copy, Debug)]
@@ -171,6 +176,7 @@ impl distribution::Variance for Pert {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 
@@ -239,7 +245,7 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::E;
+        use core::f64::consts::E;
         let d = vec![
             new!(0.0, 0.5, 1.0),
             new!(0.0, 0.5, E),

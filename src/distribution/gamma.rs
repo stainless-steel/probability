@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A gamma distribution.
 #[derive(Clone, Copy, Debug)]
@@ -164,6 +169,7 @@ pub fn sample<S: Source>(k: f64, source: &mut S) -> f64 {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 

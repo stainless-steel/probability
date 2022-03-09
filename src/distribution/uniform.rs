@@ -1,6 +1,9 @@
 use distribution;
 use source::Source;
 
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
+
 /// A continuous uniform distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct Uniform {
@@ -127,6 +130,7 @@ impl distribution::Variance for Uniform {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use prelude::*;
 
     macro_rules! new(
@@ -156,7 +160,7 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::E;
+        use core::f64::consts::E;
         assert_eq!(new!(0.0, E).entropy(), 1.0);
     }
 

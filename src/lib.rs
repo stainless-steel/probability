@@ -11,14 +11,20 @@
 //! let samples = sampler.take(10).collect::<Vec<_>>();
 //! ```
 
+#![cfg_attr(not(feature = "std"), no_std)]
+
+#[cfg(feature = "std")]
+extern crate core;
+
 #[cfg(test)]
 extern crate assert;
 
+extern crate alloc;
 extern crate random;
 extern crate special;
 
 macro_rules! nonnan(
-    ($argument:ident) => (if $argument.is_nan() { return ::std::f64::NAN; });
+    ($argument:ident) => (if $argument.is_nan() { return ::core::f64::NAN; });
 );
 
 macro_rules! should(

@@ -1,3 +1,5 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
 
@@ -44,7 +46,7 @@ impl Cauchy {
 impl distribution::Continuous for Cauchy {
     #[inline]
     fn density(&self, x: f64) -> f64 {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         let deviation = x - self.x_0;
         self.gamma / (PI * (self.gamma * self.gamma + deviation * deviation))
     }
@@ -55,7 +57,7 @@ impl distribution::Distribution for Cauchy {
 
     #[inline]
     fn distribution(&self, x: f64) -> f64 {
-        use std::f64::consts::FRAC_1_PI;
+        use core::f64::consts::FRAC_1_PI;
         FRAC_1_PI * ((x - self.x_0) / self.gamma).atan() + 0.5
     }
 }
@@ -63,14 +65,14 @@ impl distribution::Distribution for Cauchy {
 impl distribution::Entropy for Cauchy {
     #[inline]
     fn entropy(&self) -> f64 {
-        (std::f64::consts::PI * 4.0 * self.gamma).ln()
+        (core::f64::consts::PI * 4.0 * self.gamma).ln()
     }
 }
 
 impl distribution::Inverse for Cauchy {
     #[inline]
     fn inverse(&self, p: f64) -> f64 {
-        use std::f64::{consts::PI, INFINITY, NEG_INFINITY};
+        use core::f64::{consts::PI, INFINITY, NEG_INFINITY};
 
         should!((0.0..=1.0).contains(&p));
 
@@ -114,6 +116,7 @@ impl distribution::Sample for Cauchy {
 #[cfg(test)]
 mod tests {
     use assert;
+    use alloc::{vec, vec::Vec};
     use prelude::*;
 
     macro_rules! new(
@@ -176,14 +179,14 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         assert_eq!(new!(2.0, 1.0).entropy(), (PI * 4.0).ln());
         assert::close(new!(3.0, 5.2).entropy(), 4.1796828725566719243, 1e-15);
     }
 
     #[test]
     fn inverse() {
-        use std::f64::{INFINITY, NEG_INFINITY};
+        use core::f64::{INFINITY, NEG_INFINITY};
 
         let d = new!(2.0, 3.0);
         let x = vec![

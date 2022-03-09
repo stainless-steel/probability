@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A Gaussian distribution.
 #[derive(Clone, Copy, Debug)]
@@ -16,7 +21,7 @@ impl Gaussian {
     /// It should hold that `sigma > 0`.
     #[inline]
     pub fn new(mu: f64, sigma: f64) -> Self {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         should!(sigma > 0.0);
         Gaussian {
             mu,
@@ -55,8 +60,8 @@ impl distribution::Distribution for Gaussian {
     type Value = f64;
 
     fn distribution(&self, x: f64) -> f64 {
+        use core::f64::consts::SQRT_2;
         use special::Error;
-        use std::f64::consts::SQRT_2;
         (1.0 + ((x - self.mu) / (self.sigma * SQRT_2)).error()) / 2.0
     }
 }
@@ -64,7 +69,7 @@ impl distribution::Distribution for Gaussian {
 impl distribution::Entropy for Gaussian {
     #[inline]
     fn entropy(&self) -> f64 {
-        use std::f64::consts::{E, PI};
+        use core::f64::consts::{E, PI};
         0.5 * (2.0 * PI * E * self.sigma * self.sigma).ln()
     }
 }
@@ -155,7 +160,7 @@ impl distribution::Variance for Gaussian {
 /// Gaussian distribution.
 #[allow(clippy::excessive_precision)]
 pub fn inverse(p: f64) -> f64 {
-    use std::f64::{INFINITY, NEG_INFINITY};
+    use core::f64::{INFINITY, NEG_INFINITY};
 
     should!((0.0..=1.0).contains(&p));
 
@@ -406,6 +411,7 @@ const W: [f64; 128] = [
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 
@@ -483,13 +489,13 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         assert_eq!(new!(0.0, 1.0).entropy(), ((2.0 * PI).ln() + 1.0) / 2.0);
     }
 
     #[test]
     fn inverse() {
-        use std::f64::{INFINITY, NEG_INFINITY};
+        use core::f64::{INFINITY, NEG_INFINITY};
 
         let d = new!(-1.0, 0.25);
         let p = vec![

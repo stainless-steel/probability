@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A beta distribution.
 #[derive(Clone, Copy, Debug)]
@@ -185,6 +190,7 @@ impl distribution::Variance for Beta {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 
@@ -273,7 +279,7 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::E;
+        use core::f64::consts::E;
         let d = vec![
             new!(1.0, 1.0, 0.0, 1.0),
             new!(1.0, 1.0, 0.0, E),

@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// A categorical distribution.
 #[derive(Clone, Debug)]
@@ -180,6 +185,7 @@ impl distribution::Variance for Categorical {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use prelude::*;
 
     macro_rules! new(
@@ -218,7 +224,7 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::LN_2;
+        use core::f64::consts::LN_2;
         assert_eq!(new!(equal 2).entropy(), LN_2);
         assert_eq!(new!([0.1, 0.2, 0.3, 0.4]).entropy(), 1.2798542258336676);
     }

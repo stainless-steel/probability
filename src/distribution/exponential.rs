@@ -1,5 +1,10 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
+
+#[cfg(not(feature = "std"))]
+use special::FloatExt;
 
 /// An exponential distribution.
 #[derive(Clone, Copy, Debug)]
@@ -80,7 +85,7 @@ impl distribution::Mean for Exponential {
 impl distribution::Median for Exponential {
     #[inline]
     fn median(&self) -> f64 {
-        use std::f64::consts::LN_2;
+        use core::f64::consts::LN_2;
         self.lambda.recip() * LN_2
     }
 }
@@ -123,6 +128,7 @@ impl distribution::Variance for Exponential {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 
@@ -187,14 +193,14 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::E;
+        use core::f64::consts::E;
         assert_eq!(new!(E).entropy(), 0.0);
     }
 
     #[test]
     #[cfg_attr(miri, ignore)]
     fn inverse() {
-        use std::f64::INFINITY;
+        use core::f64::INFINITY;
 
         let d = new!(2.0);
         let x = vec![
@@ -235,7 +241,7 @@ mod tests {
 
     #[test]
     fn median() {
-        use std::f64::consts::LN_2;
+        use core::f64::consts::LN_2;
         assert_eq!(new!(LN_2).median(), 1.0);
     }
 

@@ -21,7 +21,7 @@ categories = ["algorithms", "science"]
 keywords = ["distribution", "probability", "sampling", "statistics", "random"]
 
 [features]
-default = ["system_math"]
+default = ["std", "system_math"]
 
 # Activating feature "system_math" (which is the default) instructs `probability`
 # to use the system math C library for mathematical operations. Deactivate this
