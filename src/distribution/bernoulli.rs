@@ -1,9 +1,7 @@
 use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
-
-#[cfg(not(feature = "std"))]
-use special::FloatExt;
 
 /// A Bernoulli distribution.
 #[derive(Clone, Copy, Debug)]

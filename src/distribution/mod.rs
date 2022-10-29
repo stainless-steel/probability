@@ -4,9 +4,6 @@ use alloc::vec::Vec;
 
 use source::Source;
 
-#[cfg(not(feature = "std"))]
-use special::FloatExt;
-
 /// A continuous distribution.
 pub trait Continuous: Distribution {
     /// Compute the probability density function.

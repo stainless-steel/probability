@@ -20,26 +20,9 @@ readme = "README.md"
 categories = ["algorithms", "science"]
 keywords = ["distribution", "probability", "sampling", "statistics", "random"]
 
-[features]
-default = ["std", "system_math"]
-
-# Activating feature "system_math" (which is the default) instructs `probability`
-# to use the system math C library for mathematical operations. Deactivate this
-# default feature if no system math C library is available on your compilation
-# target (e.g., if you compile to WebAssembly, or if you want test for undefined
-# behaviour using `miri`).
-system_math = ["special/system_math"]
-
-# Feature "std" is active by default. Deactivate it if you want to compile to a
-# `no_std` target (e.g., a microcontroller). You'll likely want to deactivate
-# feature "system_math" as well in this case.
-std = ["special/std"]
-
 [dependencies]
 random = "0.12"
-# FIXME: use upstream version of `special` if proposed changes get accepted.
-# special = {path = "../special", default-features = false}
-special = {git = "https://github.com/robamler/special.git", rev = "16708ea249ec56fbebfcc91b413142f01671ebd9", default-features = false}
+special = "0.9"
 
 [dev-dependencies]
 assert = "0.7"

@@ -4,9 +4,6 @@ use distribution;
 use distribution::Inverse;
 use source::Source;
 
-#[cfg(not(feature = "std"))]
-use special::FloatExt;
-
 /// A Laplace distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct Laplace {

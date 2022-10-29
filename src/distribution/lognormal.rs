@@ -3,9 +3,6 @@ use alloc::{vec, vec::Vec};
 use distribution::{self, Gaussian};
 use source::Source;
 
-#[cfg(not(feature = "std"))]
-use special::FloatExt;
-
 /// A lognormal distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct Lognormal {

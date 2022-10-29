@@ -3,9 +3,6 @@ use alloc::{vec, vec::Vec};
 use distribution;
 use source::Source;
 
-#[cfg(not(feature = "std"))]
-use special::FloatExt;
-
 /// An exponential distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct Exponential {
@@ -162,7 +159,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(miri, ignore)]
     fn distribution() {
         let d = new!(2.0);
         let x = vec![
@@ -198,7 +194,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg_attr(miri, ignore)]
     fn inverse() {
         use core::f64::INFINITY;
 

@@ -1,9 +1,6 @@
 use distribution;
 use source::Source;
 
-#[cfg(not(feature = "std"))]
-use special::FloatExt;
-
 /// A continuous uniform distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct Uniform {

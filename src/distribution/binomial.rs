@@ -3,9 +3,6 @@ use alloc::{vec, vec::Vec};
 use distribution;
 use source::Source;
 
-#[cfg(not(feature = "std"))]
-use special::FloatExt;
-
 /// A binomial distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct Binomial {
