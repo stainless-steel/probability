@@ -56,7 +56,8 @@ impl Pert {
         self.alpha
     }
 
-    /// Return the second shape parameter of the corresponding Beta distribution.
+    /// Return the second shape parameter of the corresponding Beta
+    /// distribution.
     #[inline(always)]
     pub fn beta(&self) -> f64 {
         self.beta
