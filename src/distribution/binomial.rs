@@ -458,8 +458,10 @@ mod tests {
     #[test]
     fn inverse() {
         let d = Binomial::new(250, 0.55);
-        assert_eq!(d.inverse(0.1), 127);
+        assert_eq!(d.inverse(0.0), 0);
         assert_eq!(d.inverse(0.025), 122);
+        assert_eq!(d.inverse(0.1), 127);
+        assert_eq!(d.inverse(1.0), 250);
 
         let x = 1298;
         let d = new!(2500, 0.55);
