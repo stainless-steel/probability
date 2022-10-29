@@ -115,8 +115,8 @@ impl distribution::Sample for Cauchy {
 
 #[cfg(test)]
 mod tests {
-    use assert;
     use alloc::{vec, vec::Vec};
+    use assert;
     use prelude::*;
 
     macro_rules! new(
