@@ -151,76 +151,28 @@ impl distribution::Entropy for Binomial {
 impl distribution::Inverse for Binomial {
     /// Compute the inverse of the cumulative distribution function.
     ///
-    /// For small `n`, a simple summation is utilized. For large `n` and large
-    /// variances, a normal asymptotic approximation is used. Otherwise, the
-    /// Newton method is employed.
+    /// The code is based on a [C implementation][1] by John Burkardt.
     ///
-    /// ## References
-    ///
-    /// 1. S. Moorhead, “Efficient evaluation of the inverse binomial cumulative
-    ///    distribution function where the number of trials is large,” Oxford
-    ///    University, 2013.
+    /// [1]: https://people.sc.fsu.edu/~jburkardt/c_src/prob/prob.html
     fn inverse(&self, p: f64) -> usize {
-        use distribution::{Discrete, Distribution, Modes};
+        use distribution::Discrete;
 
         should!((0.0..=1.0).contains(&p));
-
-        // Rename p as to not be confused with self.p.
-        let u = p;
-
-        macro_rules! buttom_up_sum(
-            ($prod_term: expr) => ({
-                let mut k = 1;
-                let mut a = self.q.powi(self.n as i32);
-                let mut sum = a - u;
-                while sum < 0.0 {
-                    a *= $prod_term(k);
-                    sum += a;
-                    k += 1;
-                }
-                k - 1
-            });
-        );
-        macro_rules! top_down_sum(
-            ($prod_term: expr) => ({
-                let mut k = 1;
-                let mut a = self.p.powi(self.n as i32);
-                let mut sum = (1.0 - u) - a;
-                while sum >= 0.0 {
-                    a *= $prod_term(k);
-                    sum -= a;
-                    k += 1;
-                }
-                self.n - k + 1
-            });
-        );
-
-        if u == 1.0 {
-            self.n
-        } else if u == 0.0 {
+        if p == 0.0 {
             0
-        } else if self.n < 1000 {
-            // Find if top-down or bottom-up summation is better.
-            if u <= self.distribution((self.n / 2) as f64) {
-                buttom_up_sum!(|k| self.p / self.q * ((self.n - k + 1) as f64 / k as f64))
-            } else {
-                top_down_sum!(|k| self.q / self.p * ((self.n - k + 1) as f64 / k as f64))
-            }
-        } else if self.npq > 80.0 {
-            // Use a normal approximation.
-            approximate_by_normal(self.p, self.np, self.npq, u).floor() as usize
+        } else if p == 1.0 {
+            self.n
         } else {
-            // Use the Newton method starting at the mode.
-            let modes = self.modes();
-            let mut m = modes[0];
-            loop {
-                let next = (u - self.distribution(m as f64)) / self.mass(m);
-                if -0.5 < next && next < 0.5 {
+            let mut x = 0;
+            let mut q = 0.0;
+            for y in 0..=self.n {
+                q += self.mass(y);
+                if p <= q {
+                    x = y;
                     break;
                 }
-                m = (m as isize + next.round() as isize) as usize;
             }
-            m
+            x
         }
     }
 }
@@ -298,49 +250,6 @@ impl distribution::Variance for Binomial {
     fn variance(&self) -> f64 {
         self.npq
     }
-}
-
-// See [Moorhead, 2013, pp. 7].
-#[rustfmt::skip]
-fn approximate_by_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
-    use distribution::gaussian;
-
-    let w = gaussian::inverse(u);
-    let w2 = w * w;
-    let w3 = w2 * w;
-    let w4 = w3 * w;
-    let w5 = w4 * w;
-    let w6 = w5 * w;
-    let sd = v.sqrt();
-    let sd_em1 = sd.recip();
-    let sd_em2 = v.recip();
-    let sd_em3 = sd_em1 * sd_em2;
-    let sd_em4 = sd_em2 * sd_em2;
-    let p2 = p * p;
-    let p3 = p2 * p;
-    let p4 = p2 * p2;
-
-    np +
-    sd * w +
-    (p + 1.0) / 3.0 -
-    (2.0 * p - 1.0) * w2 / 6.0 +
-    sd_em1 * w3 * (2.0 * p2 - 2.0 * p - 1.0) / 72.0 -
-    w * (7.0 * p2 - 7.0 * p + 1.0) / 36.0 +
-    sd_em2 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (3.0 * w4 + 7.0 * w2 - 16.0 / 1620.0) +
-    sd_em3 * (
-        w5 * (4.0 * p4 - 8.0 * p3 - 48.0 * p2 + 52.0 * p - 23.0) / 17280.0 +
-        w3 * (256.0 * p4 - 512.0 * p3 - 147.0 * p2 + 403.0 * p - 137.0) / 38880.0 -
-        w * (433.0 * p4 - 866.0 * p3 - 921.0 * p2 + 1354.0 * p - 671.0) / 38880.0
-    ) +
-    sd_em4 * (
-        w6 * (2.0 * p - 1.0) * (p2 - p + 1.0) * (p2 - p + 19.0) / 34020.0 +
-        w4 * (2.0 * p - 1.0) * (9.0 * p4 - 18.0 * p3 - 35.0 * p2 + 44.0 * p - 25.0) / 15120.0 +
-        w2 * (2.0 * p - 1.0) * (
-                923.0 * p4 - 1846.0 * p3 + 5271.0 * p2 - 4348.0 * p + 5189.0
-        ) / 408240.0 -
-        4.0 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (23.0 * p2 - 23.0 * p + 2.0) / 25515.0
-    )
-    // + O(v.powf(-2.5)), with probabilty of 1 - 2e-9
 }
 
 // strilerr(n) = ln(n!) - ln(sqrt(2π * n) * (n / e)^n)
@@ -470,8 +379,14 @@ mod tests {
         assert_eq!(new!(1001, 0.25).inverse(0.5), 250);
         assert_eq!(new!(1500, 0.15).inverse(0.2), 213);
 
-        assert_eq!(new!(1_000_000, 2.5e-5).inverse(0.9995), 42);
-        assert_eq!(new!(1_000_000_000, 6.66e-9).inverse(0.8), 8);
+        assert_eq!(new!(1_000_000, 2.5e-5).inverse(0.9995), 43);
+        assert_eq!(new!(1_000_000_000, 6.66e-9).inverse(0.8), 9);
+    }
+
+    #[test]
+    fn inverse_convergence() {
+        let d = Binomial::new(3666, 0.9810204628647335);
+        d.inverse(0.0033333333333332993);
     }
 
     #[test]
