@@ -1,3 +1,5 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
 
@@ -119,16 +121,17 @@ impl distribution::Skewness for Logistic {
 impl distribution::Variance for Logistic {
     #[inline]
     fn variance(&self) -> f64 {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         (PI * self.s).powi(2) / 3.0
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
+    use core::f64::{INFINITY, NEG_INFINITY};
     use prelude::*;
-    use std::f64::{INFINITY, NEG_INFINITY};
 
     macro_rules! new(
         ($mu:expr, $s:expr) => (Logistic::new($mu, $s));
@@ -241,13 +244,13 @@ mod tests {
 
     #[test]
     fn variance() {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         assert_eq!(new!(1.0, 3.0 / PI).variance(), 3.0);
     }
 
     #[test]
     fn deviation() {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         assert_eq!(new!(1.0, 3.0 / PI).deviation(), 3f64.sqrt());
     }
 }

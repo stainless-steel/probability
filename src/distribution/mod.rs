@@ -1,5 +1,7 @@
 //! Probability distributions.
 
+use alloc::vec::Vec;
+
 use source::Source;
 
 /// A continuous distribution.

@@ -1,3 +1,5 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
 
@@ -167,6 +169,7 @@ impl distribution::Variance for Triangular {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 

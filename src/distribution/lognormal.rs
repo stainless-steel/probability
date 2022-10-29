@@ -1,3 +1,5 @@
+use alloc::{vec, vec::Vec};
+
 use distribution::{self, Gaussian};
 use source::Source;
 
@@ -45,7 +47,7 @@ impl Default for Lognormal {
 
 impl distribution::Continuous for Lognormal {
     fn density(&self, x: f64) -> f64 {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         if x <= 0.0 {
             0.0
         } else {
@@ -70,7 +72,7 @@ impl distribution::Distribution for Lognormal {
 impl distribution::Entropy for Lognormal {
     #[inline]
     fn entropy(&self) -> f64 {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         (self.sigma * (self.mu + 0.5).exp() * (2.0 * PI).sqrt()).ln()
     }
 }
@@ -138,6 +140,7 @@ impl distribution::Variance for Lognormal {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 
@@ -197,13 +200,13 @@ mod tests {
 
     #[test]
     fn entropy() {
-        use std::f64::consts::PI;
+        use core::f64::consts::PI;
         assert_eq!(new!(-0.5, 1.0 / (2.0 * PI).sqrt()).entropy(), 0.0);
     }
 
     #[test]
     fn inverse() {
-        use std::f64::INFINITY;
+        use core::f64::INFINITY;
         let d = new!(1.0, 2.0);
         let p = vec![
             0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65,

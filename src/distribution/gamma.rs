@@ -1,3 +1,5 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
 
@@ -164,6 +166,7 @@ pub fn sample<S: Source>(k: f64, source: &mut S) -> f64 {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 

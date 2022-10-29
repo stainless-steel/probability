@@ -1,3 +1,5 @@
+use alloc::{vec, vec::Vec};
+
 use distribution;
 use source::Source;
 
@@ -112,7 +114,7 @@ impl distribution::Mean for Bernoulli {
 
 impl distribution::Median for Bernoulli {
     fn median(&self) -> f64 {
-        use std::cmp::Ordering::*;
+        use core::cmp::Ordering::*;
         match self.p.partial_cmp(&self.q) {
             Some(Less) => 0.0,
             Some(Equal) => 0.5,
@@ -124,7 +126,7 @@ impl distribution::Median for Bernoulli {
 
 impl distribution::Modes for Bernoulli {
     fn modes(&self) -> Vec<u8> {
-        use std::cmp::Ordering::*;
+        use core::cmp::Ordering::*;
         match self.p.partial_cmp(&self.q) {
             Some(Less) => vec![0],
             Some(Equal) => vec![0, 1],
@@ -164,6 +166,7 @@ impl distribution::Variance for Bernoulli {
 
 #[cfg(test)]
 mod tests {
+    use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
 
