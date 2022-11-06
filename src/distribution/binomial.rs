@@ -478,8 +478,8 @@ mod tests {
 
     #[test]
     fn inverse_convergence() {
-        let d = new!(3666, 0.9810204628647335);
-        d.inverse(0.0033333333333332993);
+        let d = new!(3666, 0.981);
+        d.inverse(0.003333333333333);
     }
 
     #[test]
