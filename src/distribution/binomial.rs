@@ -476,6 +476,7 @@ mod tests {
         assert_eq!(new!(1_000_000_000, 6.66e-9).inverse(0.8), 8);
     }
 
+    #[ignore]
     #[test]
     fn inverse_convergence() {
         let d = new!(3666, 0.981);
