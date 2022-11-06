@@ -153,28 +153,72 @@ impl distribution::Entropy for Binomial {
 impl distribution::Inverse for Binomial {
     /// Compute the inverse of the cumulative distribution function.
     ///
-    /// The code is based on a [C implementation][1] by John Burkardt.
+    /// For small `n`, a simple summation is utilized. For large `n` and large
+    /// variances, a normal asymptotic approximation is used. Otherwise, the
+    /// Newton method is employed.
     ///
-    /// [1]: https://people.sc.fsu.edu/~jburkardt/c_src/prob/prob.html
+    /// ## References
+    ///
+    /// 1. S. Moorhead, “Efficient evaluation of the inverse binomial cumulative
+    ///    distribution function where the number of trials is large,” Oxford
+    ///    University, 2013.
     fn inverse(&self, p: f64) -> usize {
-        use distribution::Discrete;
+        use distribution::{Discrete, Distribution, Modes};
 
         should!((0.0..=1.0).contains(&p));
+
+        macro_rules! sum_bottom_up(
+            ($prod_term: expr) => ({
+                let mut k = 1;
+                let mut a = self.q.powi(self.n as i32);
+                let mut sum = a - p;
+                while sum < 0.0 {
+                    a *= $prod_term(k);
+                    sum += a;
+                    k += 1;
+                }
+                k - 1
+            });
+        );
+        macro_rules! sum_top_down(
+            ($prod_term: expr) => ({
+                let mut k = 1;
+                let mut a = self.p.powi(self.n as i32);
+                let mut sum = (1.0 - p) - a;
+                while sum >= 0.0 {
+                    a *= $prod_term(k);
+                    sum -= a;
+                    k += 1;
+                }
+                self.n - k + 1
+            });
+        );
+
         if p == 0.0 {
             0
         } else if p == 1.0 {
             self.n
+        } else if self.n < 1000 {
+            // Find if top-down or bottom-up summation is better.
+            if p <= self.distribution((self.n / 2) as f64) {
+                sum_bottom_up!(|k| self.p / self.q * ((self.n - k + 1) as f64 / k as f64))
+            } else {
+                sum_top_down!(|k| self.q / self.p * ((self.n - k + 1) as f64 / k as f64))
+            }
+        } else if self.npq > 80.0 {
+            // Use a normal approximation.
+            inverse_normal(self.p, self.np, self.npq, p).floor() as usize
         } else {
-            let mut x = 0;
-            let mut q = 0.0;
-            for y in 0..=self.n {
-                q += self.mass(y);
-                if p <= q {
-                    x = y;
+            // Use the Newton method starting at the mode.
+            let mut m = self.modes()[0];
+            loop {
+                let next = (p - self.distribution(m as f64)) / self.mass(m);
+                if -0.5 < next && next < 0.5 {
                     break;
                 }
+                m = (m as isize + next.round() as isize) as usize;
             }
-            x
+            m
         }
     }
 }
@@ -254,6 +298,70 @@ impl distribution::Variance for Binomial {
     }
 }
 
+// See [Moorhead, 2013, pp. 7].
+#[rustfmt::skip]
+fn inverse_normal(p: f64, np: f64, v: f64, u: f64) -> f64 {
+    use distribution::gaussian;
+
+    let w = gaussian::inverse(u);
+    let w2 = w * w;
+    let w3 = w2 * w;
+    let w4 = w3 * w;
+    let w5 = w4 * w;
+    let w6 = w5 * w;
+    let sd = v.sqrt();
+    let sd_em1 = sd.recip();
+    let sd_em2 = v.recip();
+    let sd_em3 = sd_em1 * sd_em2;
+    let sd_em4 = sd_em2 * sd_em2;
+    let p2 = p * p;
+    let p3 = p2 * p;
+    let p4 = p2 * p2;
+
+    np +
+    sd * w +
+    (p + 1.0) / 3.0 -
+    (2.0 * p - 1.0) * w2 / 6.0 +
+    sd_em1 * w3 * (2.0 * p2 - 2.0 * p - 1.0) / 72.0 -
+    w * (7.0 * p2 - 7.0 * p + 1.0) / 36.0 +
+    sd_em2 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (3.0 * w4 + 7.0 * w2 - 16.0 / 1620.0) +
+    sd_em3 * (
+        w5 * (4.0 * p4 - 8.0 * p3 - 48.0 * p2 + 52.0 * p - 23.0) / 17280.0 +
+        w3 * (256.0 * p4 - 512.0 * p3 - 147.0 * p2 + 403.0 * p - 137.0) / 38880.0 -
+        w * (433.0 * p4 - 866.0 * p3 - 921.0 * p2 + 1354.0 * p - 671.0) / 38880.0
+    ) +
+    sd_em4 * (
+        w6 * (2.0 * p - 1.0) * (p2 - p + 1.0) * (p2 - p + 19.0) / 34020.0 +
+        w4 * (2.0 * p - 1.0) * (9.0 * p4 - 18.0 * p3 - 35.0 * p2 + 44.0 * p - 25.0) / 15120.0 +
+        w2 * (2.0 * p - 1.0) * (
+                923.0 * p4 - 1846.0 * p3 + 5271.0 * p2 - 4348.0 * p + 5189.0
+        ) / 408240.0 -
+        4.0 * (2.0 * p - 1.0) * (p + 1.0) * (p - 2.0) * (23.0 * p2 - 23.0 * p + 2.0) / 25515.0
+    )
+    // + O(v.powf(-2.5)), with probabilty of 1 - 2e-9
+}
+
+// ln(np * D₀) = x * ln(x / np) + np - x
+fn ln_d0(x: f64, np: f64) -> f64 {
+    if (x - np).abs() < 0.1 * (x + np) {
+        // ε = (n / np) is close to 1. Use a series expansion.
+        let mut s = (x - np).powi(2) / (x + np);
+        let v = (x - np) / (x + np);
+        let mut ej = 2.0 * x * v;
+        let mut j = 1;
+        loop {
+            ej *= v * v;
+            let s1 = s + ej / (2 * j + 1) as f64;
+            if s1 == s {
+                return s1;
+            }
+            s = s1;
+            j += 1;
+        }
+    }
+    x * (x / np).ln() + np - x
+}
+
 // strilerr(n) = ln(n!) - ln(sqrt(2π * n) * (n / e)^n)
 fn stirlerr(n: f64) -> f64 {
     const S0: f64 = 1.0 / 12.0;
@@ -298,27 +406,6 @@ fn stirlerr(n: f64) -> f64 {
     } else {
         (S0 - (S1 - (S2 - (S3 - S4 / nn) / nn) / nn) / nn) / n
     }
-}
-
-// ln(np * D₀) = x * ln(x / np) + np - x
-fn ln_d0(x: f64, np: f64) -> f64 {
-    if (x - np).abs() < 0.1 * (x + np) {
-        // ε = (n / np) is close to 1. Use a series expansion.
-        let mut s = (x - np).powi(2) / (x + np);
-        let v = (x - np) / (x + np);
-        let mut ej = 2.0 * x * v;
-        let mut j = 1;
-        loop {
-            ej *= v * v;
-            let s1 = s + ej / (2 * j + 1) as f64;
-            if s1 == s {
-                return s1;
-            }
-            s = s1;
-            j += 1;
-        }
-    }
-    x * (x / np).ln() + np - x
 }
 
 #[cfg(test)]
@@ -368,26 +455,30 @@ mod tests {
 
     #[test]
     fn inverse() {
-        let d = Binomial::new(250, 0.55);
+        // Check edge cases.
+        let d = new!(10, 0.5);
         assert_eq!(d.inverse(0.0), 0);
+        assert_eq!(d.inverse(1.0), 10);
+
+        // Check the summation.
+        let d = new!(250, 0.55);
         assert_eq!(d.inverse(0.025), 122);
         assert_eq!(d.inverse(0.1), 127);
-        assert_eq!(d.inverse(1.0), 250);
 
-        let x = 1298;
+        // Check the normal approximation.
         let d = new!(2500, 0.55);
-        assert_eq!(d.inverse(d.distribution(x as f64)), x);
-
+        assert_eq!(d.inverse(d.distribution(1298.0)), 1298);
         assert_eq!(new!(1001, 0.25).inverse(0.5), 250);
         assert_eq!(new!(1500, 0.15).inverse(0.2), 213);
 
-        assert_eq!(new!(1_000_000, 2.5e-5).inverse(0.9995), 43);
-        assert_eq!(new!(1_000_000_000, 6.66e-9).inverse(0.8), 9);
+        // Check the Newton method.
+        assert_eq!(new!(1_000_000, 2.5e-5).inverse(0.9995), 42);
+        assert_eq!(new!(1_000_000_000, 6.66e-9).inverse(0.8), 8);
     }
 
     #[test]
     fn inverse_convergence() {
-        let d = Binomial::new(3666, 0.9810204628647335);
+        let d = new!(3666, 0.9810204628647335);
         d.inverse(0.0033333333333332993);
     }
 
