@@ -4,7 +4,7 @@ use test::{black_box, Bencher};
 #[bench]
 fn distribution(bencher: &mut Bencher) {
     let d = Cauchy::new(0.0, 1.0);
-    let x = Independent(&d, &mut source::default())
+    let x = Independent(&d, &mut source::default([42, 60]))
         .take(1000)
         .collect::<Vec<_>>();
 
@@ -14,7 +14,7 @@ fn distribution(bencher: &mut Bencher) {
 #[bench]
 fn inverse(bencher: &mut Bencher) {
     let d = Cauchy::new(0.0, 1.0);
-    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default())
+    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default([42, 60]))
         .take(1000)
         .collect::<Vec<_>>();
 
