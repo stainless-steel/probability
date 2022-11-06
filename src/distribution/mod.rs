@@ -1,6 +1,8 @@
 //! Probability distributions.
 
 use alloc::vec::Vec;
+#[allow(unused_imports)]
+use special::Primitive;
 
 use source::Source;
 

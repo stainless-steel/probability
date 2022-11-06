@@ -7,7 +7,7 @@ The package provides a probability-theory toolbox.
 ```rust
 use probability::prelude::*;
 
-let mut source = source::default();
+let mut source = source::default([42, 69]);
 let distribution = Uniform::new(0.0, 1.0);
 let sampler = Independent(&distribution, &mut source);
 let samples = sampler.take(10).collect::<Vec<_>>();

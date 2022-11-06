@@ -1,4 +1,6 @@
 use alloc::{vec, vec::Vec};
+#[allow(unused_imports)]
+use special::Primitive;
 
 use distribution;
 use source::Source;
@@ -310,7 +312,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Independent(&new!(7.0, 20.0, 42.0), &mut source::default()).take(100) {
+        for x in Independent(&new!(7.0, 20.0, 42.0), &mut source::default([42, 69])).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

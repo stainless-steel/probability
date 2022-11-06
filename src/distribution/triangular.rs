@@ -1,4 +1,6 @@
 use alloc::{vec, vec::Vec};
+#[allow(unused_imports)]
+use special::Primitive;
 
 use distribution;
 use source::Source;

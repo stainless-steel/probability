@@ -21,8 +21,8 @@ categories = ["algorithms", "science"]
 keywords = ["distribution", "probability", "sampling", "statistics", "random"]
 
 [dependencies]
-random = "0.12"
-special = "0.9"
+random = "0.13"
+special = "0.10"
 
 [dev-dependencies]
 assert = "0.7"

@@ -1,4 +1,6 @@
 use alloc::{vec, vec::Vec};
+#[allow(unused_imports)]
+use special::Primitive;
 
 use distribution;
 use source::Source;
@@ -196,7 +198,7 @@ impl distribution::Median for Binomial {
         use core::f64::consts::LN_2;
         use distribution::Inverse;
 
-        if self.np.fract() == 0.0 || (self.p == 0.5 && self.n % 2 != 0) {
+        if (self.np - self.np.trunc()) == 0.0 || (self.p == 0.5 && self.n % 2 != 0) {
             self.np
         } else if self.p <= 1.0 - LN_2
             || self.p >= LN_2
@@ -219,7 +221,7 @@ impl distribution::Modes for Binomial {
             vec![0]
         } else if self.p == 1.0 {
             vec![self.n]
-        } else if r.fract() != 0.0 {
+        } else if (r - r.trunc()) != 0.0 {
             vec![r.floor() as usize]
         } else {
             vec![r as usize - 1, r as usize]

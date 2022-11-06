@@ -1,4 +1,6 @@
 use alloc::{vec, vec::Vec};
+#[allow(unused_imports)]
+use special::Primitive;
 
 use distribution;
 use source::Source;
@@ -240,7 +242,7 @@ mod tests {
     #[test]
     fn sample() {
         assert!(
-            Independent(&new!(0.25), &mut source::default())
+            Independent(&new!(0.25), &mut source::default([42, 69]))
                 .take(100)
                 .fold(0, |a, b| a + b)
                 <= 100
