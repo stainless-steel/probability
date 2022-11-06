@@ -226,7 +226,7 @@ mod tests {
     fn sampling() {
         let n = 100000;
         let d = Cauchy::new(35.4, 12.3);
-        let mut source = source::Xorshift128Plus::new([42, 69]);
+        let mut source = source::default(42);
 
         let cross_entropy = -(0..n)
             .map(|_| d.density(d.sample(&mut source)).ln())

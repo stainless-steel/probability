@@ -4,7 +4,7 @@ use test::{black_box, Bencher};
 #[bench]
 fn distribution(bencher: &mut Bencher) {
     let d = Binomial::new(100_000, 0.845);
-    let x = Independent(&d, &mut source::default([42, 60]))
+    let x = Independent(&d, &mut source::default(42))
         .take(1000)
         .collect::<Vec<_>>();
 
@@ -20,7 +20,7 @@ fn distribution(bencher: &mut Bencher) {
 #[bench]
 fn inverse(bencher: &mut Bencher) {
     let d = Binomial::new(100_000, 0.845);
-    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default([42, 60]))
+    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default(42))
         .take(1000)
         .collect::<Vec<_>>();
 
@@ -30,7 +30,7 @@ fn inverse(bencher: &mut Bencher) {
 #[bench]
 fn mass(bencher: &mut Bencher) {
     let d = Binomial::new(100_000, 0.845);
-    let x = Independent(&d, &mut source::default([42, 60]))
+    let x = Independent(&d, &mut source::default(42))
         .take(1000)
         .collect::<Vec<_>>();
 

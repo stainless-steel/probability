@@ -242,7 +242,7 @@ mod tests {
     #[test]
     fn sample() {
         assert!(
-            Independent(&new!(0.25), &mut source::default([42, 69]))
+            Independent(&new!(0.25), &mut source::default(42))
                 .take(100)
                 .fold(0, |a, b| a + b)
                 <= 100

@@ -312,7 +312,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        for x in Independent(&new!(7.0, 20.0, 42.0), &mut source::default([42, 69])).take(100) {
+        for x in Independent(&new!(7.0, 20.0, 42.0), &mut source::default(42)).take(100) {
             assert!(7.0 <= x && x <= 42.0);
         }
     }

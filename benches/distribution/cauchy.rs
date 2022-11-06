@@ -4,7 +4,7 @@ use test::{black_box, Bencher};
 #[bench]
 fn distribution(bencher: &mut Bencher) {
     let d = Cauchy::new(0.0, 1.0);
-    let x = Independent(&d, &mut source::default([42, 60]))
+    let x = Independent(&d, &mut source::default(42))
         .take(1000)
         .collect::<Vec<_>>();
 
@@ -14,7 +14,7 @@ fn distribution(bencher: &mut Bencher) {
 #[bench]
 fn inverse(bencher: &mut Bencher) {
     let d = Cauchy::new(0.0, 1.0);
-    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default([42, 60]))
+    let p = Independent(&Uniform::new(0.0, 1.0), &mut source::default(42))
         .take(1000)
         .collect::<Vec<_>>();
 
@@ -23,7 +23,7 @@ fn inverse(bencher: &mut Bencher) {
 
 #[bench]
 fn sample(bencher: &mut Bencher) {
-    let mut source = source::Xorshift128Plus::new([42, 69]);
+    let mut source = source::default(42);
     let d = Cauchy::new(0.0, 1.0);
 
     bencher.iter(|| black_box(d.sample(&mut source)));
@@ -31,11 +31,11 @@ fn sample(bencher: &mut Bencher) {
 
 #[bench]
 fn sample_directly(bencher: &mut Bencher) {
-    fn sample(d: &Cauchy, source: &mut source::Xorshift128Plus) -> f64 {
+    fn sample(d: &Cauchy, source: &mut source::Default) -> f64 {
         d.inverse(source::Source::read::<f64>(source))
     }
 
-    let mut source = source::Xorshift128Plus::new([42, 69]);
+    let mut source = source::default(42);
     let d = Cauchy::new(0.0, 1.0);
 
     bencher.iter(|| black_box(sample(&d, &mut source)));
@@ -43,14 +43,14 @@ fn sample_directly(bencher: &mut Bencher) {
 
 #[bench]
 fn sample_indirectly(bencher: &mut Bencher) {
-    fn sample(d: &Cauchy, source: &mut source::Xorshift128Plus) -> f64 {
+    fn sample(d: &Cauchy, source: &mut source::Default) -> f64 {
         let gaussian = Gaussian::new(0.0, 1.0);
         let a = gaussian.sample(source);
         let b = gaussian.sample(source);
         d.x_0() + d.gamma() * a / (b.abs() + f64::MIN_POSITIVE)
     }
 
-    let mut source = source::Xorshift128Plus::new([42, 69]);
+    let mut source = source::default(42);
     let d = Cauchy::new(0.0, 1.0);
 
     bencher.iter(|| black_box(sample(&d, &mut source)));

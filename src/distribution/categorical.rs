@@ -299,7 +299,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        let mut source = source::default([42, 69]);
+        let mut source = source::default(42);
 
         let sum = Independent(&new!([0.0, 0.5, 0.5]), &mut source)
             .take(100)
