@@ -154,8 +154,8 @@ impl distribution::Inverse for Binomial {
     /// Compute the inverse of the cumulative distribution function.
     ///
     /// For small `n`, a simple summation is utilized. For large `n` and large
-    /// variances, a normal asymptotic approximation is used. Otherwise, the
-    /// Newton method is employed.
+    /// variances, a normal asymptotic approximation is used. Otherwise,
+    /// Newton’s method is employed.
     ///
     /// ## References
     ///
@@ -209,14 +209,14 @@ impl distribution::Inverse for Binomial {
             // Use a normal approximation.
             inverse_normal(self.p, self.np, self.npq, p).floor() as usize
         } else {
-            // Use the Newton method starting at the mode.
-            let mut m = self.modes()[0] as f64;
+            // Use Newton’s method starting at the mode.
+            let mut q = self.modes()[0] as f64;
             loop {
-                let q = m as usize;
-                m += (p - self.distribution(m)) / self.mass(q);
-                if m as usize == q {
-                    return q;
+                let step = (p - self.distribution(q)) / self.mass(q as usize);
+                if step < 0.5 {
+                    return q as usize;
                 }
+                q += step;
             }
         }
     }
@@ -470,15 +470,18 @@ mod tests {
         assert_eq!(new!(1001, 0.25).inverse(0.5), 250);
         assert_eq!(new!(1500, 0.15).inverse(0.2), 213);
 
-        // Check the Newton method.
+        // Check Newton’s method.
         assert_eq!(new!(1_000_000, 2.5e-5).inverse(0.9995), 42);
         assert_eq!(new!(1_000_000_000, 6.66e-9).inverse(0.8), 8);
     }
 
     #[test]
     fn inverse_convergence() {
-        let d = new!(3666, 0.981);
-        d.inverse(0.003333333333333);
+        let d = new!(1024, 0.009765625);
+        d.inverse(0.32185663510619567);
+
+        let d = new!(3666, 0.9810204628647335);
+        d.inverse(0.0033333333333332993);
     }
 
     #[test]
