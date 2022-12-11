@@ -1,6 +1,6 @@
 [package]
 name = "probability"
-version = "0.20.1"
+version = "0.20.2"
 license = "Apache-2.0/MIT"
 authors = [
     "Brian Knapp <knappador@gmail.com>",
