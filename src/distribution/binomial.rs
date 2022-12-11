@@ -481,7 +481,7 @@ mod tests {
     #[test]
     fn inverse_convergence() {
         let d = new!(1024, 0.009765625);
-        assert_eq!(d.inverse(0.32185663510619567), 0);
+        assert_eq!(d.inverse(0.32185663510619567), 8);
 
         let d = new!(3666, 0.9810204628647335);
         assert_eq!(d.inverse(0.0033333333333332993), 0);
