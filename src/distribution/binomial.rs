@@ -210,13 +210,16 @@ impl distribution::Inverse for Binomial {
             inverse_normal(self.p, self.np, self.npq, p).floor() as usize
         } else {
             // Use Newton’s method starting at the mode.
+            const ALPHA: f64 = 0.999;
             let mut q = self.modes()[0] as f64;
+            let mut alpha = 1.0;
             loop {
-                let step = (p - self.distribution(q)) / self.mass(q as usize);
-                if step < 0.5 {
+                let delta = alpha * (p - self.distribution(q)) / self.mass(q as usize);
+                if delta < 0.5 {
                     return q as usize;
                 }
-                q += step;
+                q += delta;
+                alpha *= ALPHA;
             }
         }
     }
@@ -478,10 +481,10 @@ mod tests {
     #[test]
     fn inverse_convergence() {
         let d = new!(1024, 0.009765625);
-        d.inverse(0.32185663510619567);
+        assert_eq!(d.inverse(0.32185663510619567), 0);
 
         let d = new!(3666, 0.9810204628647335);
-        d.inverse(0.0033333333333332993);
+        assert_eq!(d.inverse(0.0033333333333332993), 0);
     }
 
     #[test]
