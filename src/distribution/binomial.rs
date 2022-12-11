@@ -216,7 +216,7 @@ impl distribution::Inverse for Binomial {
             loop {
                 let delta = alpha * (p - self.distribution(q)) / self.mass(q as usize);
                 if delta.abs() < 0.5 {
-                    return q as usize;
+                    return (q + delta) as usize;
                 }
                 q += delta;
                 alpha *= ALPHA;
