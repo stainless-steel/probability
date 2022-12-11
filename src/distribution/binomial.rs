@@ -484,7 +484,7 @@ mod tests {
         assert_eq!(d.inverse(0.32185663510619567), 8);
 
         let d = new!(3666, 0.9810204628647335);
-        assert_eq!(d.inverse(0.0033333333333332993), 0);
+        assert_eq!(d.inverse(0.0033333333333332993), 3573);
     }
 
     #[test]
