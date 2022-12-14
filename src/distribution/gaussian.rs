@@ -5,6 +5,8 @@ use special::Primitive;
 use distribution;
 use source::Source;
 
+use super::FromIter;
+
 /// A Gaussian distribution.
 #[derive(Clone, Copy, Debug)]
 pub struct Gaussian {
@@ -298,6 +300,35 @@ pub fn sample<S: Source>(source: &mut S) -> f64 {
     }
 }
 
+impl FromIter for Gaussian {
+    fn from_iter(iter: impl Iterator<Item=f64> + Clone) -> Self {
+        use core::f64::consts::PI;
+
+        let mut count = 0;
+        let mut mu = 0.0;
+        let mut sigma = 0.0;
+
+        // Compute the mean
+        for v in iter.clone() {
+            count += 1;
+            mu += v;
+        }
+
+        mu = mu / count as f64;
+
+        // Re-scan the iterator to compute the variance
+        for v in iter {
+            sigma += f64::powf(v - mu as f64, 2.0);
+        }
+        
+        // Convert to the standard deviation
+        sigma = f64::sqrt(sigma / (count - 1) as f64);
+
+        // Return the new distribution
+        Gaussian {mu, sigma, norm: (2.0 * PI).sqrt() * sigma}
+    }
+}
+
 const R: f64 = 3.44428647676;
 
 #[rustfmt::skip]
@@ -414,9 +445,25 @@ mod tests {
     use assert;
     use prelude::*;
 
+    use crate::distribution::FromIter;
+
     macro_rules! new(
         ($mu:expr, $sigma:expr) => (Gaussian::new($mu, $sigma));
     );
+
+    #[test]
+    fn iter() {
+        // Create a sample distribution to create an iterator from
+        let mut source = source::default(42);
+        let distribution = new!(1.0, 2.0);
+        let sampler = Independent(&distribution, &mut source);
+        let samples = sampler.take(10000).collect::<Vec<_>>();
+        let derived_distribution = Gaussian::from_iter(samples.into_iter());
+
+        assert::close(derived_distribution.mu, distribution.mu, 0.1);
+        assert::close(derived_distribution.sigma, distribution.sigma, 0.1);
+        assert::close(derived_distribution.norm, distribution.norm, 0.1);
+    }
 
     #[test]
     fn density() {
