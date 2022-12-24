@@ -510,19 +510,6 @@ mod tests {
     }
 
     #[test]
-    fn from_iter() {
-        let mut source = source::default(42);
-        let distribution = new!(1.0, 2.0);
-        let sampler = Independent(&distribution, &mut source);
-        let samples = sampler.take(10000).collect::<Vec<_>>();
-        let derived_distribution = Gaussian::from_iter(samples.into_iter());
-
-        assert::close(derived_distribution.mu, distribution.mu, 0.1);
-        assert::close(derived_distribution.sigma, distribution.sigma, 0.1);
-        assert::close(derived_distribution.norm, distribution.norm, 0.1);
-    }
-
-    #[test]
     fn inverse() {
         use core::f64::{INFINITY, NEG_INFINITY};
 
@@ -595,5 +582,18 @@ mod tests {
     #[test]
     fn deviation() {
         assert_eq!(new!(0.0, 2.0).deviation(), 2.0);
+    }
+
+    #[test]
+    fn from_iter() {
+        let mut source = source::default(42);
+        let distribution = new!(1.0, 2.0);
+        let sampler = Independent(&distribution, &mut source);
+        let samples = sampler.take(10000).collect::<Vec<_>>();
+        let derived_distribution = Gaussian::from_iter(samples);
+
+        assert::close(derived_distribution.mu, distribution.mu, 0.1);
+        assert::close(derived_distribution.sigma, distribution.sigma, 0.1);
+        assert::close(derived_distribution.norm, distribution.norm, 0.1);
     }
 }
