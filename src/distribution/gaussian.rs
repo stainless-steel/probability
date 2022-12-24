@@ -155,6 +155,21 @@ impl distribution::Variance for Gaussian {
     }
 }
 
+impl core::iter::FromIterator<f64> for Gaussian {
+    /// Infer the distribution from an iteration.
+    fn from_iter<T: IntoIterator<Item = f64>>(iterator: T) -> Self {
+        let samples: Vec<f64> = iterator.into_iter().collect();
+        let mu = samples.iter().fold(0.0, |a, b| a + b) / samples.len() as f64;
+        let sigma = f64::sqrt(
+            samples
+                .iter()
+                .fold(0.0, |a, b| a + f64::powf(b - mu as f64, 2.0))
+                / (samples.len() - 1) as f64,
+        );
+        Gaussian::new(mu, sigma)
+    }
+}
+
 /// Compute the inverse cumulative distribution function of the standard
 /// Gaussian distribution.
 #[allow(clippy::excessive_precision)]
@@ -295,27 +310,6 @@ pub fn sample<S: Source>(source: &mut S) -> f64 {
         if y < (-0.5 * x * x).exp() {
             return s * x;
         }
-    }
-}
-
-/// It is possible to infer the gaussian parameters from an iteration over f64.
-///
-/// This function computes the mean and standard deviation of an iterator and
-/// returns a instance of Gaussian that represents them.
-impl core::iter::FromIterator<f64> for Gaussian {
-    fn from_iter<I: IntoIterator<Item = f64>>(iter: I) -> Self {
-        let samples: Vec<f64> = iter.into_iter().collect();
-
-        let mu = samples.iter().fold(0.0, |a, b| a + b) / samples.len() as f64;
-
-        let sigma = f64::sqrt(
-            samples
-                .iter()
-                .fold(0.0, |a, b| a + f64::powf(b - mu as f64, 2.0))
-                / (samples.len() - 1) as f64,
-        );
-
-        Gaussian::new(mu, sigma)
     }
 }
 
