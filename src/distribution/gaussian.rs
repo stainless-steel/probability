@@ -156,7 +156,7 @@ impl distribution::Variance for Gaussian {
 }
 
 impl core::iter::FromIterator<f64> for Gaussian {
-    /// Infer the distribution from an iteration.
+    /// Infer the distribution from an iterator.
     fn from_iter<T: IntoIterator<Item = f64>>(iterator: T) -> Self {
         let samples: Vec<f64> = iterator.into_iter().collect();
         let mu = samples.iter().fold(0.0, |a, b| a + b) / samples.len() as f64;
