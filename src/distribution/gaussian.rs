@@ -82,7 +82,7 @@ impl distribution::Inverse for Gaussian {
     ///    distribution,” Journal of the Royal Statistical Society. Series C
     ///    (Applied Statistics), vol. 37, no. 3, pp. pp. 477–484, 1988.
     ///
-    /// 2. http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
+    /// 2. <http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html>
     #[inline(always)]
     fn inverse(&self, p: f64) -> f64 {
         self.mu + self.sigma * inverse(p)
