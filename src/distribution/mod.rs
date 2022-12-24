@@ -99,14 +99,6 @@ pub trait Variance: Mean {
     }
 }
 
-/// A distribution capable of being initalized from an iterator
-/// 
-/// The trait is applicable when it's possible to infer the
-/// distribution parameters from a sample dataset.
-pub trait FromIter: Distribution {
-    fn from_iter(iter: impl Iterator<Item=f64> + Clone) -> Self;
-}
-
 mod bernoulli;
 mod beta;
 mod binomial;
