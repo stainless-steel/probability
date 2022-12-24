@@ -82,7 +82,7 @@ impl distribution::Inverse for Gaussian {
     ///    distribution,” Journal of the Royal Statistical Society. Series C
     ///    (Applied Statistics), vol. 37, no. 3, pp. pp. 477–484, 1988.
     ///
-    /// 2. http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html
+    /// 2. <http://people.sc.fsu.edu/~jburkardt/c_src/asa241/asa241.html>
     #[inline(always)]
     fn inverse(&self, p: f64) -> f64 {
         self.mu + self.sigma * inverse(p)
@@ -152,6 +152,21 @@ impl distribution::Variance for Gaussian {
     #[inline]
     fn deviation(&self) -> f64 {
         self.sigma
+    }
+}
+
+impl core::iter::FromIterator<f64> for Gaussian {
+    /// Infer the distribution from an iteration.
+    fn from_iter<T: IntoIterator<Item = f64>>(iterator: T) -> Self {
+        let samples: Vec<f64> = iterator.into_iter().collect();
+        let mu = samples.iter().fold(0.0, |a, b| a + b) / samples.len() as f64;
+        let sigma = f64::sqrt(
+            samples
+                .iter()
+                .fold(0.0, |a, b| a + f64::powf(b - mu as f64, 2.0))
+                / (samples.len() - 1) as f64,
+        );
+        Gaussian::new(mu, sigma)
     }
 }
 
@@ -410,6 +425,8 @@ const W: [f64; 128] = [
 
 #[cfg(test)]
 mod tests {
+    use core::iter::FromIterator;
+
     use alloc::{vec, vec::Vec};
     use assert;
     use prelude::*;
@@ -565,5 +582,18 @@ mod tests {
     #[test]
     fn deviation() {
         assert_eq!(new!(0.0, 2.0).deviation(), 2.0);
+    }
+
+    #[test]
+    fn from_iter() {
+        let mut source = source::default(42);
+        let distribution = new!(1.0, 2.0);
+        let sampler = Independent(&distribution, &mut source);
+        let samples = sampler.take(10000).collect::<Vec<_>>();
+        let derived_distribution = Gaussian::from_iter(samples);
+
+        assert::close(derived_distribution.mu, distribution.mu, 0.1);
+        assert::close(derived_distribution.sigma, distribution.sigma, 0.1);
+        assert::close(derived_distribution.norm, distribution.norm, 0.1);
     }
 }
