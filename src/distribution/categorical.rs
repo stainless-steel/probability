@@ -13,11 +13,22 @@ pub struct Categorical {
     cumsum: Vec<f64>,
 }
 
+impl Default for Categorical {
+    #[inline]
+    fn default() -> Self {
+        Self::new_from_owned(vec![0.2, 0.2, 0.2, 0.2, 0.2])
+    }
+}
+
 impl Categorical {
     /// Create a categorical distribution with success probability `p`.
     ///
     /// It should hold that `p[i] >= 0`, `p[i] <= 1`, and `sum(p) == 1`.
     pub fn new(p: &[f64]) -> Self {
+        Self::new_from_owned(p.to_vec())
+    }
+
+    pub fn new_from_owned(p: Vec<f64>) -> Self {
         should!(is_probability_vector(p), {
             const EPSILON: f64 = 1e-12;
             p.iter().all(|&p| (0.0..=1.0).contains(&p))
@@ -32,7 +43,7 @@ impl Categorical {
         cumsum[k - 1] = 1.0;
         Categorical {
             k,
-            p: p.to_vec(),
+            p,
             cumsum,
         }
     }

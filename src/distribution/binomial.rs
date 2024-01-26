@@ -16,6 +16,13 @@ pub struct Binomial {
     npq: f64,
 }
 
+impl Default for Binomial {
+    #[inline]
+    fn default() -> Self {
+        Self::new(10, 0.5)
+    }
+}
+
 impl Binomial {
     /// Create a binomial distribution with `n` trails and success probability
     /// `p`.
